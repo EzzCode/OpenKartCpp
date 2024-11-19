@@ -240,7 +240,16 @@ int our::Application::run(int run_for_frames) {
     int current_frame = 0;
 
     //Game loop
+    glfwSetWindowTitle(window, "OpenKartCpp");
+    int id = 1210016; // Replace with your actual ID
+    float r = ((id / 1) % 16) / 16.0f;
+    float g = ((id / 16) % 16) / 16.0f;
+    float b = ((id / 256) % 16) / 16.0f;
+    float a = 1.0f; // Alpha channel
+
     while(!glfwWindowShouldClose(window)){
+        glClearColor(r, g, b, a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         if(run_for_frames != 0 && current_frame >= run_for_frames) break;
         glfwPollEvents(); // Read all the user events and call relevant callbacks.
 
@@ -324,6 +333,7 @@ int our::Application::run(int run_for_frames) {
         }
 
         ++current_frame;
+
     }
 
     // Call for cleaning up
