@@ -1,11 +1,13 @@
 #version 330
 
+
 // This vertex shader should be used to render a triangle whose normalized device coordinates are:
 // (-0.5, -0.5, 0.0), ( 0.5, -0.5, 0.0), ( 0.0,  0.5, 0.0)
 // And it also should send the vertex color as a varying to the fragment shader where the colors are (in order):
 // (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0)
-uniform vec2 translation = vec2(0.0,0.0);
-uniform vec2 scale = vec2(1.0,1.0);
+
+uniform vec2 translation =  vec2(0.0, 0.0); // Default: (0.0, 0.0)
+uniform vec2 scale = vec2(1.0,1.0);       // Default: (1.0, 1.0)
 
 out Varyings {
     vec3 color;
@@ -19,19 +21,27 @@ out Varyings {
 //TODO: (Req 1) Finish this shader
 
 void main(){
-    vec2 vertices[3] = vec2[3](
-        vec2(-0.5, -0.5),
-        vec2( 0.5, -0.5),
-        vec2( 0.0,  0.5)
+    const vec3 positions[3] = vec3[3](
+        vec3(-0.5,-0.5,0.0),
+        vec3(0.5,-0.5,0.0),
+        vec3(0.0,0.5,0.0)
     );
 
-    vec3 colors[3] = vec3[3](
-        vec3(1.0, 0.0, 0.0),
-        vec3(0.0, 1.0, 0.0),
-        vec3(0.0, 0.0, 1.0)
+     const vec3 colors[3] = vec3[3](
+        vec3(1.0, 0.0, 0.0), // Red
+        vec3(0.0, 1.0, 0.0), // Green
+        vec3(0.0, 0.0, 1.0)  // Blue
     );
+    vec3 position = positions[gl_VertexID];
+    //Scaling
+    position.xy *= scale;
 
-    vec2 newVerts = scale * vertices[gl_VertexID] + translation;
-    gl_Position = vec4(newVerts, 0.0, 1.0);
+     // Translation
+    position.xy += translation;
+
+     // send the value to gl_Position
+    gl_Position = vec4(position, 1.0);
+
+    // send the color to the varying
     vs_out.color = colors[gl_VertexID];
 }

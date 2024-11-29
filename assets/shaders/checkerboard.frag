@@ -12,13 +12,14 @@ uniform int size = 32;
 uniform vec3 colors[2];
 
 void main(){
- 
-    vec2 tilePos = floor(gl_FragCoord.xy / float(size));
+    vec2 pos = gl_FragCoord.xy;
 
-    // Use the tile position to alternate between colors
-    if(mod(tilePos.x + tilePos.y, 2.0) == 0.0) {
-        frag_color = vec4(colors[0], 1.0);
+    int row = int(pos.y) / size; 
+    int col = int(pos.x) / size;
+    
+    if ((row + col) % 2 == 0) {
+        frag_color = vec4(colors[0], 1.0); // Use color 0 for even tiles
     } else {
-        frag_color = vec4(colors[1], 1.0);
+        frag_color = vec4(colors[1], 1.0); // Use color 1 for odd tiles
     }
 }

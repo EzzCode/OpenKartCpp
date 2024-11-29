@@ -20,23 +20,30 @@ bool our::ShaderProgram::attach(const std::string &filename, GLenum type) const 
     const char* sourceCStr = sourceString.c_str();
     file.close();
 
+    GLuint shader = glCreateShader(type);
+
+    glShaderSource(shader, 1, &sourceCStr, nullptr); //provide source code
+
+    glCompileShader(shader); //compile shader then check for compilation errors
+    std::string error = checkForShaderCompilationErrors(shader);
+    if (error == "") {
+        glAttachShader(program, shader);
+        glDeleteShader(shader);
+        return true;
+    }
+    else {
+        std::cerr << error;
+        return false;
+    }
+
+
     //TODO: Complete this function
     //Note: The function "checkForShaderCompilationErrors" checks if there is
     // an error in the given shader. You should use it to check if there is a
     // compilation error and print it so that you can know what is wrong with
     // the shader. The returned string will be empty if there is no errors.
-    GLuint shader = glCreateShader(type);
-    glShaderSource(shader, 1, &sourceCStr, nullptr);
-    glCompileShader(shader);
-    std::string compilationError = checkForShaderCompilationErrors(shader);
-    if (!compilationError.empty()) {
-        std::cerr << "ERROR: Shader compilation failed for " << filename << ":\n" << compilationError << std::endl;
-        glDeleteShader(shader);
-        return false;
-    }
-    glAttachShader(program,shader);
+
     //We return true if the compilation succeeded
-    return true;
 }
 
 
@@ -47,17 +54,15 @@ bool our::ShaderProgram::link() const {
     // an error in the given program. You should use it to check if there is a
     // linking error and print it so that you can know what is wrong with the
     // program. The returned string will be empty if there is no errors.
-    
     glLinkProgram(program);
-
-    // Check for linking errors
-    std::string linkingError = checkForLinkingErrors(program);
-    if (!linkingError.empty()) {
-        std::cerr << "ERROR: Program linking failed:\n" << linkingError << std::endl;
-        glDeleteProgram(program);
+    std::string error = checkForLinkingErrors(program);
+    if (error == "")
+        return true;
+    else {
+        std::cerr << error;
         return false;
     }
-    return true;
+    //return true;
 }
 
 ////////////////////////////////////////////////////////////////////
