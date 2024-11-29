@@ -2,26 +2,30 @@
 #define SHADER_HPP
 
 #include <string>
-
+#include <iostream>
 #include <glad/gl.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace our {
+namespace our
+{
 
-    class ShaderProgram {
+    class ShaderProgram
+    {
 
     private:
-        //Shader Program Handle (OpenGL object name)
+        // Shader Program Handle (OpenGL object name)
         GLuint program;
 
     public:
-        ShaderProgram(){
-            //TODO: (Req 1) Create A shader program
+        ShaderProgram()
+        {
+            // TODO: (Req 1) Create A shader program
             program = glCreateProgram();
         }
-        ~ShaderProgram(){
-            //TODO: (Req 1) Delete a shader program
+        ~ShaderProgram()
+        {
+            // TODO: (Req 1) Delete a shader program
             glDeleteProgram(program);
         }
 
@@ -29,72 +33,74 @@ namespace our {
 
         bool link() const;
 
-        void use() { 
+        void use()
+        {
             glUseProgram(program);
         }
 
-        GLuint getUniformLocation(const std::string &name) {
-            //TODO: (Req 1) Return the location of the uniform with the given name
-            return glGetUniformLocation(program, name.c_str());
+        GLuint getUniformLocation(const std::string &name)
+        {
+            // TODO: (Req 1) Return the location of the uniform with the given name
+            if (program == 0)
+            {
+                std::cerr << "Error: Shader program is not initialized." << std::endl;
+                return -1;
+            }
+            GLint location = glGetUniformLocation(program, name.c_str());
+            if (location == -1)
+            {
+                std::cerr << "Warning: Uniform '" << name << "' not found in shader program." << std::endl;
+            }
+            return location;
         }
 
-        void set(const std::string &uniform, GLfloat value) {
-            //TODO: (Req 1) Send the given float value to the given uniform
-            GLuint location = getUniformLocation(uniform);
-            if (location != -1)
-                glUniform1f(location, value);
+        void set(const std::string &uniform, GLfloat value)
+        {
+            // TODO: (Req 1) Send the given float value to the given uniform
+            glUniform1f(getUniformLocation(uniform), value);
         }
 
-        void set(const std::string &uniform, GLuint value) {
-            //TODO: (Req 1) Send the given unsigned integer value to the given uniform
-            GLuint location = getUniformLocation(uniform);
-            if (location != -1)
-                glUniform1ui(location, value);
+        void set(const std::string &uniform, GLuint value)
+        {
+            // TODO: (Req 1) Send the given unsigned integer value to the given uniform
+            glUniform1ui(getUniformLocation(uniform), value);
         }
 
-        void set(const std::string &uniform, GLint value) {
-            //TODO: (Req 1) Send the given integer value to the given uniform
-            GLuint location = getUniformLocation(uniform);
-            if (location != -1)
-                glUniform1i(location, value);
+        void set(const std::string &uniform, GLint value)
+        {
+            // TODO: (Req 1) Send the given integer value to the given uniform
+            glUniform1i(getUniformLocation(uniform), value);
         }
 
-        void set(const std::string &uniform, glm::vec2 value) {
-            //TODO: (Req 1) Send the given 2D vector value to the given uniform
-            GLuint location = getUniformLocation(uniform);
-            if (location != -1)
-                glUniform2f(location, value.x,value.y);
+        void set(const std::string &uniform, glm::vec2 value)
+        {
+            // TODO: (Req 1) Send the given 2D vector value to the given uniform
+            glUniform2f(getUniformLocation(uniform), value.x, value.y);
         }
 
-        void set(const std::string &uniform, glm::vec3 value) {
-            //TODO: (Req 1) Send the given 3D vector value to the given uniform
-            GLuint location = getUniformLocation(uniform);
-            if (location != -1)
-                glUniform3f(location, value.x,value.y,value.z);
+        void set(const std::string &uniform, glm::vec3 value)
+        {
+            // TODO: (Req 1) Send the given 3D vector value to the given uniform
+            glUniform3f(getUniformLocation(uniform), value.x, value.y, value.z);
         }
 
-        void set(const std::string &uniform, glm::vec4 value) {
-            //TODO: (Req 1) Send the given 4D vector value to the given uniform
-            GLuint location = getUniformLocation(uniform);
-            if (location != -1)
-                glUniform4f(location, value.x, value.y, value.z,value.w);
+        void set(const std::string &uniform, glm::vec4 value)
+        {
+            // TODO: (Req 1) Send the given 4D vector value to the given uniform
+            glUniform4f(getUniformLocation(uniform), value.x, value.y, value.z, value.w);
         }
 
-        void set(const std::string &uniform, glm::mat4 matrix) {
-            //TODO: (Req 1) Send the given matrix 4x4 value to the given uniform
-            GLuint location = getUniformLocation(uniform);
-            if (location != -1)
-                glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+        void set(const std::string &uniform, glm::mat4 matrix)
+        {
+            // TODO: (Req 1) Send the given matrix 4x4 value to the given uniform
+            glUniformMatrix4fv(getUniformLocation(uniform), 1, GL_FALSE, glm::value_ptr(matrix));
         }
 
-
-        //TODO: (Req 1) Delete the copy constructor and assignment operator.
-        //Question: Why do we delete the copy constructor and assignment operator?
-        ShaderProgram(const ShaderProgram&) = delete;
-        ShaderProgram& operator=(const ShaderProgram&) = delete;
-        //We need to delete the copy constructor because opengl objects like shader programs
-        //are managed through IDS which are unique to the instance, if we copied a ShaderProgram
-        //object, this can lead to problems like double deletion.
+        // TODO: (Req 1) Delete the copy constructor and assignment operator.
+        // Question: Why do we delete the copy constructor and assignment operator?
+        ShaderProgram(const ShaderProgram &) = delete;
+        ShaderProgram &operator=(const ShaderProgram &) = delete;
+        // Answer: To prevent making multiple programs for the opengl instance (I think)
     };
 
 }

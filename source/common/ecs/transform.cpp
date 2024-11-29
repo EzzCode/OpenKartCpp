@@ -10,10 +10,20 @@ namespace our {
     // HINT: to convert euler angles to a rotation matrix, you can use glm::yawPitchRoll
     glm::mat4 Transform::toMat4() const {
         //TODO: (Req 3) Write this function
-        return glm::mat4(1.0f); 
+        // Create translation matrix
+        glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
+        
+        // Create rotation matrix from euler angles (yaw, pitch, roll)
+        glm::mat4 rotationMatrix = glm::yawPitchRoll(rotation.y, rotation.x, rotation.z);
+        
+        // Create scale matrix
+        glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
+        
+        // Combine matrices in order: Translation * Rotation * Scale
+        return translationMatrix * rotationMatrix * scaleMatrix;
     }
 
-     // Deserializes the entity data and components from a json object
+    // Deserializes the entity data and components from a json object
     void Transform::deserialize(const nlohmann::json& data){
         position = data.value("position", position);
         rotation = glm::radians(data.value("rotation", glm::degrees(rotation)));

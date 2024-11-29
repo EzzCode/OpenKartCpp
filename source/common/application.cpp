@@ -164,7 +164,7 @@ int our::Application::run(int run_for_frames) {
     configureOpenGL(); // This function sets OpenGL window hints.
 
     auto win_config = getWindowConfiguration();             // Returns the WindowConfiguration current struct instance.
-    win_config.title = "AlaaEldin Hamed Mohamed";
+
     // Create a window with the given "WindowConfiguration" attributes.
     // If it should be fullscreen, monitor should point to one of the monitors (e.g. primary monitor), otherwise it should be null
     GLFWmonitor* monitor = win_config.isFullscreen ? glfwGetPrimaryMonitor() : nullptr;
@@ -238,18 +238,12 @@ int our::Application::run(int run_for_frames) {
     // The time at which the last frame started. But there was no frames yet, so we'll just pick the current time.
     double last_frame_time = glfwGetTime();
     int current_frame = 0;
-    double r = ((1210017 / 1) % 16) / 16.0;
-    double g = ((1210017 / 16) % 16) / 16.0;
-    double b = ((1210017 / 256) % 16) / 16.0;
-    double a = 1.0;
+
     //Game loop
     while(!glfwWindowShouldClose(window)){
         if(run_for_frames != 0 && current_frame >= run_for_frames) break;
         glfwPollEvents(); // Read all the user events and call relevant callbacks.
 
-        //glClearColor(r, g, b, a);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black color
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Start a new ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

@@ -1,18 +1,2 @@
-﻿  Building Custom Rule C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeLists.txt
-  context.c
-  init.c
-  input.c
-  monitor.c
-  vulkan.c
-  window.c
-  win32_init.c
-  win32_joystick.c
-  win32_monitor.c
-  win32_time.c
-  win32_thread.c
-  win32_window.c
-  wgl_context.c
-  egl_context.c
-  osmesa_context.c
-  Generating Code...
-  glfw.vcxproj -> C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\Debug\glfw3.lib
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(2146,5): warning : The referenced project 'C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\ZERO_CHECK.vcxproj' does not exist.
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.Cpp.WindowsSDK.targets(46,5): error MSB8036: The Windows SDK version 10.0.22621.0 was not found. Install the required version of Windows SDK or change the SDK version in the project property pages or by right-clicking the solution and selecting "Retarget solution".
