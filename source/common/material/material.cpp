@@ -49,7 +49,9 @@ namespace our {
         // Bind the texture to unit 0
         glActiveTexture(GL_TEXTURE0);
         texture->bind();
-        sampler->bind(0);
+        if (sampler) {
+            sampler->bind(0);
+        }
         
         // Send the texture unit to the uniform
         shader->set("tex", 0);
@@ -63,5 +65,7 @@ namespace our {
         texture = AssetLoader<Texture2D>::get(data.value("texture", ""));
         sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
     }
+    //////////////////////////////////////////////////////////////////////
+    
 
 }
