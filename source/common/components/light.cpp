@@ -9,9 +9,10 @@ namespace our
             return;
         std::string typeStr = data.value("lightType", "directional");
         std::transform(typeStr.begin(), typeStr.end(), typeStr.begin(), ::tolower);
+
         if (typeStr == "directional")
         {
-            lightType = Type::DIRECTIONAL;
+            lightType = lightType::DIRECTIONAL;
         }
         else if (typeStr == "point")
         {
@@ -21,7 +22,7 @@ namespace our
         {
             lightType = lightType::SPOT;
         }
-        attenuation = data.value("attenuation", glm::vec3(-1.0f, 0.0f, 0.0f));
+        attenuation = data.value("attenuation", glm::vec3(0.0f, 0.0f, 1.0f));
         direction = data.value("direction", glm::vec3(-1.0f,0.0f, 0.0f));
         inner_cone_angle = data.value("innerConeAngle", glm::radians(15.0f));
         outer_cone_angle = data.value("outerConeAngle", glm::radians(30.0f));  

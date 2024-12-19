@@ -192,16 +192,19 @@
                     ],
                     "attenuation": [
                         1,
-                        1,
-                        1
+                        0,
+                        0
                     ],
                     "direction": [
-                        0.9,
-                        0.9,
-                        0.9
+                        0,
+                        -1,
+                        0
                     ],
-                    "lightType": "directional"
+                    "inner_cone_angle": "20",
+                    "outer_cone_angle": "30",
+                    "lightType": "spot"
                 }
+                
             ]
         },
         {
@@ -227,7 +230,7 @@
                 {
                     "type": "Movement",
                     "linearVelocity": [0, 0.1, 0],
-                    "angularVelocity": [-45, 0, 0]
+                    "angularVelocity": [0, 0, -45]
                 }
             ]
         
@@ -261,7 +264,7 @@
         {
             "position": [0, -1, 0],
             "rotation": [-90, 0, 0],
-            "scale": [10, 10, 1],
+            "scale": [50, 50, 1],
             "components": [
                 {
                     "type": "Mesh Renderer",
