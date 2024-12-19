@@ -66,6 +66,51 @@ namespace our {
         sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
     }
     //////////////////////////////////////////////////////////////////////
+    void LitMaterial::setup() const {
+        TexturedMaterial::setup();
+        if (albedo) {
+            glActiveTexture(GL_TEXTURE0);
+            albedo->bind();
+            sampler->bind(0);
+            shader->set("material.albedo", 0);
+        }
+        if (specular) {
+            glActiveTexture(GL_TEXTURE1);
+            specular->bind();
+            sampler->bind(1);
+            shader->set("material.specular", 1);
+        }
+        if (roughness) {
+            glActiveTexture(GL_TEXTURE2);
+            roughness->bind();
+            sampler->bind(2);
+            shader->set("material.roughness", 2);
+        }
+        if (ambientOcclusion) {
+            glActiveTexture(GL_TEXTURE3);
+            ambientOcclusion->bind();
+            sampler->bind(3);
+            shader->set("material.ambientOcclusion", 3);
+        }
+        if (emission) {
+            glActiveTexture(GL_TEXTURE4);
+            emission->bind();
+            sampler->bind(4);
+            shader->set("material.emission", 4);
+        }
+        glActiveTexture(GL_TEXTURE0);
+    }
+
+    void LitMaterial::deserialize(const nlohmann::json& data) {
+        TexturedMaterial::deserialize(data);
+        if (!data.is_object()) return;
+        albedo = AssetLoader<Texture2D>::get(data.value("albedo", ""));
+        specular = AssetLoader<Texture2D>::get(data.value("specular", ""));
+        roughness = AssetLoader<Texture2D>::get(data.value("roughness", ""));
+        ambientOcclusion = AssetLoader<Texture2D>::get(data.value("ambientOcclusion", ""));
+        emission = AssetLoader<Texture2D>::get(data.value("emission", ""));
+        sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
+    }
     
 
 }

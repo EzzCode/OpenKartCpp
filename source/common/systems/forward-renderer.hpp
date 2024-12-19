@@ -1,5 +1,6 @@
 #pragma once
-
+// ADD LIGHT COMPONENT HERE and check line 37
+#include "../components/light.hpp"
 #include "../ecs/world.hpp"
 #include "../components/camera.hpp"
 #include "../components/mesh-renderer.hpp"
@@ -33,6 +34,8 @@ namespace our
         // We define them here (instead of being local to the "render" function) as an optimization to prevent reallocating them every frame
         std::vector<RenderCommand> opaqueCommands;
         std::vector<RenderCommand> transparentCommands;
+        // This vector will store all the light components in the world
+        std::vector<LightComponent*> lightCommands;
         // Objects used for rendering a skybox
         Mesh* skySphere;
         TexturedMaterial* skyMaterial;
