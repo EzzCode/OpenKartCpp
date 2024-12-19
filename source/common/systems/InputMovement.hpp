@@ -15,8 +15,8 @@ namespace our
     class InputMovementSystem
     {
         Application *app;
-        glm::vec3 move;
-
+        glm::vec3 vel;
+        glm::vec3 accel;
     public:
         void enter(Application *app)
         {
@@ -33,27 +33,27 @@ namespace our
         
                 if (input)
                 {
-                    move.x = 0;
-                    move.y = 0;
-                    move.z = 0;
+                    vel.x = 0;
+                    vel.y = 0;
+                    vel.z = 0;
                     if (app->getKeyboard().isPressed(GLFW_KEY_UP))
                     {
-                        move.y= 1;
+                        vel.z= 1;
                     }
                     if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
                     {
-                        move.y = -1;
+                        vel.z = -1;
                     }
                     if (app->getKeyboard().isPressed(GLFW_KEY_LEFT))
                     {
-                        move.x = -1;
+                        vel.x = -1;
                     }
                     if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
                     {
-                        move.x = 1;
+                        vel.x = 1;
                     }
                     
-                    entity->localTransform.position += deltaTime * move;
+                    entity->localTransform.position += deltaTime * vel;
                 }
             }
         }

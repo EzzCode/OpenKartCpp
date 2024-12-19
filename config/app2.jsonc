@@ -210,6 +210,9 @@
                     {
                         "type": "Movement",
                         "linearVelocity": [0, 0, 0]
+                    },
+                    {
+                        "type" : "InputMovement"
                     }
                 ],
                 "children": [
