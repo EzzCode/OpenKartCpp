@@ -43,7 +43,8 @@
                 "plane-roughness": "assets/textures/Plane roughness.png",
                 "plane-emission": "assets/textures/A_black_image.jpg",
                 "mario": "assets/textures/mario_all.png",
-                "kart": "assets/textures/body_std_mr.png"
+                "kart": "assets/textures/body_std_mr.png",
+                "track": "assets/textures/track.png"
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
@@ -51,7 +52,8 @@
                 "plane": "assets/models/plane.obj",
                 "sphere": "assets/models/sphere.obj",
                 "mario": "assets/models/mario.obj",
-                "kart": "assets/models/kart.obj"
+                "kart": "assets/models/kart.obj",
+                "track": "assets/models/track2.obj"
             },
             "samplers":{
                 "default":{},
@@ -60,6 +62,20 @@
                 }
             },
             "materials":{
+                "track": {
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling": {
+                            "enabled": false
+                        },
+                        "depthTesting": {
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "track"
+                },
                 "kart":{
                     "type": "textured",
                     "shader": "textured",
@@ -179,9 +195,9 @@
         
         },
         {
-            "position": [0,10,10],
+            "position": [0,5,0],
             "rotation": [0,0,0],
-            "scale": [10,10,10],
+            "scale": [1,1,1],
             "components": [
                 {
                     "type": "Light",
@@ -192,6 +208,8 @@
                     ],
                     "attenuation": [
                         1,
+                        0,
+                        0
                         0,
                         0
                     ],
@@ -220,7 +238,7 @@
         {
             
             "rotation": [-45, 0, 0],
-            "position": [0, 0, 20],
+            "position": [0, 0, 0],
             "components": [
                 {
                     "type": "Mesh Renderer",
@@ -236,7 +254,7 @@
         
         },
         {
-            "position": [1, -0.5, -1],
+            "position": [-7, 4.5,25],
             "rotation": [0, 0, 0],
             "scale": [0.1, 0.1, 0.1],
             "components": [
@@ -261,6 +279,18 @@
                 }
             ]
         },
+        // {
+        //     "position": [0, 1, 0],
+        //     "rotation": [0, 0, 0],
+        //     "scale": [0.03, 0.03, 0.03],
+        //     "components": [
+        //         {
+        //             "type": "Mesh Renderer",
+        //             "mesh": "track",
+        //             "material": "track"
+        //         }
+        //     ]
+        // },
         {
             "position": [0, -1, 0],
             "rotation": [-90, 0, 0],
