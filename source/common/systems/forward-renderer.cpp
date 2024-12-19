@@ -224,7 +224,8 @@ namespace our
                 command.material->shader->set("light_count", (int)lightCommands.size());
                 command.material->shader->set("VP", VP);
                 command.material->shader->set("M", command.localToWorld);
-                command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
+                command.material->shader->set("M_IT", glm::transpose(glm::inverse(command.localToWorld)));
+                //command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
 
                 for (int i = 0; i < lightCommands.size(); i++)
                 {

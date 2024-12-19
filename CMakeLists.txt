@@ -76,6 +76,8 @@ set(COMMON_SOURCES
         source/common/components/free-camera-controller.hpp
         source/common/components/free-camera-controller.cpp
         source/common/components/light.hpp
+        source/common/components/input.hpp
+        source/common/components/input.cpp
         source/common/components/light.cpp
         source/common/components/movement.hpp
         source/common/components/movement.cpp
@@ -84,6 +86,7 @@ set(COMMON_SOURCES
         source/common/systems/forward-renderer.hpp
         source/common/systems/forward-renderer.cpp
         source/common/systems/free-camera-controller.hpp
+        source/common/systems/InputMovement.hpp
         source/common/systems/movement.hpp
 )
 
