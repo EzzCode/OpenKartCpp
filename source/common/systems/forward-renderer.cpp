@@ -183,8 +183,7 @@ namespace our
                   {
                       // TODO: (Req 9) Finish this function
                       // HINT: the following return should return true "first" should be drawn before "second". 
-                      return glm::dot(first.center, cameraForward) > glm::dot(second.center, cameraForward);
-                  });
+                      return glm::dot(first.center, cameraForward) > glm::dot(second.center, cameraForward); });
 
         // TODO: (Req 9) Get the camera ViewProjection matrix and store it in VP
         glm::mat4 VP = camera->getProjectionMatrix(windowSize) * camera->getViewMatrix();
@@ -217,49 +216,49 @@ namespace our
             command.material->setup();
             command.material->shader->set("transform", VP * command.localToWorld);
 
-        /////////////////////////// ADD LIGHT COMPONENT HERE ///////////////////////////
-            if(dynamic_cast<LitMaterial*>(command.material))
+            /////////////////////////// ADD LIGHT COMPONENT HERE ///////////////////////////
+            if (dynamic_cast<LitMaterial *>(command.material))
             {
-                LitMaterial* litMaterial = dynamic_cast<LitMaterial*>(command.material);
+                LitMaterial *litMaterial = dynamic_cast<LitMaterial *>(command.material);
                 command.material->shader->set("camera_position", eye);
                 command.material->shader->set("light_count", (int)lightCommands.size());
                 command.material->shader->set("VP", VP);
                 command.material->shader->set("M", command.localToWorld);
-                // command.material->shader->set("M_IT", glm::transpose(glm::inverse(command.localToWorld)));
                 command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
 
                 for (int i = 0; i < lightCommands.size(); i++)
                 {
-                    LightComponent* light = lightCommands[i];
+                    LightComponent *light = lightCommands[i];
                     glm::vec3 light_position;
                     std::string light_name = "lights[" + std::to_string(i) + "]";
+
                     if (light->getOwner()->parent)
                     {
-                        if (light->getOwner()->parent) 
-                        {
-                            light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
-                        } else {
-                            light_position = light->getOwner()->localTransform.position;
-                        }
-
-                        if(light->lightType == lightType::DIRECTIONAL)
-                        {
-                            command.material->shader->set(light_name + ".direction", glm::normalize(light->direction));
-                        }else if(light->lightType == lightType::SPOT)
-                        {
-                            command.material->shader->set(light_name + ".direction", glm::normalize(light->direction));
-                            command.material->shader->set(light_name + ".inner_cone_angle", light->inner_cone_angle);
-                            command.material->shader->set(light_name + ".outer_cone_angle", light->outer_cone_angle);
-                        }
-                        command.material->shader->set(light_name + ".position", light_position);
-                        command.material->shader->set(light_name + ".color", light->color);
-                        command.material->shader->set(light_name + ".attenuation", light->attenuation);
-                        command.material->shader->set(light_name + ".type", (int)light->lightType);
+                        light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
                     }
+                    else
+                    {
+                        light_position = light->getOwner()->localTransform.position;
+                    }
+
+                    if (light->lightType == lightType::DIRECTIONAL)
+                    {
+                        command.material->shader->set(light_name + ".direction", glm::normalize(light->direction));
+                    }
+                    else if (light->lightType == lightType::SPOT)
+                    {
+                        command.material->shader->set(light_name + ".direction", glm::normalize(light->direction));
+                        command.material->shader->set(light_name + ".inner_cone_angle", light->inner_cone_angle);
+                        command.material->shader->set(light_name + ".outer_cone_angle", light->outer_cone_angle);
+                    }
+                    command.material->shader->set(light_name + ".position", light_position);
+                    command.material->shader->set(light_name + ".color", light->color);
+                    command.material->shader->set(light_name + ".attenuation", light->attenuation);
+                    command.material->shader->set(light_name + ".type", (int)light->lightType);
                 }
             }
             /////////////////////////// LIGHT COMPONENT ///////////////////////////
-            
+
             command.mesh->draw();
         }
 
@@ -297,9 +296,9 @@ namespace our
             command.material->setup();
             command.material->shader->set("transform", VP * command.localToWorld);
             /////////////////////////// ADD LIGHT COMPONENT HERE ///////////////////////////
-            if(dynamic_cast<LitMaterial*>(command.material))
+            if (dynamic_cast<LitMaterial *>(command.material))
             {
-                LitMaterial* litMaterial = dynamic_cast<LitMaterial*>(command.material);
+                LitMaterial *litMaterial = dynamic_cast<LitMaterial *>(command.material);
                 command.material->shader->set("camera_position", eye);
                 command.material->shader->set("light_count", (int)lightCommands.size());
                 command.material->shader->set("VP", VP);
@@ -308,31 +307,32 @@ namespace our
 
                 for (int i = 0; i < lightCommands.size(); i++)
                 {
-                    LightComponent* light = lightCommands[i];
+                    LightComponent *light = lightCommands[i];
                     glm::vec3 light_position;
                     std::string light_name = "lights[" + std::to_string(i) + "]";
                     if (light->getOwner()->parent)
                     {
-                        if (light->getOwner()->parent) {
-                            light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
-                        } else {
-                            light_position = light->getOwner()->localTransform.position;
-                        }
-
-                        if(light->lightType == lightType::DIRECTIONAL)
-                        {
-                            command.material->shader->set(light_name + ".direction", light->direction);
-                        }else if(light->lightType == lightType::SPOT)
-                        {
-                            command.material->shader->set(light_name + ".direction", light->direction);
-                            command.material->shader->set(light_name + ".inner_cone_angle", light->inner_cone_angle);
-                            command.material->shader->set(light_name + ".outer_cone_angle", light->outer_cone_angle);
-                        }
-                        command.material->shader->set(light_name + ".position", light_position);
-                        command.material->shader->set(light_name + ".color", light->color);
-                        command.material->shader->set(light_name + ".attenuation", light->attenuation);
-                        command.material->shader->set(light_name + ".type", (int)light->lightType);
+                        light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
                     }
+                    else
+                    {
+                        light_position = light->getOwner()->localTransform.position;
+                    }
+
+                    if (light->lightType == lightType::DIRECTIONAL)
+                    {
+                        command.material->shader->set(light_name + ".direction", light->direction);
+                    }
+                    else if (light->lightType == lightType::SPOT)
+                    {
+                        command.material->shader->set(light_name + ".direction", light->direction);
+                        command.material->shader->set(light_name + ".inner_cone_angle", light->inner_cone_angle);
+                        command.material->shader->set(light_name + ".outer_cone_angle", light->outer_cone_angle);
+                    }
+                    command.material->shader->set(light_name + ".position", light_position);
+                    command.material->shader->set(light_name + ".color", light->color);
+                    command.material->shader->set(light_name + ".attenuation", light->attenuation);
+                    command.material->shader->set(light_name + ".type", (int)light->lightType);
                 }
             }
             /////////////////////////// LIGHT COMPONENT ///////////////////////////

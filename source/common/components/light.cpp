@@ -11,7 +11,7 @@ namespace our
         std::transform(typeStr.begin(), typeStr.end(), typeStr.begin(), ::tolower);
         if (typeStr == "directional")
         {
-            lightType = Type::DIRECTIONAL;
+            lightType = lightType::DIRECTIONAL;
         }
         else if (typeStr == "point")
         {
