@@ -224,12 +224,8 @@ namespace our
                 command.material->shader->set("light_count", (int)lightCommands.size());
                 command.material->shader->set("VP", VP);
                 command.material->shader->set("M", command.localToWorld);
-<<<<<<< HEAD
                 command.material->shader->set("M_IT", glm::transpose(glm::inverse(command.localToWorld)));
                 //command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
-=======
-                command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
->>>>>>> 00112904ebf03bfcb090db3ab8da4bb88a1aadf0
 
                 for (int i = 0; i < lightCommands.size(); i++)
                 {
@@ -315,32 +311,6 @@ namespace our
                     LightComponent *light = lightCommands[i];
                     glm::vec3 light_position;
                     std::string light_name = "lights[" + std::to_string(i) + "]";
-<<<<<<< HEAD
-                   
-                        if (light->getOwner()->parent)
-                        {
-                            light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
-                        }
-                        else
-                        {
-                            light_position = light->getOwner()->localTransform.position;
-                        }
-
-                        if (light->lightType == lightType::DIRECTIONAL)
-                        {
-                            command.material->shader->set(light_name + ".direction", light->direction);
-                        }
-                        else if (light->lightType == lightType::SPOT)
-                        {
-                            command.material->shader->set(light_name + ".direction", light->direction);
-                            command.material->shader->set(light_name + ".inner_cone_angle", light->inner_cone_angle);
-                            command.material->shader->set(light_name + ".outer_cone_angle", light->outer_cone_angle);
-                        }
-                        command.material->shader->set(light_name + ".position", light_position);
-                        command.material->shader->set(light_name + ".color", light->color);
-                        command.material->shader->set(light_name + ".attenuation", light->attenuation);
-                        command.material->shader->set(light_name + ".type", (int)light->lightType);
-=======
                     if (light->getOwner()->parent)
                     {
                         light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
@@ -364,7 +334,6 @@ namespace our
                     command.material->shader->set(light_name + ".color", light->color);
                     command.material->shader->set(light_name + ".attenuation", light->attenuation);
                     command.material->shader->set(light_name + ".type", (int)light->lightType);
->>>>>>> 00112904ebf03bfcb090db3ab8da4bb88a1aadf0
                 }
             }
             /////////////////////////// LIGHT COMPONENT ///////////////////////////

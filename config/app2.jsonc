@@ -210,8 +210,6 @@
                         1,
                         0,
                         0
-                        0,
-                        0
                     ],
                     "direction": [
                         0,
@@ -262,6 +260,9 @@
                     "type": "Mesh Renderer",
                     "mesh": "mario",
                     "material": "mario"
+                },
+                {
+                    "type": "InputMovement"
                 }
             ],
             "children": [
@@ -279,18 +280,18 @@
                 }
             ]
         },
-        // {
-        //     "position": [0, 1, 0],
-        //     "rotation": [0, 0, 0],
-        //     "scale": [0.03, 0.03, 0.03],
-        //     "components": [
-        //         {
-        //             "type": "Mesh Renderer",
-        //             "mesh": "track",
-        //             "material": "track"
-        //         }
-        //     ]
-        // },
+        {
+            "position": [0, 1, 0],
+            "rotation": [0, 0, 0],
+            "scale": [0.03, 0.03, 0.03],
+            "components": [
+                {
+                    "type": "Mesh Renderer",
+                    "mesh": "track",
+                    "material": "track"
+                }
+            ]
+        },
         {
             "position": [0, -1, 0],
             "rotation": [-90, 0, 0],
