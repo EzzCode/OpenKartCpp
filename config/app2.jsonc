@@ -385,7 +385,7 @@
                 },
                 {
                     "type": "Rigidbody",
-                    "mesh":"track",
+                    "mesh":"track2",
                     "position": [0, 50, 0],
                     "rotation": [0, 0, 0],
                     "mass":200

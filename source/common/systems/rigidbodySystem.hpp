@@ -29,7 +29,8 @@ namespace our
                 RigidbodyComponent *rigidbodyComponent = entity->getComponent<RigidbodyComponent>();
                 if (rigidbodyComponent && !rigidbodyComponent->addedToWorld)
                 {
-                    std::string path = "../assets/models/" + rigidbodyComponent->mesh + ".obj";
+                    
+                    std::string path = "../../assets/models/" + rigidbodyComponent->mesh + ".obj";
                     addObjectToWorld(path, dynWorld, btVector3(rigidbodyComponent->position.x, rigidbodyComponent->position.y, rigidbodyComponent->position.z), btVector3(rigidbodyComponent->rotation.x, rigidbodyComponent->rotation.y, rigidbodyComponent->rotation.z), rigidbodyComponent->mass);
                     rigidbodyComponent->addedToWorld = true;
                 }

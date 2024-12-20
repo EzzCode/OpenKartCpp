@@ -7,7 +7,7 @@
 #include "input.hpp"
 #include "movement.hpp"
 #include "light.hpp"
-
+#include "rigidbody.hpp"
 namespace our {
 
     // Given a json object, this function picks and creates a component in the given entity
@@ -28,6 +28,8 @@ namespace our {
             component = entity->addComponent<LightComponent>();
         } else if (type == InputComponent::getID()){
             component = entity->addComponent<InputComponent>();
+        }else if (type == RigidbodyComponent::getID()){
+            component = entity->addComponent<RigidbodyComponent>();
         }
 
         if(component) component->deserialize(data);

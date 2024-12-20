@@ -25,7 +25,7 @@ public:
     std::string mesh = "";             // Path to the OBJ file
     bool addedToWorld = false;         // Has the rigid body been added to the world?
 
-    static std::string getID() {return "msgader"; }   
+    static std::string getID() {return "Rigidbody"; }   
     
     void deserialize(const nlohmann::json& data) override;
 };
