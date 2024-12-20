@@ -78,6 +78,8 @@ set(COMMON_SOURCES
         source/common/components/light.hpp
         source/common/components/input.hpp
         source/common/components/input.cpp
+        source/common/components/rigidbody.cpp
+        source/common/components/rigidbody.hpp
         source/common/components/light.cpp
         source/common/components/movement.hpp
         source/common/components/movement.cpp
@@ -87,6 +89,7 @@ set(COMMON_SOURCES
         source/common/systems/forward-renderer.cpp
         source/common/systems/free-camera-controller.hpp
         source/common/systems/InputMovement.hpp
+        source/common/systems/rigidbodySystem.hpp
         source/common/systems/movement.hpp
 )
 
@@ -98,13 +101,15 @@ include_directories(
         vendor/glm
         vendor/imgui
         vendor/utils
+        bullet
 )
 
-
+ 
+link_directories(${PROJECT_SOURCE_DIR}/libs)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_SOURCE_DIR}/bin)
-
+ 
 set(STATES_SOURCES
         source/states/play-state.hpp
         source/states/menu-state.hpp
@@ -123,4 +128,8 @@ set(STATES_SOURCES
 # Each target compiles one example source file and the common & vendor source files
 # Then we link GLFW with each target
 add_executable(GAME_APPLICATION source/main.cpp ${STATES_SOURCES} ${COMMON_SOURCES} ${VENDOR_SOURCES})
-target_link_libraries(GAME_APPLICATION glfw)
+target_link_libraries(GAME_APPLICATION glfw
+libBulletDynamics.a
+libBulletCollision.a
+LinearMath.a
+)

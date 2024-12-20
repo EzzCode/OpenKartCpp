@@ -11,7 +11,7 @@
     },
     "scene": {
         "renderer":{
-            // "sky": "assets/textures/sky.jpg",
+            "sky": "assets/textures/sky.jpg"
             //"postprocess": "assets/shaders/postprocess/vignette.frag"
         },
         "assets":{
@@ -214,6 +214,7 @@
                     {
                         "type" : "InputMovement"
                     }
+                   
                 ],
                 "children": [
                     {
@@ -226,6 +227,7 @@
                                 "mesh": "kart",
                                 "material": "kart"
                             }
+                            
                         ],
                         "children": [
                             {
@@ -274,6 +276,7 @@
                                         "type": "Movement",
                                         "angularVelocity": [90, 0, 0]
                                     }
+                                    
                                 ]
                             },
                             {
@@ -349,6 +352,7 @@
                     "mesh": "sphere",
                     "material": "moon"
                 }
+                
             ]
         },
         {
@@ -378,6 +382,13 @@
                     "type": "Mesh Renderer",
                     "mesh": "track",
                     "material": "track"
+                },
+                {
+                    "type": "Rigidbody",
+                    "mesh":"track",
+                    "position": [0, 50, 0],
+                    "rotation": [0, 0, 0],
+                    "mass":200
                 }
             ]
         }

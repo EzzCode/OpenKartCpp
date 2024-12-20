@@ -1,7 +1,7 @@
 #include "mesh-utils.hpp"
 
 // We will use "Tiny OBJ Loader" to read and process '.obj" files
-#define TINYOBJLOADER_IMPLEMENTATION
+
 #include <tinyobj/tiny_obj_loader.h>
 
 #include <iostream>

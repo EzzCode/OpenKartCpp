@@ -5,9 +5,11 @@
 #include <ecs/world.hpp>
 #include <systems/forward-renderer.hpp>
 #include <systems/free-camera-controller.hpp>
+#include <systems/rigidbodySystem.hpp>
 #include <systems/movement.hpp>
 #include <asset-loader.hpp>
 #include <systems/InputMovement.hpp>
+#include <btBulletCollisionCommon.h>
 // This state shows how to use the ECS framework and deserialization.
 class Playstate : public our::State
 {
@@ -17,6 +19,8 @@ class Playstate : public our::State
     our::FreeCameraControllerSystem cameraController;
     our::MovementSystem movementSystem;
     our::InputMovementSystem inputMovementSystem;
+    our::RigidbodySystem rigidbodySystem;
+    
     void onInitialize() override
     {
         // First of all, we get the scene configuration from the app config
@@ -31,11 +35,24 @@ class Playstate : public our::State
         {
             world.deserialize(config["world"]);
         }
+        btBroadphaseInterface *broadphase = new btDbvtBroadphase();
+        btDefaultCollisionConfiguration *collisionConfiguration = new btDefaultCollisionConfiguration();
+        btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
+        btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 
+        btDiscreteDynamicsWorld *dynamicsWorld = new btDiscreteDynamicsWorld(
+            dispatcher,
+            broadphase,
+            solver,
+            collisionConfiguration);
+
+        // Set gravity (Y axis pointing down)
+        dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
         // We initialize the camera controller system since it needs a pointer to the app
         our::Application *appPtr = getApp();
         cameraController.enter(appPtr);
         inputMovementSystem.enter(appPtr);
+        rigidbodySystem.enter(dynamicsWorld);
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
@@ -47,6 +64,7 @@ class Playstate : public our::State
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
         inputMovementSystem.update(&world, (float)deltaTime);
+        rigidbodySystem.update(&world, (float)deltaTime);
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
 
