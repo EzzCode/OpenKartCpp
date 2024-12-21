@@ -14,7 +14,7 @@ namespace our {
             cameraType = CameraType::PERSPECTIVE;
         }
         near = data.value("near", 0.01f);
-        far = data.value("far", 100.0f);
+        far = data.value("far", 500.0f); // default 100
         fovY = data.value("fovY", 90.0f) * (glm::pi<float>() / 180);
         orthoHeight = data.value("orthoHeight", 1.0f);
     }
@@ -35,10 +35,15 @@ namespace our {
         // - the center position which is the point (0,0,-1) but after being transformed by M
         // - the up direction which is the vector (0,1,0) but after being transformed by M
         // then you can use glm::lookAt
-        glm::vec3 eye = M * glm::vec4(0, 0, 0, 1);
-        glm::vec3 center = M * glm::vec4(0, 0, -1, 1);
-        glm::vec3 up = glm::normalize(glm::vec3(M * glm::vec4(0, 1, 0, 0)));
-        return glm::lookAt(eye, center, up);
+
+        glm::vec3 eyePos = M * glm::vec4(0, 0, 0, 1);
+        glm::vec3 centerPos = M * glm::vec4(0, 0, -1, 1);
+
+        // vector
+        glm::vec3 upDir = M * glm::vec4(0, 1, 0, 0);
+
+        //return glm::mat4(1.0f);
+        return glm::lookAt(eyePos, centerPos, upDir);
     }
 
     // Creates and returns the camera projection matrix
@@ -49,13 +54,20 @@ namespace our {
         // It takes left, right, bottom, top. Bottom is -orthoHeight/2 and Top is orthoHeight/2.
         // Left and Right are the same but after being multiplied by the aspect ratio
         // For the perspective camera, you can use glm::perspective
-        float aspectRatio = (float)viewportSize.x / viewportSize.y;
-        if(cameraType == CameraType::ORTHOGRAPHIC){
-            float halfHeight = orthoHeight * 0.5f;
-            float halfWidth = halfHeight * aspectRatio;
-            return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, near, far);
+
+        float aspect = (float)viewportSize.x / viewportSize.y;
+
+        if (cameraType == CameraType::ORTHOGRAPHIC) {
+            float t = orthoHeight/2;
+            float b = -1 * orthoHeight/2;
+            float l = b * aspect;
+            float r = t * aspect;
+
+            return glm::ortho(l, r, b, t);
         } else {
-            return glm::perspective(fovY, aspectRatio, near, far);
+            return glm::perspective(fovY, aspect, near, far);
         }
+        
+        return glm::mat4(1.0f);
     }
 }

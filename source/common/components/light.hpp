@@ -1,28 +1,31 @@
 #pragma once
 #include "../ecs/component.hpp"
 #include "../shader/shader.hpp"
+#include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
-namespace our
-{  
-    enum class lightType
-    {
-        DIRECTIONAL,
-        POINT,
-        SPOT
-    };
-    class LightComponent : public Component
-    {
-        public:
-            lightType lightType;
-            glm::vec3 direction = glm::vec3(0.0f, 0.0f, 0.0f);
 
-            glm::vec3 color = glm::vec3(0.0f, 0.0f, 0.0f);
-            glm::vec3 attenuation = glm::vec3(0.0f, 0.0f, 0.0f);
-            float inner_cone_angle = 0.0f;
-            float outer_cone_angle = 0.0f;
-        // The ID of this component type is "Light"
-        static const std::string& getID() { static const std::string id = "Light"; return id; }
-        // Reads light parameters from the given json object
-        void deserialize(const nlohmann::json& data) override;
-    };
-} // namespace our
+namespace our
+{
+  enum class LightType
+  {
+    DIRECTIONAL,
+    POINT,
+    SPOT
+  };
+
+  class LightComponent : public Component
+  {
+  public:
+    LightType lightType;
+    glm::vec3 color = glm::vec3(0, 0, 0);
+
+    glm::vec3 attenuation = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 direction = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec2 cone_angles = glm::vec2(0.0f, 0.0f);
+
+    static std::string getID() { return "Light"; }
+
+    // read the light data from the json object
+    void deserialize(const nlohmann::json& data) override;
+  };
+}

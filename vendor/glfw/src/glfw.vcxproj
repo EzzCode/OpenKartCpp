@@ -22,9 +22,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B2A38DB6-7399-3474-AA5A-8B2CEC25F75B}</ProjectGuid>
+    <ProjectGuid>{776FC0D7-5FB8-3A42-9EDF-ADC12232FC9C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
     <ProjectName>glfw</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
@@ -59,46 +59,49 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glfw.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">glfw3</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">glfw.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">glfw3</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">glfw.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">glfw3</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">glfw.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">glfw3</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>
       </ExceptionHandling>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -111,27 +114,31 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>
       </ExceptionHandling>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -144,27 +151,31 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>
       </ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>MinSpace</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -177,26 +188,30 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>
       </ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
       <ObjectFileName>$(IntDir)</ObjectFileName>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_GLFW_USE_CONFIG_H;_UNICODE;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include;C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Mostafa\github\OpenKartCpp\vendor\glfw\include;D:\Mostafa\github\OpenKartCpp\vendor\glfw\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -208,11 +223,11 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\CMakeLists.txt">
+    <CustomBuild Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" "-BC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" --check-stamp-file "C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeFiles/generate.stamp"
+"D:\Mostafa\computer graphics\cmake-3.30.4-windows-x86_64\cmake-3.30.4-windows-x86_64\bin\cmake.exe" -SD:/Mostafa/github/OpenKartCpp -BD:/Mostafa/github/OpenKartCpp --check-stamp-file D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -221,11 +236,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" "-BC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" --check-stamp-file "C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeFiles/generate.stamp"
+"D:\Mostafa\computer graphics\cmake-3.30.4-windows-x86_64\cmake-3.30.4-windows-x86_64\bin\cmake.exe" -SD:/Mostafa/github/OpenKartCpp -BD:/Mostafa/github/OpenKartCpp --check-stamp-file D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -234,11 +249,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" "-BC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" --check-stamp-file "C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeFiles/generate.stamp"
+"D:\Mostafa\computer graphics\cmake-3.30.4-windows-x86_64\cmake-3.30.4-windows-x86_64\bin\cmake.exe" -SD:/Mostafa/github/OpenKartCpp -BD:/Mostafa/github/OpenKartCpp --check-stamp-file D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -247,11 +262,11 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" "-BC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" --check-stamp-file "C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeFiles/generate.stamp"
+"D:\Mostafa\computer graphics\cmake-3.30.4-windows-x86_64\cmake-3.30.4-windows-x86_64\bin\cmake.exe" -SD:/Mostafa/github/OpenKartCpp -BD:/Mostafa/github/OpenKartCpp --check-stamp-file D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -260,40 +275,40 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\context.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\init.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\input.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\monitor.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\vulkan.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\window.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_init.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_joystick.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_monitor.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_time.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_thread.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_window.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\wgl_context.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\egl_context.c" />
-    <ClCompile Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\osmesa_context.c" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\internal.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\mappings.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\glfw_config.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include\GLFW\glfw3.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\include\GLFW\glfw3native.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_platform.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\win32_joystick.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\wgl_context.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\egl_context.h" />
-    <ClInclude Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\vendor\glfw\src\osmesa_context.h" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\context.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\init.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\input.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\monitor.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\vulkan.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\window.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_init.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_joystick.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_monitor.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_time.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_thread.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_window.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\wgl_context.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\egl_context.c" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\osmesa_context.c" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\internal.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\mappings.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\glfw_config.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\include\GLFW\glfw3.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\include\GLFW\glfw3native.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_platform.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\win32_joystick.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\wgl_context.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\egl_context.h" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\vendor\glfw\src\osmesa_context.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\alaah\CUFE\Computer Graphics\Project\CMPN205 Project - Student Version\CMPN205 Project - Student Version\ZERO_CHECK.vcxproj">
-      <Project>{D59048F2-C02E-3ABA-915A-3DD9F75684C4}</Project>
+    <ProjectReference Include="D:\Mostafa\github\OpenKartCpp\ZERO_CHECK.vcxproj">
+      <Project>{B343B796-0FBE-34FC-8CEF-9300243B1FD7}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

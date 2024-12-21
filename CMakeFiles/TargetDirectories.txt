@@ -1,5 +1,5 @@
-C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/CMakeFiles/GAME_APPLICATION.dir
-C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/CMakeFiles/ALL_BUILD.dir
-C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/CMakeFiles/ZERO_CHECK.dir
-C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/CMakeFiles/ALL_BUILD.dir
-C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/vendor/glfw/src/CMakeFiles/glfw.dir
+D:/Mostafa/github/OpenKartCpp/CMakeFiles/GAME_APPLICATION.dir
+D:/Mostafa/github/OpenKartCpp/CMakeFiles/ALL_BUILD.dir
+D:/Mostafa/github/OpenKartCpp/CMakeFiles/ZERO_CHECK.dir
+D:/Mostafa/github/OpenKartCpp/vendor/glfw/CMakeFiles/ALL_BUILD.dir
+D:/Mostafa/github/OpenKartCpp/vendor/glfw/src/CMakeFiles/glfw.dir

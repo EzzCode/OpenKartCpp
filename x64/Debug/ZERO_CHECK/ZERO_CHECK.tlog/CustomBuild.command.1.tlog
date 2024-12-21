@@ -1,6 +1,6 @@
-^C:\USERS\ALAAH\CUFE\COMPUTER GRAPHICS\PROJECT\CMPN205 PROJECT - STUDENT VERSION\CMPN205 PROJECT - STUDENT VERSION\CMAKEFILES\10F693400ED3B0A1527F8AA5EA818DD3\GENERATE.STAMP.RULE
+^D:\MOSTAFA\GITHUB\OPENKARTCPP\CMAKEFILES\B28A7C13E0FA1BB8E0705915F2AC757A\GENERATE.STAMP.RULE
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" "-BC:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/alaah/CUFE/Computer Graphics/Project/CMPN205 Project - Student Version/CMPN205 Project - Student Version/GFX-LAB.sln"
+"D:\Mostafa\computer graphics\cmake-3.30.4-windows-x86_64\cmake-3.30.4-windows-x86_64\bin\cmake.exe" -SD:/Mostafa/github/OpenKartCpp -BD:/Mostafa/github/OpenKartCpp --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Mostafa/github/OpenKartCpp/GFX-LAB.sln
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

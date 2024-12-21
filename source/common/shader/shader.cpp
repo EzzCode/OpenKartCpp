@@ -20,30 +20,39 @@ bool our::ShaderProgram::attach(const std::string &filename, GLenum type) const 
     const char* sourceCStr = sourceString.c_str();
     file.close();
 
-    GLuint shader = glCreateShader(type);
-
-    glShaderSource(shader, 1, &sourceCStr, nullptr); //provide source code
-
-    glCompileShader(shader); //compile shader then check for compilation errors
-    std::string error = checkForShaderCompilationErrors(shader);
-    if (error == "") {
-        glAttachShader(program, shader);
-        glDeleteShader(shader);
-        return true;
-    }
-    else {
-        std::cerr << error;
-        return false;
-    }
-
-
+    
     //TODO: Complete this function
     //Note: The function "checkForShaderCompilationErrors" checks if there is
     // an error in the given shader. You should use it to check if there is a
     // compilation error and print it so that you can know what is wrong with
     // the shader. The returned string will be empty if there is no errors.
 
+    GLuint shaderID = glCreateShader(type); //Create shader of the given type
+
+
+    // Function parameter:
+    // shader (GLuint): shader object name.
+    // count (GLsizei): number of strings passed in the third parameter. We only have one string here.
+    // string (const GLchar**): an array of source code strings.
+    // lengths (const GLint*): an array of string lengths for each string in the third parameter. if null is passed,
+    //                          then the function will deduce the lengths automatically by searching for '\0'.
+    glShaderSource(shaderID, 1, &sourceCStr, nullptr); //Send shader source code
+    glCompileShader(shaderID); //Compile the shader code
+
+    std::string error_log = checkForShaderCompilationErrors(shaderID);
+
+    if (error_log.size() != 0) {
+        std::cerr << "ERROR IN " << filename << std::endl;
+        std::cerr << error_log << std::endl;
+        glDeleteShader(shaderID);
+        return false;
+    }
+
+    glAttachShader(program, shaderID); //Attach shader to program
+    glDeleteShader(shaderID); //Delete shader (the shader is already attached to the program so its object is no longer needed)
+
     //We return true if the compilation succeeded
+    return true;
 }
 
 
@@ -55,14 +64,15 @@ bool our::ShaderProgram::link() const {
     // linking error and print it so that you can know what is wrong with the
     // program. The returned string will be empty if there is no errors.
     glLinkProgram(program);
-    std::string error = checkForLinkingErrors(program);
-    if (error == "")
-        return true;
-    else {
-        std::cerr << error;
+    
+    std::string error_log = checkForLinkingErrors(program);
+    if (error_log.size() != 0) {
+        std::cerr << "ERROR IN LINKING" << std::endl;
+        std::cerr << error_log << std::endl;
         return false;
     }
-    //return true;
+
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -72,9 +82,11 @@ bool our::ShaderProgram::link() const {
 std::string checkForShaderCompilationErrors(GLuint shader){
      //Check and return any error in the compilation process
     GLint status;
+    // check if shader have compiled successfully
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
     if (!status) {
         GLint length;
+        // get shader log length
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
         char *logStr = new char[length];
         glGetShaderInfoLog(shader, length, nullptr, logStr);

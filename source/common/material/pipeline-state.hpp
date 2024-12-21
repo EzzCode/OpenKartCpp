@@ -42,33 +42,66 @@ namespace our {
         // For example, if faceCulling.enabled is true, you should call glEnable(GL_CULL_FACE), otherwise, you should call glDisable(GL_CULL_FACE)
         void setup() const {
             //TODO: (Req 4) Write this function
-            if(faceCulling.enabled) {
+
+            // check if face culling feature should be enabled
+            if (faceCulling.enabled) {
+                // enable face culling
                 glEnable(GL_CULL_FACE);
+
+                // specify whether front face, back face, or both are what will be candidates to be culled
                 glCullFace(faceCulling.culledFace);
+
+                // specifiy whether the front face is CW or CCW
                 glFrontFace(faceCulling.frontFace);
             } else {
                 glDisable(GL_CULL_FACE);
             }
 
-            if(depthTesting.enabled) {
+            // check if depth testing should be enabled
+            if (depthTesting.enabled) {
+                // enable depth testing
                 glEnable(GL_DEPTH_TEST);
+
+                // specify the function used to compare between pixels depth value
                 glDepthFunc(depthTesting.function);
+
             } else {
                 glDisable(GL_DEPTH_TEST);
             }
-
+        
+            // check if blending should be enabled
             if(blending.enabled) {
+
+                // enable blending
                 glEnable(GL_BLEND);
+
+                // specify the equation (add, subtract, reverse subt, min, max)
+                //      SourceFactor*Source (Equation) DestinationFactor(Destination)
+                //      GL_FUNC_ADD: add both terms
                 glBlendEquation(blending.equation);
+                
+                // specify the source factor and the destination factor
+                //    GL_SRC_ALPHA:           multiplies the source with sourchAlhpa
+                //    GL_ONE_MINUS_SRC_ALPHA: multiplies the destination with 1-sourceAlpha 
                 glBlendFunc(blending.sourceFactor, blending.destinationFactor);
-                glBlendColor(blending.constantColor.r, blending.constantColor.g, 
-                            blending.constantColor.b, blending.constantColor.a);
+
+                // specify the components of GL_BLEND_COLOR which is 
+                // the constant color used for some of the options in source and 
+                // distination factors like:
+                //     GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR
+                glBlendColor(blending.constantColor.r, blending.constantColor.g, blending.constantColor.b, blending.constantColor.a);
             } else {
                 glDisable(GL_BLEND);
-            }
 
-            glColorMask(colorMask.r, colorMask.g, colorMask.b, colorMask.a);
+               
+            }
+            
+            // specifies if the depth buffer is enabled for writing or not
             glDepthMask(depthMask);
+            
+            // specify whether the individual color components in the frame buffer can or cannot be written for all draw buffers
+            glColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
+
         }
 
         // Given a json object, this function deserializes a PipelineState structure

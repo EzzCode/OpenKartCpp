@@ -153,6 +153,28 @@
                     "albedo": "grass",
                     "ambientOcclusion": "plane-roughness"
                 },
+                "glass":{
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        },
+                        "blending":{
+                            "enabled": true,
+                            "sourceFactor": "GL_SRC_ALPHA",
+                            "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
+                        },
+                        "depthMask": false
+                    },
+                    "transparent": true,
+                    "tint": [1, 1, 1, 1],
+                    "texture": "glass",
+                    "sampler": "pixelated"
+                },
                 "monkey":{
                     "type": "lit",
                     "shader": "light",
@@ -197,7 +219,72 @@
             
         },
         "world":[
+            
+        // {
+        //     "name": "Player",
+        //     "position": [0, 0, 0],
+        //     "rotation": [0, 0, 0],
+        //     "scale": [1, 1, 1],
+        //     "components": [
+        //         {
+        //             "type": "Mesh Renderer",
+        //             "mesh": "player",
+        //             "material": "player"
+        //         },
+        //         {
+        //             "type": "Free Player Controller",
+        //             "positionSensitivity": [1, 1, 1],
+        //             "total_count": 10,
+        //             "is_bounded": 1,
+        //             "boundary": [46.67, 46.67]
+        //         }
+        //     ]
+        // },
+        
+        {
+            "namw": "track",
+            "position": [0, 1, 0],
+            "rotation": [0, 0, 0],
+            "scale": [0.03, 0.03, 0.03],
+            "components": [
+                {
+                    "type": "Mesh Renderer",
+                    "mesh": "track",
+                    "material": "track"
+                },
+                {
+                    "type": "Collider",
+                    "x_diff": 1,
+                    "y_diff": 1,
+                    "z_diff": 1,
+                    "action": 2
+
+                }
+            ]
+        },
+        {
+            "name":"wall",
+            "position": [-7, 5, 50],
+            "rotation": [0, 0, 0],
+            "scale": [2, 20, 2],
+            "components": [
+                {
+                    "type": "Mesh Renderer",
+                    "mesh": "plane",
+                    "material": "glass"
+                }, 
+                {
+                    "type": "Collider",
+                    "x_diff": 1,
+                    "y_diff": 1,
+                    "z_diff": 1,
+                    "action": 1
+
+                }
+            ]
+        },
             {
+                "name": "kart",
                 "position": [-7, 4.5,25],
                 "rotation": [0, 0, 0],
                 "scale": [0.1, 0.1, 0.1],
@@ -209,12 +296,18 @@
                     },
                     {
                         "type": "Movement",
-                        "linearVelocity": [0, 0, 0]
+                        "linearVelocity": [0, 0, 5]
                     },
                     {
-                        "type" : "InputMovement"
+                        "type": "Collider",
+                        "x_diff": 1,
+                        "y_diff": 1,
+                        "z_diff": 1,
+                        "action": 0
+
                     }
                 ],
+
                 "children": [
                     {
                         "position": [0, -5, 0],
@@ -229,6 +322,7 @@
                         ],
                         "children": [
                             {
+                                "name": "tire1",
                                 "position": [-5, 2, -3],
                                 "rotation": [0, 0, 0],
                                 "scale": [1.25, 1.25, 1.25],
@@ -245,6 +339,7 @@
                                 ]
                             },
                             {
+                                "name": "tire2",
                                 "position": [5, 2, -3],
                                 "rotation": [0, 0, 0],
                                 "scale": [1.25, 1.25, 1.25],
@@ -261,6 +356,7 @@
                                 ]
                             },
                             {
+                                "name": "tire3",
                                 "position": [5, 2, 6],
                                 "rotation": [0, 0, 0],
                                 "scale": [1, 1, 1],
@@ -277,6 +373,7 @@
                                 ]
                             },
                             {
+                                "name": "tire4",
                                 "position": [-5, 2, 6],
                                 "rotation": [0, 0, 0],
                                 "scale": [1, 1, 1],
@@ -293,11 +390,13 @@
                                 ]
                             }
                         ]
+
                     },
 
                     {
                         "position"  : [0, 15, -24],
                         "rotation"  : [-30, 180, 0],
+                        "scale"     : [1, 1, 1],
                         "components" : [
                             {
                                 "type" : "Camera"
@@ -368,18 +467,6 @@
                 }
             ]
         
-        },
-        {
-            "position": [0, 1, 0],
-            "rotation": [0, 0, 0],
-            "scale": [0.03, 0.03, 0.03],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "track",
-                    "material": "track"
-                }
-            ]
         }
         ]
     }

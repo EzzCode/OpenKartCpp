@@ -1,14 +1,16 @@
 #pragma once
-// ADD LIGHT COMPONENT HERE and check line 37
-#include "../components/light.hpp"
+
 #include "../ecs/world.hpp"
 #include "../components/camera.hpp"
 #include "../components/mesh-renderer.hpp"
+#include "../components/light.hpp"
+
 #include "../asset-loader.hpp"
 
 #include <glad/gl.h>
 #include <vector>
 #include <algorithm>
+
 
 namespace our
 {
@@ -34,8 +36,6 @@ namespace our
         // We define them here (instead of being local to the "render" function) as an optimization to prevent reallocating them every frame
         std::vector<RenderCommand> opaqueCommands;
         std::vector<RenderCommand> transparentCommands;
-        // This vector will store all the light components in the world
-        std::vector<LightComponent*> lightCommands;
         // Objects used for rendering a skybox
         Mesh* skySphere;
         TexturedMaterial* skyMaterial;
@@ -46,6 +46,7 @@ namespace our
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).
+        std::vector<LightComponent *> lights;
         void initialize(glm::ivec2 windowSize, const nlohmann::json& config);
         // Clean up the renderer
         void destroy();

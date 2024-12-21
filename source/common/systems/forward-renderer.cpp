@@ -1,7 +1,6 @@
 #include "forward-renderer.hpp"
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
-#include <iostream>
 
 namespace our
 {
@@ -27,6 +26,7 @@ namespace our
             //  Hints: the sky will be draw after the opaque objects so we would need depth testing but which depth funtion should we pick?
             //  We will draw the sphere from the inside, so what options should we pick for the face culling.
             PipelineState skyPipelineState{};
+
             // enable depth testing
             skyPipelineState.depthTesting.enabled = true;
 
@@ -38,6 +38,7 @@ namespace our
 
             // cull the front face (we want the inside)
             skyPipelineState.faceCulling.culledFace = GL_FRONT;
+
             // Load the sky texture (note that we don't need mipmaps since we want to avoid any unnecessary blurring while rendering the sky)
             std::string skyTextureFile = config.value<std::string>("sky", "");
             Texture2D *skyTexture = texture_utils::loadImage(skyTextureFile, false);
@@ -64,18 +65,40 @@ namespace our
         if (config.contains("postprocess"))
         {
             // TODO: (Req 11) Create a framebuffer
+
+            // generate frame buffer
             glGenFramebuffers(1, &postprocessFrameBuffer);
+
+            // bind the postprocess frame buffer
             glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
 
             // TODO: (Req 11) Create a color and a depth texture and attach them to the framebuffer
             //  Hints: The color format can be (Red, Green, Blue and Alpha components with 8 bits for each channel).
             //  The depth format can be (Depth component with 24 bits).
+
+            // create color texture with GL_RGBA8 internal formal
             colorTarget = texture_utils::empty(GL_RGBA8, windowSize);
+
+            // create depth texture with GL_DEPTH_COMPONENT24 internal format
             depthTarget = texture_utils::empty(GL_DEPTH_COMPONENT24, windowSize);
+
+            // void glFramebufferTexture1D(
+            //       GLenum target, => target framebuffer (GL_FRAMEBUFFER, GL_DRAW_FRAMEBUFFER, ..),
+            //       GLenum attachment =>  point of attachment,
+            //       GLenum textarget => type of texture expected in the texture paramenter,
+            //       GLuint texture => texture object to be attached,
+            //       GLint level => level of detail
+            //  )
+
+            // attach color texture to the framebuffer
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTarget->getOpenGLName(), 0);
+
+            // attach depth texture to the framebuffer
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTarget->getOpenGLName(), 0);
 
             // TODO: (Req 11) Unbind the framebuffer just to be safe
+
+            // write to default framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             // Create a vertex array to use for drawing the texture
@@ -131,13 +154,16 @@ namespace our
 
     void ForwardRenderer::render(World *world)
     {
+        world->deleteMarkedEntities();
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent *camera = nullptr;
         opaqueCommands.clear();
         transparentCommands.clear();
-        lightCommands.clear();
+        // !!!!!!!!!!!!!!!! SHOULD WE CLEAR THE LIGHT ????????
+        lights.clear();
         for (auto entity : world->getEntities())
         {
+            
             // If we hadn't found a camera yet, we look for a camera in this entity
             if (!camera)
                 camera = entity->getComponent<CameraComponent>();
@@ -161,10 +187,11 @@ namespace our
                     opaqueCommands.push_back(command);
                 }
             }
-            // Add LightComponent to the entity
+
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! get all light sources
             if (auto light = entity->getComponent<LightComponent>(); light)
             {
-                lightCommands.push_back(light);
+                lights.push_back(light);
             }
         }
 
@@ -174,26 +201,39 @@ namespace our
 
         // TODO: (Req 9) Modify the following line such that "cameraForward" contains a vector pointing the camera forward direction
         //  HINT: See how you wrote the CameraComponent::getViewMatrix, it should help you solve this one
+        // glm::vec3 cameraForward = glm::vec3(0.0, 0.0, -1.0f);
+        
         auto M = camera->getOwner()->getLocalToWorldMatrix();
         glm::vec3 eye = M * glm::vec4(0, 0, 0, 1);
         glm::vec3 center = M * glm::vec4(0, 0, -1, 1);
-        glm::vec3 cameraForward = glm::normalize(center - eye);
+        // the vector containing the camera direction
+        glm::vec3 cameraForward = camera->getOwner()->getLocalToWorldMatrix() * glm::vec4(0, 0, -1, 0);
 
         std::sort(transparentCommands.begin(), transparentCommands.end(), [cameraForward](const RenderCommand &first, const RenderCommand &second)
                   {
-                      // TODO: (Req 9) Finish this function
-                      // HINT: the following return should return true "first" should be drawn before "second". 
-                      return glm::dot(first.center, cameraForward) > glm::dot(second.center, cameraForward); });
+            //TODO: (Req 9) Finish this function
+            // HINT: the following return should return true "first" should be drawn before "second"
+            
+            // farthest (bigger value) to nearest (smaller value)
+            if (glm::dot(first.center, cameraForward) > glm::dot(second.center, cameraForward))
+                return true; 
+            return false; });
 
         // TODO: (Req 9) Get the camera ViewProjection matrix and store it in VP
         glm::mat4 VP = camera->getProjectionMatrix(windowSize) * camera->getViewMatrix();
 
         // TODO: (Req 9) Set the OpenGL viewport using viewportStart and viewportSize
+
+        // glviewport(x,y, windowSize.x, windowSize.y)
+        //      x and y specifies the lower left corner of the viewport rectangle, in pixels. The initial value is (0,0).
+        //      windowSize specifies the viewport siez
         glViewport(0, 0, windowSize.x, windowSize.y);
 
         // TODO: (Req 9) Set the clear color to black and the clear depth to 1
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClearDepth(1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+        // specify the value used when the depth is cleared
+        glClearDepth(1);
 
         // TODO: (Req 9) Set the color mask to true and the depth mask to true (to ensure the glClear will affect the framebuffer)
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -211,56 +251,82 @@ namespace our
 
         // TODO: (Req 9) Draw all the opaque commands
         //  Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
-        for (const auto &command : opaqueCommands)
+
+        // create commands vector to contain opaque commands
+        std::vector<RenderCommand> coms(opaqueCommands);
+
+        for (RenderCommand &com : coms)
         {
-            command.material->setup();
-            command.material->shader->set("transform", VP * command.localToWorld);
 
-            /////////////////////////// ADD LIGHT COMPONENT HERE ///////////////////////////
-            if (dynamic_cast<LitMaterial *>(command.material))
+            // setup pipline and set the program to be used
+            com.material->setup();
+
+            // send to uniform the matrix to transform position
+            com.material->shader->set("transform", VP * com.localToWorld);
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (dynamic_cast<LitMaterial *>(com.material))
             {
-                LitMaterial *litMaterial = dynamic_cast<LitMaterial *>(command.material);
-                command.material->shader->set("camera_position", eye);
-                command.material->shader->set("light_count", (int)lightCommands.size());
-                command.material->shader->set("VP", VP);
-                command.material->shader->set("M", command.localToWorld);
-                command.material->shader->set("M_IT", glm::transpose(glm::inverse(command.localToWorld)));
-                //command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
+                LitMaterial *litMaterial = dynamic_cast<LitMaterial *>(com.material);
 
-                for (int i = 0; i < lightCommands.size(); i++)
+                // set VP, eye, M, M_IT and light count in shader
+                com.material->shader->set("VP", VP);
+                com.material->shader->set("eye", eye);
+                com.material->shader->set("M", com.localToWorld);
+                com.material->shader->set("M_IT", glm::inverse(com.localToWorld));
+                com.material->shader->set("light_count", (int)lights.size());
+
+                for (int i = 0; i < lights.size(); i++)
                 {
-                    LightComponent *light = lightCommands[i];
-                    glm::vec3 light_position;
-                    std::string light_name = "lights[" + std::to_string(i) + "]";
 
-                    if (light->getOwner()->parent)
+                    glm::vec3 lightPos;
+                    std::string light_name = "lights[" + std::to_string(i) + "]";
+                    // if it is a child, send parent pos + relative pos of entity
+                    if (lights[i]->getOwner()->parent)
                     {
-                        light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
+                        // If light has a parent, add parent position to light's relative position
+                        lightPos = lights[i]->getOwner()->parent->localTransform.position + lights[i]->getOwner()->localTransform.position;
                     }
                     else
                     {
-                        light_position = light->getOwner()->localTransform.position;
+                        // If light has no parent, use its own position
+                        lightPos = lights[i]->getOwner()->localTransform.position;
                     }
 
-                    if (light->lightType == lightType::DIRECTIONAL)
+                    // for directional and Spot, send read directions
+                    //    Set light type-specific variables in shader
+
+                    /* 
+                        Directional and spot lights have a direction associated with them, which is used to calculate the light's intensity at a given surface. These directions are specified in world space, and are used as-is in the lighting calculations.
+
+                        Point lights, on the other hand, do not have a direction associated with them. Instead, they have a position in world space and their intensity falls off with distance from the surface being shaded. In this case, the distance from the surface to the light is used in the lighting calculations, rather than the direction.
+                    
+                    */
+                    switch (lights[i]->lightType)
                     {
-                        command.material->shader->set(light_name + ".direction", glm::normalize(light->direction));
+                     // Normalize direction vector for directional lights
+                    case LightType::DIRECTIONAL:
+                        com.material->shader->set(light_name + ".direction", glm::normalize(lights[i]->direction));
+                        break;
+                    case LightType::POINT:
+                        break;
+                    case LightType::SPOT:
+                        // Normalize direction vector for spot lights
+                        com.material->shader->set(light_name + ".direction", glm::normalize(lights[i]->direction));
+                        com.material->shader->set(light_name + ".cone_angles", lights[i]->cone_angles);
+                        break;
                     }
-                    else if (light->lightType == lightType::SPOT)
-                    {
-                        command.material->shader->set(light_name + ".direction", glm::normalize(light->direction));
-                        command.material->shader->set(light_name + ".inner_cone_angle", light->inner_cone_angle);
-                        command.material->shader->set(light_name + ".outer_cone_angle", light->outer_cone_angle);
-                    }
-                    command.material->shader->set(light_name + ".position", light_position);
-                    command.material->shader->set(light_name + ".color", light->color);
-                    command.material->shader->set(light_name + ".attenuation", light->attenuation);
-                    command.material->shader->set(light_name + ".type", (int)light->lightType);
+                    // Construct light variable name based on light index
+                    com.material->shader->set(light_name + ".position", lightPos);
+                    // Set remaining light variables in shader
+                    com.material->shader->set(light_name + ".color", lights[i]->color);
+                    com.material->shader->set(light_name + ".attenuation", lights[i]->attenuation);
+                    com.material->shader->set(light_name + ".type", (int)lights[i]->lightType);
                 }
             }
-            /////////////////////////// LIGHT COMPONENT ///////////////////////////
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-            command.mesh->draw();
+            // draw the mesh
+            com.mesh->draw();
         }
 
         // If there is a sky material, draw the sky
@@ -268,76 +334,93 @@ namespace our
         {
             // TODO: (Req 10) setup the sky material
             this->skyMaterial->setup();
-
             // TODO: (Req 10) Get the camera position
-            glm::vec3 camPos = M * glm::vec4(0, 0, 0, 1);
+            glm::vec3 camPos = camera->getOwner()->getLocalToWorldMatrix() * glm::vec4(0, 0, 0, 1);
 
-            // TODO: (Req 10) Create a model matrix for the sky such that it always follows the camera (sky sphere center = camera position)
-            glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), camPos);
+            // TODO: (Req 10) Create a model matrix for the sy such that it always follows the camera (sky sphere center = camera position)
+            glm::mat4 matrix = glm::translate(glm::mat4(1.0f), camPos);
 
             // TODO: (Req 10) We want the sky to be drawn behind everything (in NDC space, z=1)
-            //  We can achieve this by multiplying by an extra matrix after the projection but what values should we put in it?
+            //  We can acheive the is by multiplying by an extra matrix after the projection but what values should we put in it?
+
+            // make z = w || COLUMN MAJOR MATRIX ORDERING || Transpose
             glm::mat4 alwaysBehindTransform = glm::mat4(
                 1.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 1.0f);
-
             // TODO: (Req 10) set the "transform" uniform
-            skyMaterial->shader->set("transform", alwaysBehindTransform * VP * modelMatrix);
-
+            skyMaterial->shader->set("transform", alwaysBehindTransform * VP * matrix);
             // TODO: (Req 10) draw the sky sphere
             skySphere->draw();
         }
-
         // TODO: (Req 9) Draw all the transparent commands
         //  Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
-        for (const auto &command : transparentCommands)
-        {
-            command.material->setup();
-            command.material->shader->set("transform", VP * command.localToWorld);
-            /////////////////////////// ADD LIGHT COMPONENT HERE ///////////////////////////
-            if (dynamic_cast<LitMaterial *>(command.material))
-            {
-                LitMaterial *litMaterial = dynamic_cast<LitMaterial *>(command.material);
-                command.material->shader->set("camera_position", eye);
-                command.material->shader->set("light_count", (int)lightCommands.size());
-                command.material->shader->set("VP", VP);
-                command.material->shader->set("M", command.localToWorld);
-                command.material->shader->set("M_IT", glm::transpose(glm::inverse(command.localToWorld)));
 
-                for (int i = 0; i < lightCommands.size(); i++)
+        std::vector<RenderCommand> coms2(transparentCommands);
+
+        // append to it the transparnt commands
+        // coms.insert(coms.end(), transparentCommands.begin(), transparentCommands.end());
+
+        for (RenderCommand &com : coms2)
+        {
+            // ShaderProgram* shader = com.material->shader;
+            // Mash* mesh = com.mesh;
+
+            com.material->setup();
+
+            com.material->shader->set("transform", VP * com.localToWorld);
+            // com.material->shader->set("tint", VP * com.localToWorld);
+
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (dynamic_cast<LitMaterial *>(com.material))
+            {
+                LitMaterial *litMaterial = dynamic_cast<LitMaterial *>(com.material);
+
+                // set VP, eye, M, M_IT and light count in shader
+                com.material->shader->set("VP", VP);
+                com.material->shader->set("eye", eye);
+                com.material->shader->set("M", com.localToWorld);
+                com.material->shader->set("M_IT", glm::inverse(com.localToWorld));
+                com.material->shader->set("light_count", (int)lights.size());
+
+                for (int i = 0; i < lights.size(); i++)
                 {
-                    LightComponent *light = lightCommands[i];
-                    glm::vec3 light_position;
+
+                    glm::vec3 lightPos;
                     std::string light_name = "lights[" + std::to_string(i) + "]";
-                    if (light->getOwner()->parent)
+                    // if it is a child, send parent pos + relative pos of entity
+                    if (lights[i]->getOwner()->parent)
                     {
-                        light_position = light->getOwner()->parent->localTransform.position + light->getOwner()->localTransform.position;
+                        lightPos = lights[i]->getOwner()->parent->localTransform.position + lights[i]->getOwner()->localTransform.position;
                     }
                     else
                     {
-                        light_position = light->getOwner()->localTransform.position;
+                        lightPos = lights[i]->getOwner()->localTransform.position;
                     }
 
-                    if (light->lightType == lightType::DIRECTIONAL)
+                    // for directional/Spot  send read directions
+                    switch (lights[i]->lightType)
                     {
-                        command.material->shader->set(light_name + ".direction", light->direction);
+                    case LightType::DIRECTIONAL:
+                        com.material->shader->set(light_name + ".direction", glm::normalize(lights[i]->direction));
+                        break;
+                    case LightType::POINT:
+                        break;
+                    case LightType::SPOT:
+                        com.material->shader->set(light_name + ".direction", glm::normalize(lights[i]->direction));
+                        com.material->shader->set(light_name + ".cone_angles", lights[i]->cone_angles);
+                        break;
                     }
-                    else if (light->lightType == lightType::SPOT)
-                    {
-                        command.material->shader->set(light_name + ".direction", light->direction);
-                        command.material->shader->set(light_name + ".inner_cone_angle", light->inner_cone_angle);
-                        command.material->shader->set(light_name + ".outer_cone_angle", light->outer_cone_angle);
-                    }
-                    command.material->shader->set(light_name + ".position", light_position);
-                    command.material->shader->set(light_name + ".color", light->color);
-                    command.material->shader->set(light_name + ".attenuation", light->attenuation);
-                    command.material->shader->set(light_name + ".type", (int)light->lightType);
+                    com.material->shader->set(light_name + ".position", lightPos);
+                    com.material->shader->set(light_name + ".color", lights[i]->color);
+                    com.material->shader->set(light_name + ".attenuation", lights[i]->attenuation);
+                    com.material->shader->set(light_name + ".type", (int)lights[i]->lightType);
                 }
             }
-            /////////////////////////// LIGHT COMPONENT ///////////////////////////
-            command.mesh->draw();
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            com.mesh->draw();
         }
 
         // If there is a postprocess material, apply postprocessing
@@ -347,8 +430,34 @@ namespace our
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             // TODO: (Req 11) Setup the postprocess material and draw the fullscreen triangle
+
             postprocessMaterial->setup();
+
+            // use another texture unit for drawing
+            glActiveTexture(GL_TEXTURE1);
+
+            // bind depth texture
+            depthTarget->bind();
+
+            // bind the sampler to TEXTURE UNIT 1
+            postprocessMaterial->sampler->bind(1);
+
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // set depth_sampler to 1
+            postprocessMaterial->shader->set("depth_sampler", 1);
+
+            // set inverse projection matrix
+            postprocessMaterial->shader->set("inverse_projection", glm::inverse(camera->getProjectionMatrix(windowSize)));
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            // select GL_TEXTURE0 as active txture unit
+            glActiveTexture(GL_TEXTURE0);
+
+            // bind vertix array
             glBindVertexArray(postProcessVertexArray);
+
+            // draw triangle
+            //      primitive_mode, start, count
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
     }
