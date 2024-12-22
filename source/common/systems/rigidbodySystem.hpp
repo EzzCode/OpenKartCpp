@@ -8,126 +8,180 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
-#include <iostream>
-using namespace std;
+#include <memory>
+#include <unordered_map>
+#include <stdexcept>
+
 namespace our
 {
 
     class RigidbodySystem
     {
-    public:
+    private:
         btDiscreteDynamicsWorld *dynWorld;
-        void enter(btDiscreteDynamicsWorld *world)
+        btRigidBody *createRigidBody(const std::string &meshPath, const btVector3 &position,
+                                     const btVector3 &rotation, float mass, const btVector3 &scale = btVector3(1.0f, 1.0f, 1.0f))
         {
-            dynWorld = world;
-        }
-
-        void update(World *world, float deltaTime)
-        {
-            for (auto entity : world->getEntities())
-            {
-                RigidbodyComponent *rigidbodyComponent = entity->getComponent<RigidbodyComponent>();
-                if (rigidbodyComponent && !rigidbodyComponent->addedToWorld)
-                {
-                    
-                    std::string path = "./assets/models/" + rigidbodyComponent->mesh + ".obj";
-                    addObjectToWorld(path, dynWorld, btVector3(rigidbodyComponent->position.x, rigidbodyComponent->position.y, rigidbodyComponent->position.z), btVector3(rigidbodyComponent->rotation.x, rigidbodyComponent->rotation.y, rigidbodyComponent->rotation.z), rigidbodyComponent->mass);
-                    rigidbodyComponent->addedToWorld = true;
-                }
-                if (rigidbodyComponent)
-                {
-                    cout << "Updating rigidbody" << endl;
-                    cout << rigidbodyComponent->position.x << " " << rigidbodyComponent->position.y << " " << rigidbodyComponent->position.z << endl;
-                    // Update the position of the entity based on the rigid body
-                    entity->localTransform.position = rigidbodyComponent->position;
-                }
-            }
-        }
-        void addObjectToWorld(const std::string &path, btDiscreteDynamicsWorld *world, const btVector3 &position, const btVector3 &rotation, float mass)
-        {
-            // Step 1: Load OBJ file
+            // Load mesh using tinyobj
             tinyobj::attrib_t attrib;
             std::vector<tinyobj::shape_t> shapes;
             std::vector<tinyobj::material_t> materials;
             std::string warn, err;
 
-            if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str()))
+            bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, meshPath.c_str());
+            if (!ret)
             {
-                throw std::runtime_error("Failed to load OBJ file: " + warn + err);
+                throw std::runtime_error("Failed to load mesh: " + meshPath + " " + err);
             }
 
-            std::vector<VertexRigidbody> vertices_vec;
-            std::vector<Face> faces;
-
+            // Debug: log the number of vertices and triangles
+            std::cout << "Loaded mesh with " << attrib.vertices.size() / 3 << " vertices and "
+                      << shapes[0].mesh.indices.size() / 3 << " triangles" << std::endl;
+            btTriangleMesh *triangleMesh = new btTriangleMesh();
             for (const auto &shape : shapes)
             {
-                size_t index_offset = 0;
-                for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++)
+                for (size_t f = 0; f < shape.mesh.indices.size() / 3; f++)
                 {
-                    size_t fv = shape.mesh.num_face_vertices[f];
-                    if (fv != 3)
+                    btVector3 vertices[3];
+                    for (size_t v = 0; v < 3; v++)
                     {
-                        throw std::runtime_error("Only triangular faces are supported!");
+                        tinyobj::index_t idx = shape.mesh.indices[3 * f + v];
+                        vertices[v] = btVector3(
+                            attrib.vertices[3 * idx.vertex_index] * scale.getX(),
+                            attrib.vertices[3 * idx.vertex_index + 1] * scale.getY(),
+                            attrib.vertices[3 * idx.vertex_index + 2] * scale.getZ());
                     }
-
-                    Face face;
-                    for (size_t v = 0; v < fv; v++)
-                    {
-                        tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
-                        tinyobj::real_t vx = attrib.vertices[3 * idx.vertex_index + 0];
-                        tinyobj::real_t vy = attrib.vertices[3 * idx.vertex_index + 1];
-                        tinyobj::real_t vz = attrib.vertices[3 * idx.vertex_index + 2];
-
-                        if (v == 0)
-                            face.v1 = vertices_vec.size();
-                        if (v == 1)
-                            face.v2 = vertices_vec.size();
-                        if (v == 2)
-                            face.v3 = vertices_vec.size();
-
-                        vertices_vec.push_back({vx, vy, vz});
-                    }
-                    index_offset += fv;
-                    faces.push_back(face);
+                    triangleMesh->addTriangle(vertices[0], vertices[1], vertices[2]);
                 }
             }
-            // Step 2: Create a Bullet triangle mesh shape
-            btTriangleMesh *triangleMesh = new btTriangleMesh();
-            for (const auto &face : faces)
+
+            // Create the collision shape
+            btCollisionShape *collisionShape;
+            if (triangleMesh->getNumTriangles() > 0)
             {
-
-                const VertexRigidbody &v1 = vertices_vec[face.v1];
-                const VertexRigidbody &v2 = vertices_vec[face.v2];
-                const VertexRigidbody &v3 = vertices_vec[face.v3];
-
-                triangleMesh->addTriangle(
-                    btVector3(v1.x, v1.y, v1.z),
-                    btVector3(v2.x, v2.y, v2.z),
-                    btVector3(v3.x, v3.y, v3.z));
+                if (mass == 0.0f)
+                {
+                    // Static objects use triangle mesh
+                    bool useQuantizedBvhTree = true;
+                    collisionShape = new btBvhTriangleMeshShape(triangleMesh, useQuantizedBvhTree);
+                }
+                else
+                {
+                    // Dynamic objects use convex hull
+                    btConvexHullShape *tmpShape = new btConvexHullShape();
+                    for (size_t i = 0; i < attrib.vertices.size(); i += 3)
+                    {
+                        btVector3 vertex(
+                            attrib.vertices[i] * scale.getX(),
+                            attrib.vertices[i + 1] * scale.getY(),
+                            attrib.vertices[i + 2] * scale.getZ());
+                        tmpShape->addPoint(vertex);
+                    }
+                    collisionShape = tmpShape;
+                }
+            }
+            else
+            {
+                // Fallback to box shape
+                collisionShape = new btBoxShape(btVector3(1.0f, 1.0f, 1.0f));
             }
 
-            btCollisionShape *shape = new btBvhTriangleMeshShape(triangleMesh, true);
-
-            // Step 3: Create rigid body and add it to the world
+            // Create the transform
             btTransform transform;
             transform.setIdentity();
             transform.setOrigin(position);
             transform.setRotation(btQuaternion(rotation.x(), rotation.y(), rotation.z()));
 
-            btScalar btMass(mass);
+            // Setup the rigid body
             btVector3 localInertia(0, 0, 0);
-
-            if (btMass != 0.0f)
+            if (mass != 0.0f)
             {
-                shape->calculateLocalInertia(btMass, localInertia);
+                collisionShape->calculateLocalInertia(mass, localInertia);
             }
 
+            // Create motion state
             btDefaultMotionState *motionState = new btDefaultMotionState(transform);
-            btRigidBody::btRigidBodyConstructionInfo rbInfo(btMass, motionState, shape, localInertia);
-            btRigidBody *rigidbody = new btRigidBody(rbInfo);
 
-            world->addRigidBody(rigidbody);
+            // Create rigid body
+            btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, collisionShape, localInertia);
+            btRigidBody *body = new btRigidBody(rbInfo);
+
+            // Add the body to the dynamics world
+            dynWorld->addRigidBody(body);
+
+            return body;
+        }
+
+    public:
+        Application *app;
+        void enter(btDiscreteDynamicsWorld *world, Application *app)
+        {
+
+            this->app = app;
+            if (!world)
+                throw std::invalid_argument("Dynamic world cannot be null");
+            dynWorld = world;
+        }
+
+        void update(World *world, float deltaTime)
+        {
+            if (!world)
+                return;
+
+            for (auto entity : world->getEntities())
+            {
+                auto *rigidbodyComponent = entity->getComponent<RigidbodyComponent>();
+                if (!rigidbodyComponent)
+                    continue;
+
+                if (!rigidbodyComponent->addedToWorld)
+                {
+                    std::string path = "./assets/models/" + rigidbodyComponent->mesh + ".obj";
+                    rigidbodyComponent->addedToWorld = true;
+                    rigidbodyComponent->rigidbody = createRigidBody(
+                        path,
+                        btVector3(rigidbodyComponent->position.x, rigidbodyComponent->position.y, rigidbodyComponent->position.z),
+                        btVector3(rigidbodyComponent->rotation.x, rigidbodyComponent->rotation.y, rigidbodyComponent->rotation.z),
+                        rigidbodyComponent->mass,
+                        btVector3(rigidbodyComponent->scale.x, rigidbodyComponent->scale.y, rigidbodyComponent->scale.z));
+                }
+
+                if (rigidbodyComponent->input == 1 && rigidbodyComponent->mass != 0.0f)
+                {
+                    btRigidBody *body = rigidbodyComponent->rigidbody;
+                        btVector3 velocity = body->getLinearVelocity();
+                        if (velocity.length() > 100.0f)
+                        {
+                            velocity = velocity.normalized() * 100.0f;
+                            body->setLinearVelocity(velocity);
+                        }
+                    if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
+                    {
+                        btVector3 force(0.0f, 0.0f, -500.0f);
+                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                    }
+                    if (app->getKeyboard().isPressed(GLFW_KEY_UP))
+                    {
+                        btVector3 force(0.0f, 0.0f, 500.0f);
+                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                    }
+                    if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
+                    {
+                        btVector3 force(-500.0f, 0.0f, 0.0f);
+                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                    }
+                    if (app->getKeyboard().isPressed(GLFW_KEY_LEFT))
+                    {
+                        btVector3 force(500.0f, 0.0f, 0.0f);
+                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                    }
+                }
+
+                const btTransform &transform = rigidbodyComponent->rigidbody->getWorldTransform();
+                const btVector3 &position = transform.getOrigin();
+                entity->localTransform.position = glm::vec3(position.x(), position.y(), position.z());
+            }
         }
     };
 
-}
+} // namespace our

@@ -6,10 +6,12 @@
 #include <systems/forward-renderer.hpp>
 #include <systems/free-camera-controller.hpp>
 #include <systems/rigidbodySystem.hpp>
+#include<systems/ColliderSystem.hpp>
 #include <systems/movement.hpp>
 #include <asset-loader.hpp>
 #include <systems/InputMovement.hpp>
 #include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
 // This state shows how to use the ECS framework and deserialization.
 class Playstate : public our::State
 {
@@ -20,9 +22,11 @@ class Playstate : public our::State
     our::MovementSystem movementSystem;
     our::InputMovementSystem inputMovementSystem;
     our::RigidbodySystem rigidbodySystem;
-    
+    our::ColliderSystem colliderSystem;
+    btDiscreteDynamicsWorld *dynamicsWorld;
     void onInitialize() override
     {
+        
         // First of all, we get the scene configuration from the app config
         auto &config = getApp()->getConfig()["scene"];
         // If we have assets in the scene config, we deserialize them
@@ -40,7 +44,7 @@ class Playstate : public our::State
         btCollisionDispatcher *dispatcher = new btCollisionDispatcher(collisionConfiguration);
         btSequentialImpulseConstraintSolver *solver = new btSequentialImpulseConstraintSolver();
 
-        btDiscreteDynamicsWorld *dynamicsWorld = new btDiscreteDynamicsWorld(
+        dynamicsWorld = new btDiscreteDynamicsWorld(
             dispatcher,
             broadphase,
             solver,
@@ -48,11 +52,27 @@ class Playstate : public our::State
 
         // Set gravity (Y axis pointing down)
         dynamicsWorld->setGravity(btVector3(0, -9.81f, 0));
-        // We initialize the camera controller system since it needs a pointer to the app
+
+        // Create ground plane
+        btCollisionShape *groundShape = new btBoxShape(btVector3(500, 0.5f, 500)); // Half-extents
+        btDefaultMotionState *groundMotionState = new btDefaultMotionState(
+            btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 1.0f, 0)));
+
+        btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(
+            0, // mass = 0 makes it static
+            groundMotionState,
+            groundShape,
+            btVector3(0, 0, 0) // local inertia
+        );
+
+        btRigidBody *groundRigidBody = new btRigidBody(groundRigidBodyCI);
+        dynamicsWorld->addRigidBody(groundRigidBody);
+
         our::Application *appPtr = getApp();
         cameraController.enter(appPtr);
         inputMovementSystem.enter(appPtr);
-        rigidbodySystem.enter(dynamicsWorld);
+        rigidbodySystem.enter(dynamicsWorld,appPtr);
+
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
@@ -65,9 +85,10 @@ class Playstate : public our::State
         cameraController.update(&world, (float)deltaTime);
         inputMovementSystem.update(&world, (float)deltaTime);
         rigidbodySystem.update(&world, (float)deltaTime);
+        colliderSystem.update(&world, (float)deltaTime);
+        dynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
-
         // Get a reference to the keyboard object
         auto &keyboard = getApp()->getKeyboard();
 

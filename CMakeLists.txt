@@ -80,6 +80,8 @@ set(COMMON_SOURCES
         source/common/components/input.cpp
         source/common/components/rigidbody.cpp
         source/common/components/rigidbody.hpp
+        source/common/components/collider.cpp
+        source/common/components/collider.hpp
         source/common/components/light.cpp
         source/common/components/movement.hpp
         source/common/components/movement.cpp
@@ -87,6 +89,7 @@ set(COMMON_SOURCES
 
         source/common/systems/forward-renderer.hpp
         source/common/systems/forward-renderer.cpp
+        source/common/systems/ColliderSystem.hpp
         source/common/systems/free-camera-controller.hpp
         source/common/systems/InputMovement.hpp
         source/common/systems/rigidbodySystem.hpp
