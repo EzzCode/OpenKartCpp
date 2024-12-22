@@ -9,6 +9,7 @@
 #include "light.hpp"
 #include "rigidbody.hpp"
 #include "collider.hpp"
+#include "sound.hpp"
 namespace our {
 
     // Given a json object, this function picks and creates a component in the given entity
@@ -33,6 +34,8 @@ namespace our {
             component = entity->addComponent<RigidbodyComponent>();
         }else if(type == ColliderComponent::getID()){
             component = entity->addComponent<ColliderComponent>();
+        }else if (type == SoundComponent::getID()){
+            component = entity->addComponent<SoundComponent>();
         }
 
         if(component) component->deserialize(data);
