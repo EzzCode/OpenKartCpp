@@ -26,7 +26,8 @@ public:
     std::string mesh = "";             // Path to the OBJ file
     bool addedToWorld = false;         // Has the rigid body been added to the world?
     int input = 0;                     // Is the rigid body controlled by input?
-    btRigidBody *rigidbody;
+    btRigidBody *rigidbody; 
+    btRaycastVehicle *vehicle;         // EASE ADDED
     float steeringAngle = 0.0f;        // Current steering angle
     static std::string getID() {return "Rigidbody"; }   
     

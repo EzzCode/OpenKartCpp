@@ -10,7 +10,8 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <memory>
 #include <unordered_map>
-#include <stdexcept>
+#include <stdexcept>    
+#include <BulletDynamics/Vehicle/btRaycastVehicle.h>
 
 namespace our
 {
@@ -134,10 +135,11 @@ namespace our
                 if (!rigidbodyComponent)
                     continue;
 
+                // Create the rigid body if not already in the world
                 if (!rigidbodyComponent->addedToWorld)
                 {
-                    std::string path = "./assets/models/" + rigidbodyComponent->mesh + ".obj";
                     rigidbodyComponent->addedToWorld = true;
+                    std::string path = "./assets/models/" + rigidbodyComponent->mesh + ".obj";
                     rigidbodyComponent->rigidbody = createRigidBody(
                         path,
                         btVector3(rigidbodyComponent->position.x, rigidbodyComponent->position.y, rigidbodyComponent->position.z),
@@ -146,40 +148,118 @@ namespace our
                         btVector3(rigidbodyComponent->scale.x, rigidbodyComponent->scale.y, rigidbodyComponent->scale.z));
                 }
 
+                // If this object needs a vehicle and has non-zero mass
                 if (rigidbodyComponent->input == 1 && rigidbodyComponent->mass != 0.0f)
                 {
-                    btRigidBody *body = rigidbodyComponent->rigidbody;
-                        btVector3 velocity = body->getLinearVelocity();
-                        if (velocity.length() > 100.0f)
-                        {
-                            velocity = velocity.normalized() * 100.0f;
-                            body->setLinearVelocity(velocity);
-                        }
-                    if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
+                    // Create RaycastVehicle once
+                    if (!rigidbodyComponent->vehicle)
                     {
-                        btVector3 force(0.0f, 0.0f, -500.0f);
-                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                        // Vehicle tuning and setup
+                        btRaycastVehicle::btVehicleTuning tuning;
+                        tuning.m_suspensionStiffness = 20.0f;
+                        tuning.m_suspensionCompression = 4.0f;
+                        tuning.m_suspensionDamping = 4.5f;
+
+                        btVehicleRaycaster *raycaster = new btDefaultVehicleRaycaster(dynWorld);
+                        rigidbodyComponent->vehicle = new btRaycastVehicle(tuning, rigidbodyComponent->rigidbody, raycaster);
+
+                        // Add the vehicle to the world
+                        dynWorld->addVehicle(rigidbodyComponent->vehicle);
+
+                        // Set chassis dimensions
+                        btVector3 chassisHalfExtents(1.0f, 0.5f, 2.0f); // Example dimensions, adjust as needed
+
+                        // Define wheel positions relative to the chassis
+                        btVector3 wheelPositions[] = {
+                            btVector3(chassisHalfExtents.x(), -chassisHalfExtents.y(), chassisHalfExtents.z()),
+                            btVector3(-chassisHalfExtents.x(), -chassisHalfExtents.y(), chassisHalfExtents.z()),
+                            btVector3(chassisHalfExtents.x(), -chassisHalfExtents.y(), -chassisHalfExtents.z()),
+                            btVector3(-chassisHalfExtents.x(), -chassisHalfExtents.y(), -chassisHalfExtents.z())};
+
+                        // Suspension direction and wheel axle
+                        btVector3 wheelDir(0, -1, 0);
+                        btVector3 wheelAxle(1, 0, 0);
+                        float restLength = 0.6f;
+                        float radius = 0.5f;
+
+                        // Add wheels to the vehicle
+                        for (int i = 0; i < 4; i++)
+                        {
+                            bool isFrontWheel = (i < 2); // Front wheels (0, 1)
+                            rigidbodyComponent->vehicle->addWheel(wheelPositions[i], wheelDir, wheelAxle, restLength, radius, tuning, isFrontWheel);
+                        }
                     }
+                    // Velocity clamping
+                    btVector3 velocity = rigidbodyComponent->rigidbody->getLinearVelocity();
+                    if (velocity.length() > 100.0f)
+                    {
+                        velocity = velocity.normalized() * 100.0f;
+                        rigidbodyComponent->rigidbody->setLinearVelocity(velocity);
+                    }
+
+                    // Vehicle controls
+                    static float engineForce = 0.0f;
+                    static float steeringValue = 0.0f;
+                    float brakeForce = 0.0f;
+
                     if (app->getKeyboard().isPressed(GLFW_KEY_UP))
                     {
-                        btVector3 force(0.0f, 0.0f, 500.0f);
-                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                        engineForce += 10.0f; // Accelerate
                     }
-                    if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
+                    else if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
                     {
-                        btVector3 force(-500.0f, 0.0f, 0.0f);
-                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                        engineForce -= 10.0f; // Reverse
                     }
+                    else
+                    {
+                        engineForce = 0.0f; // Neutral
+                    }
+
                     if (app->getKeyboard().isPressed(GLFW_KEY_LEFT))
                     {
-                        btVector3 force(500.0f, 0.0f, 0.0f);
-                        rigidbodyComponent->rigidbody->applyCentralForce(force);
+                        steeringValue += 0.01f; // Turn left
                     }
-                }
+                    else if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
+                    {
+                        steeringValue -= 0.01f; // Turn right
+                    }
+                    else
+                    {
+                        steeringValue = 0.0f; // Straight
+                    }
 
-                const btTransform &transform = rigidbodyComponent->rigidbody->getWorldTransform();
-                const btVector3 &position = transform.getOrigin();
-                entity->localTransform.position = glm::vec3(position.x(), position.y(), position.z());
+                    if (app->getKeyboard().isPressed(GLFW_KEY_SPACE))
+                    {
+                        brakeForce = 100.0f; // Brake
+                    }
+                    else
+                    {
+                        brakeForce = 0.0f;
+                    }
+
+                    // Apply inputs to the vehicle
+                    for (int i = 0; i < rigidbodyComponent->vehicle->getNumWheels(); i++)
+                    {
+                        rigidbodyComponent->vehicle->applyEngineForce(engineForce, i);
+                        rigidbodyComponent->vehicle->setBrake(brakeForce, i);
+
+                        // Apply steering only to the front wheels
+                        if (i < 2)
+                        {
+                            rigidbodyComponent->vehicle->setSteeringValue(steeringValue, i);
+                        }
+                    }
+
+                }
+                // Update entity transform from rigid body or vehicle chassis transform
+                btTransform transform;
+                if(rigidbodyComponent->vehicle)
+                    transform = rigidbodyComponent->vehicle->getChassisWorldTransform();
+                else
+                    transform = rigidbodyComponent->rigidbody->getWorldTransform();
+
+                const btVector3 &pos = transform.getOrigin();
+                entity->localTransform.position = glm::vec3(pos.x(), pos.y(), pos.z());
             }
         }
     };
