@@ -10,6 +10,9 @@
 #include <asset-loader.hpp>
 #include <systems/InputMovement.hpp>
 #include <btBulletCollisionCommon.h>
+#include <systems/soundSystem.hpp>
+#include <systems/miniaudio.h>
+
 // This state shows how to use the ECS framework and deserialization.
 class Playstate : public our::State
 {
@@ -20,6 +23,7 @@ class Playstate : public our::State
     our::MovementSystem movementSystem;
     our::InputMovementSystem inputMovementSystem;
     our::RigidbodySystem rigidbodySystem;
+    our::soundSystem soundSystem;
     
     void onInitialize() override
     {
@@ -53,6 +57,7 @@ class Playstate : public our::State
         cameraController.enter(appPtr);
         inputMovementSystem.enter(appPtr);
         rigidbodySystem.enter(dynamicsWorld);
+        soundSystem.initialize();
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
@@ -65,6 +70,7 @@ class Playstate : public our::State
         cameraController.update(&world, (float)deltaTime);
         inputMovementSystem.update(&world, (float)deltaTime);
         rigidbodySystem.update(&world, (float)deltaTime);
+        soundSystem.update(&world, (float)deltaTime);
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
 
@@ -80,6 +86,8 @@ class Playstate : public our::State
 
     void onDestroy() override
     {
+        // We destroy the sound system
+        soundSystem.destroy();
         // Don't forget to destroy the renderer
         renderer.destroy();
         // On exit, we call exit for the camera controller system to make sure that the mouse is unlocked
