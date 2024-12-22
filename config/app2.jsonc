@@ -320,13 +320,14 @@
                             {
                                 "type" : "Free Camera Controller"
                             
+                            },
+                            {
+                                "type" : "Sound",
+                                "soundPath": "assets/sounds/1-06. Toad Circuit & Mario Circuit.mp3",
+                                "looped": true,
+                                "playing": false,
+                                "volume": 1
                             }
-                            // {
-                            //     "type" : "Sound",
-                            //     "soundPath": "assets/sounds/BackgroundMusic.mp3",
-                            //     "loop": true,
-                            //     "play": true
-                            // }
                         ]
                
                     }
