@@ -160,17 +160,17 @@ namespace our
                 {
                 // Vehicle tuning and setup
                 btRaycastVehicle::btVehicleTuning tuning;
-                tuning.m_suspensionStiffness = 50.0f;
+                tuning.m_suspensionStiffness = 200.0f;
                 tuning.m_suspensionCompression = 2.3f;
                 tuning.m_suspensionDamping = 2.4f;
-                tuning.m_maxSuspensionTravelCm = 200.0f;
+                tuning.m_maxSuspensionTravelCm = 0.5f;
                 tuning.m_frictionSlip = 1000.0f;
                 tuning.m_maxSuspensionForce = 10000.0f;
-
+                tuning = btRaycastVehicle::btVehicleTuning();
                 // Configure vehicle rigid body
                 rigidbodyComponent->rigidbody->setActivationState(DISABLE_DEACTIVATION);
-                rigidbodyComponent->rigidbody->setAngularFactor(btVector3(0, 1, 0));
-
+                                // Add downward force to prevent bouncing
+                rigidbodyComponent->rigidbody->setGravity(btVector3(0, -5, 0));
                 btVehicleRaycaster *raycaster = new btDefaultVehicleRaycaster(dynWorld);
                 rigidbodyComponent->vehicle = new btRaycastVehicle(tuning, rigidbodyComponent->rigidbody, raycaster);
                 rigidbodyComponent->vehicle->setCoordinateSystem(0, 1, 2);
@@ -179,16 +179,19 @@ namespace our
 
                 btBoxShape* boxShape = static_cast<btBoxShape*>(rigidbodyComponent->rigidbody->getCollisionShape());
                 btVector3 chassisHalfExtents = boxShape->getHalfExtentsWithoutMargin();
-                
+            
                 btVector3 wheelDir(0, -1, 0);
                 btVector3 wheelAxle(-1, 0, 0);
-                float restLength = 0.6f;
-                float radius = 0.4f;
+                float restLength = 0.1f;
+                float radius = 0.5f;
+                float offsetX = 0.2f; // Custom offset for wheel base width
+                float offsetZ = 0.3f; // Custom offset for wheel base length
+
                 btVector3 wheelPositions[] = {
-                    btVector3(chassisHalfExtents.x() + radius, -chassisHalfExtents.y() - radius, chassisHalfExtents.z() + radius),
-                    btVector3(-chassisHalfExtents.x() - radius, -chassisHalfExtents.y() - radius, chassisHalfExtents.z() + radius),
-                    btVector3(chassisHalfExtents.x() + radius, -chassisHalfExtents.y() - radius, -chassisHalfExtents.z() - radius),
-                    btVector3(-chassisHalfExtents.x() - radius, -chassisHalfExtents.y() - radius, -chassisHalfExtents.z() - radius)};
+                    btVector3(chassisHalfExtents.x() + radius + offsetX, -chassisHalfExtents.y() - radius, chassisHalfExtents.z() + radius + offsetZ),
+                    btVector3(-chassisHalfExtents.x() - radius - offsetX, -chassisHalfExtents.y() - radius, chassisHalfExtents.z() + radius + offsetZ),
+                    btVector3(chassisHalfExtents.x() + radius + offsetX, -chassisHalfExtents.y() - radius, -chassisHalfExtents.z() - radius - offsetZ),
+                    btVector3(-chassisHalfExtents.x() - radius - offsetX, -chassisHalfExtents.y() - radius, -chassisHalfExtents.z() - radius - offsetZ)};
 
                 // Add wheels with friction
                 for (int i = 0; i < 4; i++)
@@ -204,9 +207,9 @@ namespace our
                 }
 
                 btVector3 velocity = rigidbodyComponent->rigidbody->getLinearVelocity();
-                if (velocity.length() > 10.0f)
+                if (velocity.length() > 5.0f)
                 {
-                velocity = velocity.normalized() * 10.0f;
+                velocity = velocity.normalized() * 5.0f;
                 rigidbodyComponent->rigidbody->setLinearVelocity(velocity);
                 }
 
@@ -216,11 +219,11 @@ namespace our
 
                 if (app->getKeyboard().isPressed(GLFW_KEY_UP))
                 {
-                engineForce += 1.0f;
+                engineForce += 10.0f;
                 }
                 else if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
                 {
-                engineForce -= 1.0f;
+                engineForce -= 10.0f;
                 }
                 else
                 {
@@ -253,20 +256,17 @@ namespace our
                 {
                 rigidbodyComponent->vehicle->applyEngineForce(engineForce, i);
                 rigidbodyComponent->vehicle->setBrake(brakeForce, i);
-                std::cout << "Engine force: " << engineForce << std::endl;
-                std::cout << "Brake force: " << brakeForce << std::endl;
         
                 if (i < 2)
                 {
-                    steeringValue = glm::clamp(steeringValue, -0.3f, 0.3f);
+                    steeringValue = glm::clamp(steeringValue, -0.6f, 0.6f);
                     rigidbodyComponent->vehicle->setSteeringValue(steeringValue, i);
-                    std::cout << "Steering value: " << steeringValue << std::endl;
                 }
                 }
             }
-
+            
             btTransform transform;
-            if(rigidbodyComponent->vehicle)
+            if (rigidbodyComponent->vehicle)
                 transform = rigidbodyComponent->vehicle->getChassisWorldTransform();
             else
                 transform = rigidbodyComponent->rigidbody->getWorldTransform();
