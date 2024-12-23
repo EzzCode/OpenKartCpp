@@ -58,6 +58,9 @@
     <ClCompile Include="D:\Mostafa\github\OpenKartCpp\source\common\components\collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\source\common\components\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="D:\Mostafa\github\OpenKartCpp\source\common\systems\forward-renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -193,6 +196,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\components\collider.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\components\input.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\systems\forward-renderer.hpp">

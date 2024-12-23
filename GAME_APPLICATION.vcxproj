@@ -388,6 +388,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\components\component-deserializer.hpp" />
     <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\components\collider.hpp" />
     <ClCompile Include="D:\Mostafa\github\OpenKartCpp\source\common\components\collider.cpp" />
+    <ClCompile Include="D:\Mostafa\github\OpenKartCpp\source\common\components\input.cpp" />
+    <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\components\input.hpp" />
     <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\systems\forward-renderer.hpp" />
     <ClCompile Include="D:\Mostafa\github\OpenKartCpp\source\common\systems\forward-renderer.cpp" />
     <ClInclude Include="D:\Mostafa\github\OpenKartCpp\source\common\systems\free-camera-controller.hpp" />

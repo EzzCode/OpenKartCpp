@@ -83,6 +83,9 @@ set(COMMON_SOURCES
         source/common/components/collider.hpp
         source/common/components/collider.cpp
 
+        source/common/components/input.cpp
+        source/common/components/input.hpp
+
         source/common/systems/forward-renderer.hpp
         source/common/systems/forward-renderer.cpp
         source/common/systems/free-camera-controller.hpp

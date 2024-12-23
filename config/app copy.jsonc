@@ -1,0 +1,1018 @@
+{
+    "start-scene" : "play",
+    "window":
+    {
+        "title":"OpenKartCPP",
+        "size":{
+            "width":1280,
+            "height":720
+        },
+        "fullscreen": false
+    },
+    "scene": {
+        "renderer":{
+            "sky": "assets/textures/sky.jpg"
+            //"postprocess": "assets/shaders/postprocess/vignette.frag"
+        },
+        "assets":{
+            "shaders":{
+                "tinted":{
+                    "vs":"assets/shaders/tinted.vert",
+                    "fs":"assets/shaders/tinted.frag"
+                },
+                "textured":{
+                    "vs":"assets/shaders/textured.vert",
+                    "fs":"assets/shaders/textured.frag"
+                },
+                "light":{
+                    "vs":"assets/shaders/light.vert",
+                    "fs":"assets/shaders/light.frag"
+                }
+            },
+            "textures":{
+                "moon": "assets/textures/moon.jpg",
+                "grass": "assets/textures/grass_ground_d.jpg",
+                "wood": "assets/textures/wood.jpg",
+                "glass": "assets/textures/glass-panels.png",
+                "monkey": "assets/textures/monkey.png",
+                "emission": "assets/textures/emissive.jpg",
+                "roughness": "assets/textures/roughness.jpg",
+                "specular": "assets/textures/specular.jpg",
+                "albedo": "assets/textures/albedo.jpg",
+                "ambient": "assets/textures/ambient_occlusion.jpg",
+                "plane-roughness": "assets/textures/Plane roughness.png",
+                "plane-emission": "assets/textures/A_black_image.jpg",
+                "mario": "assets/textures/mario.png",
+                "kart": "assets/textures/body_std_mr.png",
+                "track": "assets/textures/track.png",
+                "tire" : "assets/textures/tire.png",
+                "trampoline" : "assets/textures/trampoline_colors.png"
+            },
+            "meshes":{
+                "cube": "assets/models/cube.obj",
+                "monkey": "assets/models/monkey.obj",
+                "plane": "assets/models/plane.obj",
+                "sphere": "assets/models/sphere.obj",
+                "mario": "assets/models/mario.obj",
+                "kart": "assets/models/kart.obj",
+                "track": "assets/models/track2.obj",
+                "tire": "assets/models/tire.obj",
+                "trampoline": "assets/models/trampoline.obj"
+            },
+            "samplers":{
+                "default":{},
+                "pixelated":{
+                    "MAG_FILTER": "GL_NEAREST"
+                }
+            },
+            "materials":{
+                "trampoline": {
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling": {
+                            "enabled": false
+                        },
+                        "depthTesting": {
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "trampoline"
+                },
+                "track": {
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling": {
+                            "enabled": false
+                        },
+                        "depthTesting": {
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "track"
+                },
+                "tire": {
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling": {
+                            "enabled": false
+                        },
+                        "depthTesting": {
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "tire"
+                },
+                "kart":{
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling": {
+                            "enabled": false
+                        },
+                        "depthTesting": {
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "kart"
+                },
+                "mario":{
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling": {
+                            "enabled": false
+                        },
+                        "depthTesting": {
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "mario"
+                },
+                "metal":{
+                    "type": "tinted",
+                    "shader": "tinted",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [0.45, 0.4, 0.5, 1]
+                },
+                "grass":{
+                    "type": "lit",
+                    "shader": "light",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "grass",
+                    "sampler": "default",
+                    "roughness": "plane-roughness",
+                    "emission": "plane-emission",
+                    "specular": "plane-roughness",
+                    "albedo": "grass",
+                    "ambientOcclusion": "plane-roughness"
+                },
+                "glass":{
+                    "type": "textured",
+                    "shader": "textured",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        },
+                        "blending":{
+                            "enabled": true,
+                            "sourceFactor": "GL_SRC_ALPHA",
+                            "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
+                        },
+                        "depthMask": false
+                    },
+                    "transparent": true,
+                    "tint": [1, 1, 1, 1],
+                    "texture": "glass",
+                    "sampler": "pixelated"
+                },
+                "monkey":{
+                    "type": "lit",
+                    "shader": "light",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "monkey",
+                    "sampler": "default",
+                    "albedo":"albedo",
+                    "ambientOcclusion": "ambient",
+                    "emission": "emission",
+                    "roughness": "roughness",
+                    "specular": "specular"
+                },
+                "moon":{
+                    "type": "lit",
+                    "shader": "light",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "texture": "moon",
+                    "sampler": "default",
+                    "albedo":"moon",
+                    "ambientOcclusion": "moon",
+                    "emission": "moon",
+                    "roughness": "roughness",
+                    "specular": "specular"
+                }
+            }
+            
+        },
+        "world":[
+            // {
+            //     "position": [0,0,0],                              
+            //     "components": [
+            //         {
+            //             "type": "Camera"
+            //         },
+            //         {
+            //             "type": "Free Camera Controller"
+            //         }
+            //     ],
+            //     "children": [
+            //         {
+            //             "position": [1, -1, -1],
+            //             "rotation": [45, 45, 0],
+            //             "scale": [0.1, 0.1, 1.0],
+            //             "components": [
+            //                 {
+            //                     "type": "Mesh Renderer",
+            //                     "mesh": "cube",
+            //                     "material": "metal"
+            //                 }
+            //             ]
+            //         }
+            //     ]
+            // },
+
+////////////////////////////////////////////////////TRACK////////////////////////////////////////////////////////
+{
+    "name":"wall1",
+    "position": [-7, 4,0],
+    "rotation": [90, 0, 0],
+    "scale": [10, 230, 10],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        }, 
+        {
+            "type": "Collider",
+            "x_diff": 10,
+            "y_diff": 0.06,
+            "z_diff": 23,
+            "action": 1
+
+        }
+    ]
+},
+
+///////////////////////////////////////////////LEFT LINE////////////////////////////////////////////////////
+{
+    "name": "wall2",
+    "position": [
+        -7,
+        -5,
+        260
+    ],
+    "rotation": [
+        90,
+        90,
+        0
+    ],
+    "scale": [
+        10,
+        180,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 15,
+            "y_diff": 0.005,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+
+{
+    "name": "wall2",
+    "position": [
+        163,
+        -5,
+        260
+    ],
+    "rotation": [
+        90,
+        90,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+// {
+//     "name": "wall3",
+//     "position": [
+//         183,
+//         -5,
+//         260
+//     ],
+//     "rotation": [
+//         90,
+//         90,
+//         0
+//     ],
+//     "scale": [
+//         10,
+//         10,
+//         10
+//     ],
+//     "components": [
+//         {
+//             "type": "Mesh Renderer",
+//             "mesh": "plane",
+//             "material": "glass"
+//         },
+//         {
+//             "type": "Collider",
+//             "x_diff": 1,
+//             "y_diff": 0.06,
+//             "z_diff": 1,
+//             "action": 1
+//         }
+//     ]
+// },
+{
+    "name": "wall3",
+    "position": [
+        183,
+        -5,
+        260
+    ],
+    "rotation": [
+        90,
+        90,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+{
+    "name": "wall6",
+    "position": [
+        183,
+        -5,
+        250
+    ],
+    "rotation": [
+        90,
+        90,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 0.5,
+            "action": 1
+        }
+    ]
+},
+{
+    "name": "wall4",
+    "position": [
+        183,
+        0,
+        230
+    ],
+    "rotation": [
+        90,
+        90,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+{
+    "name": "wall4",
+    "position": [
+        183,
+        0,
+        220
+    ],
+    "rotation": [
+        90,
+        90,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+{
+    "name": "wall5",
+    "position": [
+        183,
+        0,
+        210
+    ],
+    "rotation": [
+        90,
+        90,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 0.5,
+            "action": 1
+        }
+    ]
+},
+
+/////////////////////////////////////////////////////////////TRAMPOLINE//////////////////////////////////////////////////////
+{
+    "name": "trampoline",
+    "position": [183,-11,245],
+    "rotation": [0,0,0],
+    "scale": [1,1,1],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "trampoline",
+            "material": "trampoline"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+
+{
+    "name": "trampoline",
+    "position": [183,-6,212],
+    "rotation": [0,0,0],
+    "scale": [1,1,1],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "trampoline",
+            "material": "trampoline"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+///////////////////////////////////////////////BACK///////////////////////////////////////////////////
+{
+    "name": "wall4",
+    "position": [
+        183,
+        4,
+        190
+    ],
+    "rotation": [
+        90,
+        0,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 1
+        }
+    ]
+},
+
+    {
+        "name": "wall4",
+        "position": [
+            183,
+            4,
+            180
+        ],
+        "rotation": [
+            90,
+            0,
+            0
+        ],
+        "scale": [
+            10,
+            10,
+            10
+        ],
+        "components": [
+            {
+                "type": "Mesh Renderer",
+                "mesh": "plane",
+                "material": "glass"
+            },
+            {
+                "type": "Collider",
+                "x_diff": 1,
+                "y_diff": 0.06,
+                "z_diff": 1,
+                "action": 1
+            }
+        ]
+    },
+    {
+        "name": "wall4",
+        "position": [
+            183,
+            4,
+            170
+        ],
+        "rotation": [
+            90,
+            0,
+            0
+        ],
+        "scale": [
+            10,
+            10,
+            10
+        ],
+        "components": [
+            {
+                "type": "Mesh Renderer",
+                "mesh": "plane",
+                "material": "glass"
+            },
+            {
+                "type": "Collider",
+                "x_diff": 1,
+                "y_diff": 0.06,
+                "z_diff": 1,
+                "action": 1
+            }
+        ]
+    },
+    {
+        "name": "wall4",
+        "position": [
+            183,
+            4,
+            160
+        ],
+        "rotation": [
+            90,
+            0,
+            0
+        ],
+        "scale": [
+            10,
+            10,
+            10
+        ],
+        "components": [
+            {
+                "type": "Mesh Renderer",
+                "mesh": "plane",
+                "material": "glass"
+            },
+            {
+                "type": "Collider",
+                "x_diff": 1,
+                "y_diff": 0.06,
+                "z_diff": 1,
+                "action": 1
+            }
+        ]
+    },
+    {
+        "name": "wall4",
+        "position": [
+            183,
+            4,
+            150
+        ],
+        "rotation": [
+            90,
+            0,
+            0
+        ],
+        "scale": [
+            10,
+            10,
+            10
+        ],
+        "components": [
+            {
+                "type": "Mesh Renderer",
+                "mesh": "plane",
+                "material": "glass"
+            },
+            {
+                "type": "Collider",
+                "x_diff": 1,
+                "y_diff": 0.06,
+                "z_diff": 1,
+                "action": 1
+            }
+        ]
+    },
+    {
+        "name": "wall4",
+        "position": [
+            183,
+            4,
+            140
+        ],
+        "rotation": [
+            90,
+            0,
+            0
+        ],
+        "scale": [
+            10,
+            10,
+            10
+        ],
+        "components": [
+            {
+                "type": "Mesh Renderer",
+                "mesh": "plane",
+                "material": "glass"
+            },
+            {
+                "type": "Collider",
+                "x_diff": 1,
+                "y_diff": 0.06,
+                "z_diff": 1,
+                "action": 1
+            }
+        ]
+    },
+    {
+        "position": [183,4,125],
+        "scale": [10, 10, 10],
+        "components": [
+            {
+                "type": "Mesh Renderer",
+                "mesh": "sphere",
+                "material": "moon"
+            },
+            {
+                "type": "Collider",
+                "x_diff": 1,
+                "y_diff": 1,
+                "z_diff": 1,
+                "action": 3                
+            }
+        ]
+    },
+    ///////////////////////////////////////////////////OBSTACLES///////////////////////////////////////////////////////
+{
+    "name": "wall",
+    "position": [
+        -5,
+        5,
+        50
+    ],
+    "rotation": [
+        0,
+        0,
+        0
+    ],
+    "scale": [
+        10,
+        10,
+        10
+    ],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "glass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 0.06,
+            "z_diff": 1,
+            "action": 4
+        }
+    ]
+},           
+ {
+    "name": "grass",
+    "position": [-5, 4.5, 80],
+    "rotation": [-90, 0, 0],
+    "scale": [10, 5, 1],
+    "components": [
+        {
+            "type": "Mesh Renderer",
+            "mesh": "plane",
+            "material": "grass"
+        },
+        {
+            "type": "Collider",
+            "x_diff": 1,
+            "y_diff": 1,
+            "z_diff": 1,
+            "action": 4
+        }
+    ]
+},
+   /////////////////////////////////////////////KART////////////////////////////////////////////////////        
+{
+                "name": "kart",
+                "position": [0,4.5,10],               
+                "rotation": [0, 0, 0],
+                "scale": [0.1, 0.1, 0.1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "mario",
+                        "material": "mario"
+                    },
+                    {
+                        "type": "Movement"
+                    },
+                    {
+                        "type": "Collider",
+                        "x_diff": 1,
+                        "y_diff": 0.06,
+                        "z_diff": 1,
+                        "action": 0
+
+                    },
+                    {
+                    "type" : "InputMovement"
+                    
+                    }
+                ],
+
+                "children": [
+                    {
+                        "position": [0, -5, 0],
+                        "rotation": [0, 0, 0],
+                        "scale": [1.5, 1.5, 1.5],
+                        "components": [
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "kart",
+                                "material": "kart"
+                            }
+                        ],
+                        "children": [
+                            {
+                                "name": "tire1",
+                                "position": [-5, 2, -3],
+                                "rotation": [0, 0, 0],
+                                "scale": [1.25, 1.25, 1.25],
+                                "components": [
+                                    {
+                                        "type": "Mesh Renderer",
+                                        "mesh": "tire",
+                                        "material": "tire"
+                                    },
+                                    {
+                                        "type": "Movement",
+                                        "angularVelocity": [90, 0, 0]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "tire2",
+                                "position": [5, 2, -3],
+                                "rotation": [0, 0, 0],
+                                "scale": [1.25, 1.25, 1.25],
+                                "components": [
+                                    {
+                                        "type": "Mesh Renderer",
+                                        "mesh": "tire",
+                                        "material": "tire"
+                                    },
+                                    {
+                                        "type": "Movement",
+                                        "angularVelocity": [90, 0, 0]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "tire3",
+                                "position": [5, 2, 6],
+                                "rotation": [0, 0, 0],
+                                "scale": [1, 1, 1],
+                                "components": [
+                                    {
+                                        "type": "Mesh Renderer",
+                                        "mesh": "tire",
+                                        "material": "tire"
+                                    },
+                                    {
+                                        "type": "Movement",
+                                        "angularVelocity": [90, 0, 0]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "tire4",
+                                "position": [-5, 2, 6],
+                                "rotation": [0, 0, 0],
+                                "scale": [1, 1, 1],
+                                "components": [
+                                    {
+                                        "type": "Mesh Renderer",
+                                        "mesh": "tire",
+                                        "material": "tire"
+                                    },
+                                    {
+                                        "type": "Movement",
+                                        "angularVelocity": [90, 0, 0]
+                                    }
+                                ]
+                            }
+                        ]
+
+                    },
+
+
+                    {
+                        "position"  : [0, 15, -24],
+                        "rotation"  : [-30, 180, 0],
+                        "speed"     : 0.4,
+                        "scale"     : [1, 1, 1],
+                        "components" : [
+                            {
+                                "type" : "Camera"
+                            },
+                            {
+                            "type" : "Free Camera Controller"
+                            
+                            }
+                        ]
+               
+                    }
+                ]
+            }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // {
+        //     "position": [0,5,0],
+        //     "rotation": [0,0,0],
+        //     "scale": [1,1,1],
+        //     "components": [
+        //         {
+        //             "type": "Light",
+        //             "color": [
+        //                 1,
+        //                 0,
+        //                 0
+        //             ],
+        //             "attenuation": [
+        //                 1,
+        //                 0,
+        //                 0
+        //             ],
+        //             "direction": [
+        //                 0,
+        //                 -1,
+        //                 0
+        //             ],
+        //             "inner_cone_angle": "20",
+        //             "outer_cone_angle": "30",
+        //             "lightType": "spot"
+        //         }
+        
+        //     ]
+        // },
+        ]
+    }
+}

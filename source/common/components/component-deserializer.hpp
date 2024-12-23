@@ -6,8 +6,8 @@
 #include "mesh-renderer.hpp"
 #include "free-camera-controller.hpp"
 #include "movement.hpp"
-#include  "game-components.hpp"
 #include "collider.hpp"
+#include "input.hpp"
 
 namespace our {
 
@@ -23,16 +23,14 @@ namespace our {
             component = entity->addComponent<FreeCameraControllerComponent>();
         } else if (type == MovementComponent::getID()) {
             component = entity->addComponent<MovementComponent>();
+        }else if (type == InputComponent::getID()){
+            component = entity->addComponent<InputComponent>();
         } else if (type == MeshRendererComponent::getID()) {
             component = entity->addComponent<MeshRendererComponent>();
         } else if (type == LightComponent::getID()) {
             component = entity->addComponent<LightComponent>();
-        } else if (type == CoinComponent::getID()) {
-            component = entity->addComponent<CoinComponent>();
         } else if (type == ColliderComponent::getID()) {
             component = entity->addComponent<ColliderComponent>();
-        } else if (type == ObstacleComponent::getID()) {
-            component = entity->addComponent<ObstacleComponent>();
         }
         if(component) component->deserialize(data);
     }
