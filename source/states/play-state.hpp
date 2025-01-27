@@ -80,6 +80,7 @@ class Playstate : public our::State
 
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
+        renderer.setWorld(dynamicsWorld);
         renderer.initialize(size, config["renderer"]);
     }
 
@@ -93,6 +94,7 @@ class Playstate : public our::State
         soundSystem.update(&world, (float)deltaTime);
         colliderSystem.update(&world, (float)deltaTime);
         dynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
+
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
         // Get a reference to the keyboard object

@@ -5,6 +5,9 @@
 #include "../components/camera.hpp"
 #include "../components/mesh-renderer.hpp"
 #include "../asset-loader.hpp"
+#include "BulletDebugDrawer.hpp"
+// #include "rigidbodySystem.hpp"
+#include "../components/rigidbody.hpp"
 
 #include <glad/gl.h>
 #include <vector>
@@ -39,13 +42,21 @@ namespace our
         // Objects used for rendering a skybox
         Mesh* skySphere;
         TexturedMaterial* skyMaterial;
+        btDiscreteDynamicsWorld *dynWorld = nullptr;
+        BulletDebugDrawer debugDrawer;
         // Objects used for Postprocessing
         GLuint postprocessFrameBuffer, postProcessVertexArray;
         Texture2D *colorTarget, *depthTarget;
         TexturedMaterial* postprocessMaterial;
+
+
+        bool debug = false;
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).
+        void setWorld(btDiscreteDynamicsWorld *world){
+            dynWorld = world;
+        }
         void initialize(glm::ivec2 windowSize, const nlohmann::json& config);
         // Clean up the renderer
         void destroy();

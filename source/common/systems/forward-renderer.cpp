@@ -103,10 +103,17 @@ namespace our
             // so it is more performant to disable the depth mask
             postprocessMaterial->pipelineState.depthMask = false;
         }
+        if(debug == true)
+        {
+            debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+            dynWorld->setDebugDrawer(&debugDrawer);
+            debugDrawer.glfw3_device_create();
+        }
     }
 
     void ForwardRenderer::destroy()
     {
+        if(debug) debugDrawer.glfw3_device_destroy();
         // Delete all objects related to the sky
         if (skyMaterial)
         {
@@ -339,7 +346,12 @@ namespace our
             /////////////////////////// LIGHT COMPONENT ///////////////////////////
             command.mesh->draw();
         }
-
+        if (debug == true)
+        {
+            debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints + btIDebugDraw::DBG_DrawConstraints + btIDebugDraw::DBG_DrawConstraintLimits);
+            dynWorld->debugDrawWorld();
+            debugDrawer.glfw3_device_render(glm::value_ptr(VP));
+        }
         // If there is a postprocess material, apply postprocessing
         if (postprocessMaterial)
         {

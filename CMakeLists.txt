@@ -97,6 +97,8 @@ set(COMMON_SOURCES
         source/common/systems/InputMovement.hpp
         source/common/systems/rigidbodySystem.hpp
         source/common/systems/movement.hpp
+        source/common/systems/BulletDebugDrawer.hpp
+        source/common/systems/BulletDebugDrawer.cpp
 )
 
 # Define the directories in which to search for the included headers
