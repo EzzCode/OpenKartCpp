@@ -1,5 +1,5 @@
 {
-    "start-scene" : "play",
+    "start-scene" : "menu",
     "window":
     {
         "title":"OpenKartCPP",
@@ -326,7 +326,7 @@
                                 "soundPath": "assets/sounds/1-06. Toad Circuit & Mario Circuit.mp3",
                                 "looped": true,
                                 "playing": false,
-                                "volume": 0
+                                "volume": 10
                             }
                         ]
                
@@ -357,7 +357,7 @@
                     ],
                     "inner_cone_angle": "20",
                     "outer_cone_angle": "30",
-                    "lightType": "spot"
+                    "lightType": "point"
                 }
         
             ]
@@ -378,7 +378,7 @@
         {
             
             "rotation": [-45, 0, 0],
-            "position": [0, 0, 0],
+            "position": [0, 30, 0],
             "components": [
                 {
                     "type": "Mesh Renderer",
