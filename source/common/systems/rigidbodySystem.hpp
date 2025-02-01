@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <BulletDynamics/Vehicle/btRaycastVehicle.h>
+#include "../components/movement.hpp"
 
 namespace our
 {
@@ -126,47 +127,51 @@ namespace our
             dynWorld = world;
         }
         //(y: yaw, x: pitch, z: roll)
-        void quaternionToEuler(const btQuaternion& quat, float& yaw, float& pitch, float& roll) 
+        void quaternionToEuler(const btQuaternion &quat, float &yaw, float &pitch, float &roll)
         {
             // Constants to avoid magic numbers
-            constexpr float SINGULARITY_THRESHOLD = 0.499f;  // Close to 0.5
+            constexpr float SINGULARITY_THRESHOLD = 0.499f; // Close to 0.5
             constexpr float HALF_PI = glm::half_pi<float>();
-            
+
             // Check for normalized quaternion
             float norm = quat.length2();
-            if (std::abs(norm - 1.0f) > 1e-6f) {
-                // Handle warning or error for non-normalized quaternion
-                // Could throw an exception or normalize the quaternion here
-            }
-            
+            // if (std::abs(norm - 1.0f) > 1e-6f)
+            // {
+            //     // Handle warning or error for non-normalized quaternion
+            //     // Could throw an exception or normalize the quaternion here
+            // }
+
             // Calculate common terms once
             float xy = quat.x() * quat.y();
             float zw = quat.z() * quat.w();
-            float test = xy + zw;  // sin(pitch) test for gimbal lock
-            
-            if (test > SINGULARITY_THRESHOLD) { 
+            float test = xy + zw; // sin(pitch) test for gimbal lock
+
+            if (test > SINGULARITY_THRESHOLD)
+            {
                 // North pole singularity case (pitch = +90 degrees)
                 yaw = HALF_PI;
                 pitch = 2.0f * std::atan2(quat.x(), quat.w());
                 roll = 0.0f;
             }
-            else if (test < -SINGULARITY_THRESHOLD) { 
+            else if (test < -SINGULARITY_THRESHOLD)
+            {
                 // South pole singularity case (pitch = -90 degrees)
                 yaw = -HALF_PI;
                 pitch = -2.0f * std::atan2(quat.x(), quat.w());
                 roll = 0.0f;
             }
-            else {
+            else
+            {
                 // Regular case
                 float xx = quat.x() * quat.x();
                 float yy = quat.y() * quat.y();
                 float zz = quat.z() * quat.z();
-                
+
                 yaw = std::atan2(2.0f * (quat.x() * quat.w() - quat.y() * quat.z()),
-                                1.0f - 2.0f * (xx + zz));
+                                 1.0f - 2.0f * (xx + zz));
                 pitch = std::asin(2.0f * test);
                 roll = std::atan2(2.0f * (quat.y() * quat.w() - quat.x() * quat.z()),
-                                1.0f - 2.0f * (yy + zz));
+                                  1.0f - 2.0f * (yy + zz));
             }
         }
         void update(World *world, float deltaTime)
@@ -221,22 +226,21 @@ namespace our
                         rigidbodyComponent->vehicle = new btRaycastVehicle(tuning, rigidbodyComponent->rigidbody, raycaster);
                         rigidbodyComponent->vehicle->setCoordinateSystem(0, 1, 2);
 
-
                         btBoxShape *boxShape = static_cast<btBoxShape *>(rigidbodyComponent->rigidbody->getCollisionShape());
                         btVector3 chassisHalfExtents = boxShape->getHalfExtentsWithoutMargin();
 
                         btVector3 wheelDir(0, -1, 0);
                         btVector3 wheelAxle(-1, 0, 0);
                         float restLength = 0.1f; // Increase rest length
-                        float radius = 0.3f;      // Smaller wheel radius for stability
-                        float offsetX = 0.3f;     // Wider wheel base
-                        float offsetZ = 0.4f;     // Longer wheel base
+                        float radius = 0.3f;     // Smaller wheel radius for stability
+                        float offsetX = 0.3f;    // Wider wheel base
+                        float offsetZ = 0.4f;    // Longer wheel base
                         //(y,z,x)
                         btVector3 wheelPositions[] = {
                             btVector3(chassisHalfExtents.x() + radius + offsetX, 0, chassisHalfExtents.z() + radius + offsetZ),
                             btVector3(-chassisHalfExtents.x() - radius - offsetX, 0, chassisHalfExtents.z() + radius + offsetZ),
-                            btVector3(chassisHalfExtents.x() + radius + offsetX, 0 , -chassisHalfExtents.z() - radius - offsetZ),
-                            btVector3(-chassisHalfExtents.x() - radius - offsetX, 0 , -chassisHalfExtents.z() - radius - offsetZ)};
+                            btVector3(chassisHalfExtents.x() + radius + offsetX, 0, -chassisHalfExtents.z() - radius - offsetZ),
+                            btVector3(-chassisHalfExtents.x() - radius - offsetX, 0, -chassisHalfExtents.z() - radius - offsetZ)};
 
                         // Add wheels with friction
                         for (int i = 0; i < 4; i++)
@@ -247,7 +251,7 @@ namespace our
                             // Set wheel friction
                             btWheelInfo &wheel = rigidbodyComponent->vehicle->getWheelInfo(i);
                             wheel.m_frictionSlip = 10000.0f; // Lower friction slip
-                            wheel.m_rollInfluence = 2.1f;  // Reduce roll influence for better stability
+                            wheel.m_rollInfluence = 1.5f;  // Reduce roll influence for better stability
                         }
                         dynWorld->addVehicle(rigidbodyComponent->vehicle);
                     }
@@ -262,16 +266,38 @@ namespace our
                     static float engineForce = 0.0f;
                     static float steeringValue = 0.0f;
                     float brakeForce = 0.0f;
+                    // Check if the vehicle is in the air by examining the wheel contact points
+                    bool isInAir = true;
+                    for (int i = 0; i < rigidbodyComponent->vehicle->getNumWheels(); i++)
+                    {
+                        if (rigidbodyComponent->vehicle->getWheelInfo(i).m_raycastInfo.m_isInContact)
+                        {
+                            isInAir = false;
+                            break;
+                        }
+                    }
 
+                    // Reduce gravity if the vehicle is in the air
+                    if (isInAir)
+                    {
+                        rigidbodyComponent->rigidbody->applyCentralForce(btVector3(0, 10, 0)); // Small upward force
+
+                        // Level the car by setting the angular velocity to zero
+                        rigidbodyComponent->rigidbody->setAngularVelocity(btVector3(0, 0, 0));
+
+                        dynWorld->setGravity(btVector3(0, -2, 0)); // Reduced gravity
+                    }
+                    else
+                    {
+                        dynWorld->setGravity(btVector3(0, -9.81, 0)); // Normal gravity
+                    }
                     if (app->getKeyboard().isPressed(GLFW_KEY_UP))
                     {
                         engineForce += 10.0f;
-                        brakeForce = 0.0f;
                     }
                     else if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
                     {
                         engineForce -= 10.0f;
-                        brakeForce = 0.0f;
                     }
                     else
                     {
@@ -303,7 +329,6 @@ namespace our
                         brakeForce = 10.0f;
                     }
 
-
                     for (int i = 0; i < rigidbodyComponent->vehicle->getNumWheels(); i++)
                     {
                         engineForce = glm::clamp(engineForce, -700.0f, 700.0f);
@@ -319,29 +344,56 @@ namespace our
                 }
                 // Get the current transform of the rigid body
                 btTransform transform;
-                if (rigidbodyComponent->vehicle) {
+                if (rigidbodyComponent->vehicle)
+                {
+
                     rigidbodyComponent->rigidbody->getMotionState()->getWorldTransform(transform);
                     // Get position and rotation
                     btVector3 pos = transform.getOrigin();
                     btQuaternion rot = transform.getRotation();
-                    
+
                     // Convert to Euler angles
                     float yaw, pitch, roll;
                     quaternionToEuler(rot, yaw, pitch, roll);
-                    
+
                     // Update the entity's position and rotation
                     rigidbodyComponent->position = glm::vec3(pos.x(), pos.y(), pos.z());
                     rigidbodyComponent->rotation = glm::vec3(yaw, roll, pitch);
+
                     entity->localTransform.position = rigidbodyComponent->position;
                     entity->localTransform.rotation = rigidbodyComponent->rotation;
-                } else if (rigidbodyComponent->rigidbody) {
+                    
+                    btVector3 velocity = rigidbodyComponent->rigidbody->getLinearVelocity();
+                    float steeringValue = rigidbodyComponent->vehicle->getSteeringValue(0);
+                    for (auto child : world->getEntities())
+                    {
+                        if (child->parent == entity)
+                        {
+                            std::string name = child->name;
+                            if (name.find("tire") != std::string::npos)
+                            {
+                                MovementComponent *movement = child->getComponent<MovementComponent>();
+                                if (movement)
+                                {
+                                    movement->angularVelocity = glm::vec3(velocity.length(), 0.0f, 0.0f);
+                                }
+                                if (name == "tireFront")
+                                {
+                                    child->localTransform.rotation = glm::vec3(child->localTransform.rotation.x, steeringValue, 0.0f);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (rigidbodyComponent->rigidbody)
+                {
                     rigidbodyComponent->rigidbody->getMotionState()->getWorldTransform(transform);
                     btVector3 pos = transform.getOrigin();
                     btQuaternion rot = transform.getRotation();
-                    
+
                     float yaw, pitch, roll;
                     quaternionToEuler(rot, yaw, pitch, roll);
-                    
+
                     rigidbodyComponent->position = glm::vec3(pos.x(), pos.y(), pos.z());
                     rigidbodyComponent->rotation = glm::vec3(yaw, roll, pitch);
                     entity->localTransform.position = rigidbodyComponent->position;

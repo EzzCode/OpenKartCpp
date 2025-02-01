@@ -11,6 +11,7 @@ namespace our
         std::string soundPath;
         bool looped = false;
         bool playing = false;
+        ma_sound sound;
         int volume = 100;
 
         static std::string getID() { return "Sound"; }

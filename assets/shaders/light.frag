@@ -39,9 +39,10 @@ struct Material {
     sampler2D emission;
 };
 uniform Material material;
+uniform float alphaThreshold;
 uniform Light lights[MAX_LIGHTS];
 uniform int light_count;
-uniform vec3 ambient_light = vec3(0.1);
+uniform vec3 ambient_light = vec3(0.7);
 
 
 void main(){
@@ -109,6 +110,7 @@ void main(){
     }   
     
     // Set the color of the pixel
-    frag_color = vec4(color , 1.0); 
+    vec4 tex_color = texture(material.albedo, fs_in.tex_coord);
+    frag_color = vec4(color, tex_color.a);  
 
 }

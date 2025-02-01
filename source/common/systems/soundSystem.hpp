@@ -8,46 +8,59 @@ namespace our
 {
 
     // The sound system is responsible for moving every entity which contains a soundComponent.
-    // This system is added as a simple example for how use the ECS framework to implement logic. 
+    // This system is added as a simple example for how use the ECS framework to implement logic.
     // For more information, see "common/components/sound.hpp"
-    class soundSystem {
+    class soundSystem
+    {
     private:
         ma_engine engine;
+
     public:
-        void initialize() {
+        void initialize()
+        {
             ma_result result = ma_engine_init(NULL, &engine);
-            if (result != MA_SUCCESS) {
+            if (result != MA_SUCCESS)
+            {
                 std::cerr << "Failed to initialize audio engine." << std::endl;
             }
         }
-        // This should be called every frame to update all entities containing a soundComponent. 
-        void update(World* world, float deltaTime) {
+        // This should be called every frame to update all entities containing a soundComponent.
+        void update(World *world, float deltaTime)
+        {
             // For each entity in the world
-            for(auto entity : world->getEntities()){
+            for (auto entity : world->getEntities())
+            {
                 // Get the sound component if it exists
-                SoundComponent* soundComp = entity->getComponent<SoundComponent>();
+                SoundComponent *soundComp = entity->getComponent<SoundComponent>();
                 // If the sound component exists
-                if(soundComp){
-                    if(soundComp->looped){
-                        if(!soundComp->playing){
-                            ma_sound sound;
-                            const char* soundFile = soundComp->soundPath.c_str();
-                            ma_result result = ma_engine_play_sound(&engine, soundFile, NULL);
-                            if (result != MA_SUCCESS) {
-                                std::cerr << "Failed to play sound." << std::endl;
+                if (soundComp)
+                {
+                    if (!soundComp->playing)
+                    {
+                        const char *soundFile = soundComp->soundPath.c_str();
+                        ma_result result = ma_sound_init_from_file(&engine, soundFile, MA_SOUND_FLAG_DECODE, NULL, NULL, &soundComp->sound);
+                        if (result != MA_SUCCESS)
+                        {
+                            std::cerr << "Failed to initialize sound from file." << std::endl;
+                        }
+                        else
+                        {
+                            ma_sound_set_volume(&soundComp->sound, soundComp->volume / 100.0);
+                            if (soundComp->looped)
+                            {
+                                ma_sound_set_looping(&soundComp->sound, true); // Loop the sound
                             }
-                            // Set the volume for the engine (affects all sounds)
-                            ma_engine_set_volume(&engine, soundComp->volume/100.0);
+                            ma_sound_start(&soundComp->sound);
                             soundComp->playing = true;
                         }
                     }
                 }
             }
         }
-        void destroy() {
+        void destroy()
+        {
             ma_engine_uninit(&engine);
         }
-
     };
 
 }
