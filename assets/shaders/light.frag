@@ -111,6 +111,9 @@ void main(){
     
     // Set the color of the pixel
     vec4 tex_color = texture(material.albedo, fs_in.tex_coord);
+    if(tex_color.a < alphaThreshold){
+        discard;
+    }
     frag_color = vec4(color, tex_color.a);  
 
 }

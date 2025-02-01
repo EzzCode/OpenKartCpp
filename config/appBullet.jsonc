@@ -73,8 +73,7 @@
                             "enabled": false
                         },
                         "depthTesting":{
-                            "enabled": true,
-                            "function": "GL_LESS"
+                            "enabled": true
                         },
                         "blending":{
                             "enabled": true,
@@ -89,12 +88,14 @@
                     "transparent": true,
                     "texture": "track",
                     "sampler": "default",
+                    "alphaThreshold": 0.01,
                     "roughness": "track",
                     "emission": "plane-emission",
                     "specular": "track",
                     "albedo": "track",
                     "ambientOcclusion": "track"
                 },
+            
                 "tire": {
                     "type": "textured",
                     "shader": "textured",
@@ -233,20 +234,12 @@
                         "type": "Rigidbody",
                         "mesh":"kart",
                         "input" : 1,
-                        "position": [-5, 5, 50],
+                        "position": [-5, 6, 50],
                         "rotation": [180, 0, 0],
                         "scale": [0.1, 0.1, 0.1],
                         "steeringAngle" :0,
                         "mass":700
                     }
-                   
-                    
-                
-                  
-    
-                    
-                           
-                   
                 ],
                 "children": [
                     {
@@ -336,7 +329,8 @@
                         "rotation"  : [-30, 180, 0],
                         "components" : [
                             {
-                                "type" : "Camera"
+                                "type" : "Camera",
+                                "far": 150
                             },
                             {
                                 "type" : "Free Camera Controller"
@@ -417,7 +411,7 @@
         {
             "position": [0, 1, 0],
             "rotation": [0, 0, 0],
-            "scale": [0.03, 0.03, 0.03],
+            "scale": [0.04, 0.04, 0.04],
             "components": [
                 {
                     "type": "Mesh Renderer",
@@ -430,7 +424,7 @@
                     "input" : 0,
                     "position": [0, 1, 0],
                     "rotation": [0, 0, 0],
-                    "scale": [0.03, 0.03, 0.03],
+                    "scale": [0.04, 0.04, 0.04],
                     "steeringAngle" :0,
                     "mass":0
                 }
