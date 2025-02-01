@@ -109,7 +109,7 @@ include_directories(
         vendor/glm
         vendor/imgui
         vendor/utils
-        bullet
+        vendor/bullet
 )
 
  
