@@ -42,7 +42,7 @@ uniform Material material;
 uniform float alphaThreshold;
 uniform Light lights[MAX_LIGHTS];
 uniform int light_count;
-uniform vec3 ambient_light = vec3(0.7);
+uniform vec3 ambient_light = vec3(1.0);
 
 
 void main(){

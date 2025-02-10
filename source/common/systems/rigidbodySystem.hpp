@@ -280,7 +280,7 @@ namespace our
                     // Reduce gravity if the vehicle is in the air
                     if (isInAir)
                     {
-                        rigidbodyComponent->rigidbody->applyCentralForce(btVector3(0, 10, 0)); // Small upward force
+                        rigidbodyComponent->rigidbody->applyCentralForce(btVector3(0, 15, 0)); // Small upward force
 
                         // Level the car by setting the angular velocity to zero
                         rigidbodyComponent->rigidbody->setAngularVelocity(btVector3(0, 0, 0));
@@ -354,13 +354,14 @@ namespace our
 
                     // Convert to Euler angles
                     float yaw, pitch, roll;
-                    quaternionToEuler(rot, yaw, pitch, roll);
+                    quaternionToEuler(rot, yaw, roll, pitch);
 
                     // Update the entity's position and rotation
                     rigidbodyComponent->position = glm::vec3(pos.x(), pos.y(), pos.z());
-                    rigidbodyComponent->rotation = glm::vec3(yaw, roll, pitch);
+                    rigidbodyComponent->rotation = glm::vec3(yaw, pitch, roll);
 
                     entity->localTransform.position = rigidbodyComponent->position;
+                    entity->localTransform.position.y -= 0.07f;
                     entity->localTransform.rotation = rigidbodyComponent->rotation;
                     
                     btVector3 velocity = rigidbodyComponent->rigidbody->getLinearVelocity();
@@ -375,7 +376,17 @@ namespace our
                                 MovementComponent *movement = child->getComponent<MovementComponent>();
                                 if (movement)
                                 {
-                                    movement->angularVelocity = glm::vec3(velocity.length(), 0.0f, 0.0f);
+                                    float groundSpeed = velocity.length();
+                                    // Get forward direction from velocity
+                                    float forwardSpeed = velocity.dot(rigidbodyComponent->rigidbody->getWorldTransform().getBasis().getColumn(2));
+                                    
+                                    if (rigidbodyComponent->vehicle->getWheelInfo(0).m_raycastInfo.m_isInContact) {
+                                        // Apply rotation based on forward/backward movement
+                                        float rotationSpeed = groundSpeed * 2 * (forwardSpeed >= 0 ? 1 : -1);
+                                        movement->angularVelocity = glm::vec3(rotationSpeed, 0.0f, 0.0f);
+                                    } else {
+                                        movement->angularVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
+                                    }
                                 }
                                 if (name == "tireFront")
                                 {
