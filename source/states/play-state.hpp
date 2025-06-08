@@ -13,6 +13,8 @@
 #include <btBulletCollisionCommon.h>
 #include <systems/soundSystem.hpp>
 #include <systems/miniaudio.h>
+#include <systems/race-system.hpp>
+#include <systems/hud-system.hpp>
 
 #include <btBulletDynamicsCommon.h>
 // This state shows how to use the ECS framework and deserialization.
@@ -23,10 +25,11 @@ class Playstate : public our::State
     our::ForwardRenderer renderer;
     our::FreeCameraControllerSystem cameraController;
     our::MovementSystem movementSystem;
-    our::InputMovementSystem inputMovementSystem;
-    our::RigidbodySystem rigidbodySystem;
+    our::InputMovementSystem inputMovementSystem;    our::RigidbodySystem rigidbodySystem;
     our::soundSystem soundSystem;
     our::ColliderSystem colliderSystem;
+    our::RaceSystem raceSystem;
+    our::HUDSystem hudSystem;
     btDiscreteDynamicsWorld *dynamicsWorld;
     void onInitialize() override
     {
@@ -74,9 +77,12 @@ class Playstate : public our::State
 
         our::Application *appPtr = getApp();
         cameraController.enter(appPtr);
-        inputMovementSystem.enter(appPtr);
-        rigidbodySystem.enter(dynamicsWorld,appPtr);
+        inputMovementSystem.enter(appPtr);        rigidbodySystem.enter(dynamicsWorld,appPtr);
         soundSystem.initialize();
+        
+        // Initialize race and HUD systems
+        raceSystem.enter(appPtr);
+        hudSystem.enter(appPtr, &raceSystem);
 
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
@@ -85,18 +91,26 @@ class Playstate : public our::State
     }
 
     void onDraw(double deltaTime) override
-    {
-        // Here, we just run a bunch of systems to control the world logic
+    {        // Here, we just run a bunch of systems to control the world logic
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
         inputMovementSystem.update(&world, (float)deltaTime);
         rigidbodySystem.update(&world, (float)deltaTime);
         soundSystem.update(&world, (float)deltaTime);
         colliderSystem.update(&world, (float)deltaTime);
+        
+        // Update race system
+        raceSystem.update(&world, (float)deltaTime);
+        
+        // Update physics
         dynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
 
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
+        
+        // Update and render HUD
+        hudSystem.update(&world, (float)deltaTime);
+        hudSystem.render();
         // Get a reference to the keyboard object
         auto &keyboard = getApp()->getKeyboard();
 

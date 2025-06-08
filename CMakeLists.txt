@@ -84,10 +84,11 @@ set(COMMON_SOURCES
         source/common/components/collider.hpp
         source/common/components/light.cpp
         source/common/components/movement.hpp
-        source/common/components/movement.cpp
-        source/common/components/component-deserializer.hpp
+        source/common/components/movement.cpp        source/common/components/component-deserializer.hpp
         source/common/components/sound.hpp
         source/common/components/sound.cpp
+        source/common/components/race.hpp
+        source/common/components/race.cpp
         
         source/common/systems/miniaudio.h
         source/common/systems/forward-renderer.hpp
@@ -95,10 +96,13 @@ set(COMMON_SOURCES
         source/common/systems/ColliderSystem.hpp
         source/common/systems/free-camera-controller.hpp
         source/common/systems/InputMovement.hpp
-        source/common/systems/rigidbodySystem.hpp
-        source/common/systems/movement.hpp
+        source/common/systems/rigidbodySystem.hpp        source/common/systems/movement.hpp
         source/common/systems/BulletDebugDrawer.hpp
         source/common/systems/BulletDebugDrawer.cpp
+        source/common/systems/race-system.hpp
+        source/common/systems/race-system.cpp
+        source/common/systems/hud-system.hpp
+        source/common/systems/hud-system.cpp
 )
 
 # Define the directories in which to search for the included headers
