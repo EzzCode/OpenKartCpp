@@ -6,6 +6,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Windows-specific configurations
+if(WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-DNOMINMAX)
+    add_definitions(-DWIN32_LEAN_AND_MEAN)
+    # Set runtime library to Multi-threaded DLL
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+endif()
+
 # These are the options we select for building GLFW as a library
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)        # Don't build Documentation
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)       # Don't build Tests
@@ -82,21 +93,21 @@ set(COMMON_SOURCES
         source/common/components/rigidbody.hpp
         source/common/components/collider.cpp
         source/common/components/collider.hpp
-        source/common/components/light.cpp
-        source/common/components/movement.hpp
-        source/common/components/movement.cpp        source/common/components/component-deserializer.hpp
+        source/common/components/light.cpp        source/common/components/movement.hpp
+        source/common/components/movement.cpp
+        source/common/components/component-deserializer.hpp
         source/common/components/sound.hpp
         source/common/components/sound.cpp
         source/common/components/race.hpp
         source/common/components/race.cpp
         
-        source/common/systems/miniaudio.h
-        source/common/systems/forward-renderer.hpp
+        source/common/systems/miniaudio.h        source/common/systems/forward-renderer.hpp
         source/common/systems/forward-renderer.cpp
         source/common/systems/ColliderSystem.hpp
         source/common/systems/free-camera-controller.hpp
         source/common/systems/InputMovement.hpp
-        source/common/systems/rigidbodySystem.hpp        source/common/systems/movement.hpp
+        source/common/systems/rigidbodySystem.hpp
+        source/common/systems/movement.hpp
         source/common/systems/BulletDebugDrawer.hpp
         source/common/systems/BulletDebugDrawer.cpp
         source/common/systems/race-system.hpp
@@ -112,6 +123,7 @@ include_directories(
         vendor/glad/include
         vendor/glm
         vendor/imgui
+        vendor/imgui/imgui_impl
         vendor/utils
         vendor/bullet
 )
@@ -140,8 +152,33 @@ set(STATES_SOURCES
 # Each target compiles one example source file and the common & vendor source files
 # Then we link GLFW with each target
 add_executable(GAME_APPLICATION source/main.cpp ${STATES_SOURCES} ${COMMON_SOURCES} ${VENDOR_SOURCES})
-target_link_libraries(GAME_APPLICATION glfw
-libBulletDynamics.a
-libBulletCollision.a
-LinearMath.a
+
+# Additional include directories specific to the target
+target_include_directories(GAME_APPLICATION PRIVATE
+    vendor/imgui/imgui_impl
+)
+
+# Link libraries
+target_link_libraries(GAME_APPLICATION 
+    glfw
+    libBulletDynamics.a
+    libBulletCollision.a
+    libLinearMath.a
+    libBulletSoftBody.a
+)
+
+# Windows-specific libraries
+if(WIN32)
+    target_link_libraries(GAME_APPLICATION 
+        opengl32
+        gdi32
+        user32
+        kernel32
+    )
+endif()
+
+# Set target properties
+set_target_properties(GAME_APPLICATION PROPERTIES
+    OUTPUT_NAME "GAME_APPLICATION"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
