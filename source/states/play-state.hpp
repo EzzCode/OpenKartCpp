@@ -73,12 +73,12 @@ class Playstate : public our::State
         );
 
         btRigidBody *groundRigidBody = new btRigidBody(groundRigidBodyCI);
-        dynamicsWorld->addRigidBody(groundRigidBody);
+        dynamicsWorld->addRigidBody(groundRigidBody);        
         our::Application *appPtr = getApp();
         cameraController.enter(appPtr);
         // InputMovementSystem disabled to avoid conflicts with RigidbodySystem
         // inputMovementSystem.enter(appPtr);        
-        rigidbodySystem.enter(dynamicsWorld,appPtr);
+        rigidbodySystem.enter(dynamicsWorld, appPtr, config);
         soundSystem.initialize();
         
         // Initialize race and HUD systems

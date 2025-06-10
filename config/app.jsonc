@@ -9,6 +9,51 @@
         },
         "fullscreen": false
     },
+    "vehicleTuning": {
+        "bullet3d": {
+            "suspensionStiffness": 5.88,
+            "suspensionCompression": 0.83,
+            "suspensionDamping": 0.88,
+            "maxSuspensionTravelCm": 500.0,
+            "frictionSlip": 10.5,
+            "maxSuspensionForce": 6000.0
+        },
+        "wheel": {
+            "restLength": 0.1,
+            "radius": 0.3,
+            "offsetX": 0.3,
+            "offsetZ": 0.4,
+            "frictionSlip": 10000.0,
+            "rollInfluence": 1.5
+        },
+        "rigidbody": {
+            "friction": 0.7,
+            "rollingFriction": 0.1,
+            "linearDamping": 0.1,
+            "angularDamping": 0.5
+        },
+        "physics": {
+            "maxSpeed": 25.0,
+            "engineForceRange": {
+                "min": -700.0,
+                "max": 700.0
+            },
+            "brakeForce": 10.0,
+            "gravity": -9.81,
+            "airForce": 15.0
+        },
+        "steering": {
+            "increment": 0.005,
+            "returnFactor": 0.95,
+            "maxAngleAtLowSpeed": 0.4,
+            "maxAngleAtHighSpeed": 0.07,
+            "speedThreshold": 10.0
+        },
+        "input": {
+            "engineForceIncrement": 10.0,
+            "brakeForceDefault": 2.0
+        }
+    },
     "scene": {
         "renderer":{
             "sky": "assets/textures/skyorig.png"
@@ -202,7 +247,7 @@
         "world":[
             {
                 "position": [-5, 6, 50],
-                "rotation": [0, 0, 0],
+                "rotation": [180, 0, 0],
                 "scale": [0.1, 0.1, 0.1],
                 "components": [
                     {
@@ -218,8 +263,8 @@
                         "type": "Rigidbody",
                         "mesh":"kart",
                         "input" : 1,
-                        "position": [-5, 6, 20],
-                        "rotation": [0, 0, 0],
+                        "position": [-5, 6, 50],
+                        "rotation": [180, 0, 0],
                         "scale": [0.1, 0.1, 0.1],
                         "steeringAngle" :0,
                         "mass":700
