@@ -11,47 +11,47 @@
     },
     "vehicleTuning": {
         "bullet3d": {
-            "suspensionStiffness": 5.88,
-            "suspensionCompression": 0.83,
-            "suspensionDamping": 0.88,
-            "maxSuspensionTravelCm": 500.0,
-            "frictionSlip": 10.5,
-            "maxSuspensionForce": 6000.0
+            "suspensionStiffness": 30.0,
+            "suspensionCompression": 4.0,
+            "suspensionDamping": 3.5,
+            "maxSuspensionTravelCm": 150.0,
+            "frictionSlip": 15.0,
+            "maxSuspensionForce": 20000.0
         },
         "wheel": {
-            "restLength": 0.1,
-            "radius": 0.3,
-            "offsetX": 0.3,
-            "offsetZ": 0.4,
+            "restLength": 0.01,
+            "radius": 0.35,
+            "offsetX": 0.5,
+            "offsetZ": 0.45,
             "frictionSlip": 10000.0,
-            "rollInfluence": 1.5
+            "rollInfluence": 0.2
         },
         "rigidbody": {
-            "friction": 0.7,
-            "rollingFriction": 0.1,
+            "friction": 0.8,
+            "rollingFriction": 0.05,
             "linearDamping": 0.1,
-            "angularDamping": 0.5
+            "angularDamping": 0.8
         },
         "physics": {
-            "maxSpeed": 25.0,
+            "maxSpeed": 40.0,
             "engineForceRange": {
-                "min": -700.0,
-                "max": 700.0
+                "min": -600.0,
+                "max": 1200.0
             },
-            "brakeForce": 10.0,
-            "gravity": -9.81,
-            "airForce": 15.0
+            "brakeForce": 20.0,
+            "gravity": -12.0,
+            "airForce": 3.0
         },
         "steering": {
-            "increment": 0.005,
-            "returnFactor": 0.95,
-            "maxAngleAtLowSpeed": 0.4,
+            "increment": 0.01,
+            "returnFactor": 0.9,
+            "maxAngleAtLowSpeed": 0.5,
             "maxAngleAtHighSpeed": 0.07,
-            "speedThreshold": 10.0
+            "speedThreshold": 15.0
         },
         "input": {
-            "engineForceIncrement": 10.0,
-            "brakeForceDefault": 2.0
+            "engineForceIncrement": 25.0,
+            "brakeForceDefault": 4.0
         }
     },
     "scene": {
@@ -268,7 +268,7 @@
                         "rotation": [180, 0, 0],
                         "scale": [0.1, 0.1, 0.1],
                         "steeringAngle" :0,
-                        "mass":700
+                        "mass":500
                     },                    {
                         "type": "race-player",
                         "currentLap": 1,

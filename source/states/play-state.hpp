@@ -73,12 +73,21 @@ class Playstate : public our::State
         );
 
         btRigidBody *groundRigidBody = new btRigidBody(groundRigidBodyCI);
-        dynamicsWorld->addRigidBody(groundRigidBody);        
+        dynamicsWorld->addRigidBody(groundRigidBody);
         our::Application *appPtr = getApp();
         cameraController.enter(appPtr);
         // InputMovementSystem disabled to avoid conflicts with RigidbodySystem
         // inputMovementSystem.enter(appPtr);        
-        rigidbodySystem.enter(dynamicsWorld, appPtr, config);
+        
+        // Pass vehicleTuning config section directly without copying - more efficient O(1) access
+        const auto& fullConfig = getApp()->getConfig();
+        auto vehicleTuningIt = fullConfig.find("vehicleTuning");
+        if (vehicleTuningIt != fullConfig.end()) {
+            rigidbodySystem.enter(dynamicsWorld, appPtr, *vehicleTuningIt);
+        } else {
+            rigidbodySystem.enter(dynamicsWorld, appPtr);
+        }
+        
         soundSystem.initialize();
         
         // Initialize race and HUD systems

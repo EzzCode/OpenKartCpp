@@ -242,17 +242,29 @@ namespace our
             return body;
         }    public:
         Application *app;
-        
-        void enter(btDiscreteDynamicsWorld *world, Application *app, const nlohmann::json& config = nlohmann::json{})
+        void enter(btDiscreteDynamicsWorld *world, Application *app, const nlohmann::json& vehicleTuningConfig = nlohmann::json{})
         {
             this->app = app;
             if (!world)
                 throw std::invalid_argument("Dynamic world cannot be null");
             dynWorld = world;
             
-            // Load vehicle tuning configuration if available
-            if (config.contains("vehicleTuning")) {
-                vehicleTuning.deserialize(config["vehicleTuning"]);
+            // Debug: Print vehicle tuning config status
+            std::cout << "RigidbodySystem::enter() - VehicleTuning config provided: " 
+                      << (!vehicleTuningConfig.is_null() && vehicleTuningConfig.is_object() ? "YES" : "NO") << std::endl;
+            
+            // Load vehicle tuning configuration if provided
+            if (!vehicleTuningConfig.is_null() && vehicleTuningConfig.is_object()) {
+                std::cout << "Loading vehicleTuning configuration..." << std::endl;
+                vehicleTuning.deserialize(vehicleTuningConfig);
+                
+                // Debug: Print some loaded values to verify
+                std::cout << "Loaded values - Max Speed: " << vehicleTuning.maxSpeed 
+                          << ", Suspension Stiffness: " << vehicleTuning.suspensionStiffness 
+                          << ", Engine Force Max: " << vehicleTuning.engineForceMax << std::endl;
+            } else {
+                std::cout << "Using default vehicleTuning values - Max Speed: " << vehicleTuning.maxSpeed 
+                          << ", Suspension Stiffness: " << vehicleTuning.suspensionStiffness << std::endl;
             }
         }
         //(y: yaw, x: pitch, z: roll)
