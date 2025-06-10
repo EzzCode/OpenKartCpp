@@ -89,15 +89,16 @@ class Playstate : public our::State
         }
         
         soundSystem.initialize();
-        
-        // Initialize race and HUD systems
+          // Initialize race and HUD systems
         raceSystem.enter(appPtr);
-        hudSystem.enter(appPtr, &raceSystem);
-
+        
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.setWorld(dynamicsWorld);
         renderer.initialize(size, config["renderer"]);
+        
+        // Initialize HUD system with renderer reference
+        hudSystem.enter(appPtr, &raceSystem, &renderer);
     }
 
     void onDraw(double deltaTime) override

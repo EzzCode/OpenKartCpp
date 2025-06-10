@@ -57,8 +57,8 @@
     "scene": {
         "renderer":{
             "sky": "assets/textures/skyorig.png",
-            "debug": true
-            //"postprocess": "assets/shaders/postprocess/vignette.frag"
+            "debug": true,
+            "postprocess": "assets/shaders/postprocess/vignette.frag"
         },
         "assets":{
             "shaders":{
