@@ -74,10 +74,11 @@ class Playstate : public our::State
 
         btRigidBody *groundRigidBody = new btRigidBody(groundRigidBodyCI);
         dynamicsWorld->addRigidBody(groundRigidBody);
-
         our::Application *appPtr = getApp();
         cameraController.enter(appPtr);
-        inputMovementSystem.enter(appPtr);        rigidbodySystem.enter(dynamicsWorld,appPtr);
+        // InputMovementSystem disabled to avoid conflicts with RigidbodySystem
+        // inputMovementSystem.enter(appPtr);        
+        rigidbodySystem.enter(dynamicsWorld,appPtr);
         soundSystem.initialize();
         
         // Initialize race and HUD systems
@@ -92,18 +93,22 @@ class Playstate : public our::State
 
     void onDraw(double deltaTime) override
     {        // Here, we just run a bunch of systems to control the world logic
+        // Update physics with optimized timestep for better performance
+    
+        // Use adaptive timestep with more substeps for better performance and stability
+        dynamicsWorld->stepSimulation((float)deltaTime, 10, 1.0f / 120.0f);
+        
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
-        inputMovementSystem.update(&world, (float)deltaTime);
+        
+        // Only use RigidbodySystem for physics-based movement
+        // InputMovementSystem is disabled to avoid conflicts
         rigidbodySystem.update(&world, (float)deltaTime);
         soundSystem.update(&world, (float)deltaTime);
         colliderSystem.update(&world, (float)deltaTime);
         
         // Update race system
         raceSystem.update(&world, (float)deltaTime);
-        
-        // Update physics
-        dynamicsWorld->stepSimulation(1.0f / 60.0f, 10);
 
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);

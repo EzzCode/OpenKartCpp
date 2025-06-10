@@ -93,7 +93,8 @@ set(COMMON_SOURCES
         source/common/components/rigidbody.hpp
         source/common/components/collider.cpp
         source/common/components/collider.hpp
-        source/common/components/light.cpp        source/common/components/movement.hpp
+        source/common/components/light.cpp        
+        source/common/components/movement.hpp
         source/common/components/movement.cpp
         source/common/components/component-deserializer.hpp
         source/common/components/sound.hpp
@@ -101,7 +102,8 @@ set(COMMON_SOURCES
         source/common/components/race.hpp
         source/common/components/race.cpp
         
-        source/common/systems/miniaudio.h        source/common/systems/forward-renderer.hpp
+        source/common/systems/miniaudio.h        
+        source/common/systems/forward-renderer.hpp
         source/common/systems/forward-renderer.cpp
         source/common/systems/ColliderSystem.hpp
         source/common/systems/free-camera-controller.hpp
@@ -176,9 +178,3 @@ if(WIN32)
         kernel32
     )
 endif()
-
-# Set target properties
-set_target_properties(GAME_APPLICATION PROPERTIES
-    OUTPUT_NAME "GAME_APPLICATION"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-)

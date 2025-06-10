@@ -345,10 +345,17 @@ namespace our
             }
             /////////////////////////// LIGHT COMPONENT ///////////////////////////
             command.mesh->draw();
-        }
-        if (debug == true)
+        }        if (debug == true)
         {
-            debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints + btIDebugDraw::DBG_DrawConstraints + btIDebugDraw::DBG_DrawConstraintLimits);
+            // Option 1: Show only wireframes (kart will appear white/gray, wheels blue)
+            debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawConstraints);
+            
+            // Option 2: Show wireframes + contact points (current - kart appears red due to contacts)
+            // debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints + btIDebugDraw::DBG_DrawConstraints + btIDebugDraw::DBG_DrawConstraintLimits);
+            
+            // Option 3: Show everything for full debug info
+            // debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints + btIDebugDraw::DBG_DrawConstraints + btIDebugDraw::DBG_DrawConstraintLimits + btIDebugDraw::DBG_DrawAabb);
+            
             dynWorld->debugDrawWorld();
             debugDrawer.glfw3_device_render(glm::value_ptr(VP));
         }

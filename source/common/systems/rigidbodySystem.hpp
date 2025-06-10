@@ -38,7 +38,7 @@ namespace our
                 throw std::runtime_error("Failed to load mesh: " + meshPath + " " + err);
             }
 
-            // Debug: log the number of vertices and triangles
+            // Debug: log the number of vertices and triangles            
             std::cout << "Loaded mesh with " << attrib.vertices.size() / 3 << " vertices and "
                       << shapes[0].mesh.indices.size() / 3 << " triangles" << std::endl;
             btTriangleMesh *triangleMesh = new btTriangleMesh();
@@ -257,9 +257,13 @@ namespace our
                     }
 
                     btVector3 velocity = rigidbodyComponent->rigidbody->getLinearVelocity();
-                    if (velocity.length() > 7.0f)
+                    // Limit maximum velocity to prevent excessive speeds (realistic car speed limit)
+                    float maxSpeed = 25.0f; // Approximately 90 km/h or 56 mph
+                    if (velocity.length() > maxSpeed)
                     {
-                        velocity = velocity.normalized() * 7.0f;
+                        // Normalize velocity and scale to maximum allowed speed
+                        velocity = velocity.normalized() * maxSpeed;
+                        // Apply the clamped velocity back to the rigid body
                         rigidbodyComponent->rigidbody->setLinearVelocity(velocity);
                     }
 
@@ -285,7 +289,7 @@ namespace our
                         // Level the car by setting the angular velocity to zero
                         rigidbodyComponent->rigidbody->setAngularVelocity(btVector3(0, 0, 0));
 
-                        dynWorld->setGravity(btVector3(0, -2, 0)); // Reduced gravity
+                        dynWorld->setGravity(btVector3(0, -9.81, 0)); // Reduced gravity
                     }
                     else
                     {
@@ -407,6 +411,7 @@ namespace our
 
                     rigidbodyComponent->position = glm::vec3(pos.x(), pos.y(), pos.z());
                     rigidbodyComponent->rotation = glm::vec3(yaw, roll, pitch);
+                    
                     entity->localTransform.position = rigidbodyComponent->position;
                     entity->localTransform.rotation = rigidbodyComponent->rotation;
                 }
