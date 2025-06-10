@@ -1,20 +1,41 @@
 cmake_minimum_required(VERSION 3.5)   # Selects the minimum version of CMake required to run this file
 project(GFX-LAB VERSION 0.1.0)          # Here we select the project name and version
 
+
+# Enable ccache if available for faster rebuilds
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif()
+
 # Here we select C++17 with all the standards required and all compiler-specific extensions disabled
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Windows-specific configurations
+# Compiler-specific configurations
 if(WIN32)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     add_definitions(-DNOMINMAX)
     add_definitions(-DWIN32_LEAN_AND_MEAN)
-    # Set runtime library to Multi-threaded DLL
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    
+    # Only set runtime library for MSVC, not MinGW
+    if(MSVC)
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        # GCC-specific optimizations
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unused-variable")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
+        
+        # Enable faster linking
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--build-id=none")
+        endif()
+    endif()
 endif()
 
 # These are the options we select for building GLFW as a library
@@ -24,6 +45,29 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)    # Don't build Examples
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)           # Don't build Installation Information
 set(GLFW_USE_HYBRID_HPG ON CACHE BOOL "" FORCE)     # Add variables to use High Performance Graphics Card if available
 add_subdirectory(vendor/glfw)                       # Build the GLFW project to use later as a library
+
+# FreeType configuration - disable optional dependencies to prevent rebuild issues
+set(FT_WITH_HARFBUZZ OFF CACHE BOOL "Disable HarfBuzz" FORCE)
+set(FT_WITH_ZLIB OFF CACHE BOOL "Disable ZLIB" FORCE)
+set(FT_WITH_PNG OFF CACHE BOOL "Disable PNG" FORCE)
+set(FT_WITH_BZip2 OFF CACHE BOOL "Disable BZip2" FORCE)
+set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable Brotli" FORCE)
+
+# Disable FreeType dependency searches to prevent warnings
+set(CMAKE_DISABLE_FIND_PACKAGE_HarfBuzz TRUE CACHE BOOL "Disable HarfBuzz search" FORCE)
+set(CMAKE_DISABLE_FIND_PACKAGE_ZLIB TRUE CACHE BOOL "Disable ZLIB search" FORCE)
+set(CMAKE_DISABLE_FIND_PACKAGE_PNG TRUE CACHE BOOL "Disable PNG search" FORCE)
+set(CMAKE_DISABLE_FIND_PACKAGE_BZip2 TRUE CACHE BOOL "Disable BZip2 search" FORCE)
+set(CMAKE_DISABLE_FIND_PACKAGE_PkgConfig TRUE CACHE BOOL "Disable PkgConfig search" FORCE)
+
+# Disable FreeType build tests and examples to speed up build
+set(FT_BUILD_TESTS OFF CACHE BOOL "Disable FreeType tests" FORCE)
+set(FT_BUILD_EXAMPLES OFF CACHE BOOL "Disable FreeType examples" FORCE)
+
+# Mark FreeType as a static library
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(vendor/freetype-2.10.0)            # Build FreeType from vendor folder
 
 # A variable with all the source files of GLAD
 set(GLAD_SOURCE vendor/glad/src/gl.c)
@@ -116,11 +160,16 @@ set(COMMON_SOURCES
         source/common/systems/race-system.cpp
         source/common/systems/hud-system.hpp
         source/common/systems/hud-system.cpp
+        source/common/text/text-renderer.hpp
+        source/common/text/text-renderer.cpp
+        source/common/text/font.hpp
+        source/common/text/font.cpp
 )
 
 # Define the directories in which to search for the included headers
 include_directories(
         source/common
+        source/common/text
         vendor/glfw/include
         vendor/glad/include
         vendor/glm
@@ -128,6 +177,7 @@ include_directories(
         vendor/imgui/imgui_impl
         vendor/utils
         vendor/bullet
+        vendor/freetype-2.10.0/include
 )
 
  
@@ -163,10 +213,18 @@ target_include_directories(GAME_APPLICATION PRIVATE
 # Link libraries
 target_link_libraries(GAME_APPLICATION 
     glfw
-    libBulletDynamics.a
-    libBulletCollision.a
-    libLinearMath.a
-    libBulletSoftBody.a
+    freetype
+)
+
+# Add Bullet physics library directory
+target_link_directories(GAME_APPLICATION PRIVATE ${CMAKE_SOURCE_DIR}/libs)
+
+# Link Bullet libraries (without .a extension for CMake)
+target_link_libraries(GAME_APPLICATION 
+    BulletDynamics
+    BulletCollision
+    LinearMath
+    BulletSoftBody
 )
 
 # Windows-specific libraries
