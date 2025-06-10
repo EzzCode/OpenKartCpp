@@ -11,7 +11,6 @@ endif()
 
 # Here we select C++17 with all the standards required and all compiler-specific extensions disabled
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Compiler-specific configurations
@@ -46,28 +45,14 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)           # Don't build Installation I
 set(GLFW_USE_HYBRID_HPG ON CACHE BOOL "" FORCE)     # Add variables to use High Performance Graphics Card if available
 add_subdirectory(vendor/glfw)                       # Build the GLFW project to use later as a library
 
-# FreeType configuration - disable optional dependencies to prevent rebuild issues
-set(FT_WITH_HARFBUZZ OFF CACHE BOOL "Disable HarfBuzz" FORCE)
-set(FT_WITH_ZLIB OFF CACHE BOOL "Disable ZLIB" FORCE)
-set(FT_WITH_PNG OFF CACHE BOOL "Disable PNG" FORCE)
-set(FT_WITH_BZip2 OFF CACHE BOOL "Disable BZip2" FORCE)
-set(FT_DISABLE_BROTLI ON CACHE BOOL "Disable Brotli" FORCE)
-
-# Disable FreeType dependency searches to prevent warnings
-set(CMAKE_DISABLE_FIND_PACKAGE_HarfBuzz TRUE CACHE BOOL "Disable HarfBuzz search" FORCE)
-set(CMAKE_DISABLE_FIND_PACKAGE_ZLIB TRUE CACHE BOOL "Disable ZLIB search" FORCE)
-set(CMAKE_DISABLE_FIND_PACKAGE_PNG TRUE CACHE BOOL "Disable PNG search" FORCE)
-set(CMAKE_DISABLE_FIND_PACKAGE_BZip2 TRUE CACHE BOOL "Disable BZip2 search" FORCE)
 set(CMAKE_DISABLE_FIND_PACKAGE_PkgConfig TRUE CACHE BOOL "Disable PkgConfig search" FORCE)
 
 # Disable FreeType build tests and examples to speed up build
 set(FT_BUILD_TESTS OFF CACHE BOOL "Disable FreeType tests" FORCE)
 set(FT_BUILD_EXAMPLES OFF CACHE BOOL "Disable FreeType examples" FORCE)
 
-# Mark FreeType as a static library
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
-add_subdirectory(vendor/freetype-2.10.0)            # Build FreeType from vendor folder
+add_subdirectory(vendor/freetype-2.13.3)            # Build FreeType from vendor folder
 
 # A variable with all the source files of GLAD
 set(GLAD_SOURCE vendor/glad/src/gl.c)
@@ -177,7 +162,7 @@ include_directories(
         vendor/imgui/imgui_impl
         vendor/utils
         vendor/bullet
-        vendor/freetype-2.10.0/include
+        vendor/freetype-2.13.3/include
 )
 
  
