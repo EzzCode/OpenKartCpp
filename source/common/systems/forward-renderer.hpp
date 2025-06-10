@@ -12,9 +12,23 @@
 #include <glad/gl.h>
 #include <vector>
 #include <algorithm>
+#include <map>
+#include <string>
+
+// FreeType headers
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 namespace our
 {
+    
+    // Structure to hold character information
+    struct Character {
+        GLuint textureID;  // ID handle of the glyph texture
+        glm::ivec2 size;   // Size of glyph
+        glm::ivec2 bearing; // Offset from baseline to left/top of glyph
+        GLuint advance;    // Offset to advance to next glyph
+    };
     
     // The render command stores command that tells the renderer that it should draw
     // the given mesh at the given localToWorld matrix using the given material
@@ -51,6 +65,18 @@ namespace our
 
 
         bool debug = false;
+
+        // Text rendering resources
+        FT_Library ft;
+        FT_Face face;
+        std::map<char, Character> characters;
+        GLuint textVAO, textVBO;
+        ShaderProgram* textShader;
+        
+        // Helper methods for text rendering
+        void initializeTextRendering();
+        void loadFont(const std::string& fontPath);
+        void destroyTextRendering();
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).
@@ -63,6 +89,9 @@ namespace our
         // This function should be called every frame to draw the given world
         void render(World* world);
 
+        // Text rendering methods
+        void renderText(const std::string& text, float x, float y, float scale, const glm::vec3& color);
+        void renderTextCentered(const std::string& text, float x, float y, float scale, const glm::vec3& color);
 
     };
 

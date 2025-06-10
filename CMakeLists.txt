@@ -145,10 +145,11 @@ set(COMMON_SOURCES
         source/common/systems/race-system.cpp
         source/common/systems/hud-system.hpp
         source/common/systems/hud-system.cpp
-        source/common/text/text-renderer.hpp
-        source/common/text/text-renderer.cpp
-        source/common/text/font.hpp
-        source/common/text/font.cpp
+        # Text rendering is implemented in ForwardRenderer, these files don't exist
+        # source/common/text/text-renderer.hpp
+        # source/common/text/text-renderer.cpp
+        # source/common/text/font.hpp
+        # source/common/text/font.cpp
 )
 
 # Define the directories in which to search for the included headers
