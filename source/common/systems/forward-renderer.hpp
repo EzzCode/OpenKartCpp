@@ -50,7 +50,7 @@ namespace our
         TexturedMaterial* postprocessMaterial;
 
 
-        bool debug = true;
+        bool debug = false;
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).

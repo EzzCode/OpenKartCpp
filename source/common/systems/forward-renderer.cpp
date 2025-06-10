@@ -5,11 +5,13 @@
 
 namespace our
 {
-
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json &config)
     {
         // First, we store the window size for later use
         this->windowSize = windowSize;
+
+        // Read debug configuration
+        debug = config.value("debug", false);
 
         // Then we check if there is a sky texture in the configuration
         if (config.contains("sky"))
