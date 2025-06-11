@@ -1,0 +1,22 @@
+{
+    "start-scene": "text-rendering-demo",
+    "window":
+    {
+        "title":"Text Rendering with Postprocessing Demo",
+        "size":{
+            "width":1280,
+            "height":720
+        },
+        "fullscreen": false
+    },
+    "screenshots":{
+        "directory": "screenshots/text-demo",
+        "requests": [
+            { "file": "text-with-postprocess.png", "frame": 1 }
+        ]
+    },    "scene": {
+        "renderer": {
+            "postprocess": "assets/shaders/postprocess/vignette.frag"
+        }
+    }
+}

@@ -130,6 +130,8 @@ set(COMMON_SOURCES
         source/common/components/sound.cpp
         source/common/components/race.hpp
         source/common/components/race.cpp
+        source/common/components/text-renderer.hpp
+        source/common/components/text-renderer.cpp
         
         source/common/systems/miniaudio.h        
         source/common/systems/forward-renderer.hpp
@@ -145,9 +147,8 @@ set(COMMON_SOURCES
         source/common/systems/race-system.cpp
         source/common/systems/hud-system.hpp
         source/common/systems/hud-system.cpp
-        # Text rendering is implemented in ForwardRenderer, these files don't exist
-        # source/common/text/text-renderer.hpp
-        # source/common/text/text-renderer.cpp
+        source/common/systems/text-render-system.hpp
+        source/common/systems/text-render-system.cpp
         # source/common/text/font.hpp
         # source/common/text/font.cpp
 )

@@ -1,550 +1,530 @@
 {
-    "start-scene" : "menu",
-    "window":
-    {
-        "title":"OpenKartCPP",
-        "size":{
-            "width":1280,
-            "height":720
-        },
-        "fullscreen": false
+  "start-scene": "menu",
+  "window": {
+    "title": "OpenKartCPP",
+    "size": {
+      "width": 1280,
+      "height": 720
     },
-    "vehicleTuning": {
-        "bullet3d": {
-            "suspensionStiffness": 30.0,
-            "suspensionCompression": 4.0,
-            "suspensionDamping": 3.5,
-            "maxSuspensionTravelCm": 150.0,
-            "frictionSlip": 15.0,
-            "maxSuspensionForce": 20000.0
+    "fullscreen": false
+  },
+  "vehicleTuning": {
+    "bullet3d": {
+      "suspensionStiffness": 30.0,
+      "suspensionCompression": 4.0,
+      "suspensionDamping": 3.5,
+      "maxSuspensionTravelCm": 150.0,
+      "frictionSlip": 15.0,
+      "maxSuspensionForce": 20000.0
+    },
+    "wheel": {
+      "restLength": 0.01,
+      "radius": 0.35,
+      "offsetX": 0.5,
+      "offsetZ": 0.45,
+      "frictionSlip": 10000.0,
+      "rollInfluence": 0.2
+    },
+    "rigidbody": {
+      "friction": 0.8,
+      "rollingFriction": 0.05,
+      "linearDamping": 0.1,
+      "angularDamping": 0.8
+    },
+    "physics": {
+      "maxSpeed": 40.0,
+      "engineForceRange": {
+        "min": -600.0,
+        "max": 1200.0
+      },
+      "brakeForce": 20.0,
+      "gravity": -12.0,
+      "airForce": 3.0
+    },
+    "steering": {
+      "increment": 0.01,
+      "returnFactor": 0.9,
+      "maxAngleAtLowSpeed": 0.5,
+      "maxAngleAtHighSpeed": 0.07,
+      "speedThreshold": 15.0
+    },
+    "input": {
+      "engineForceIncrement": 25.0,
+      "brakeForceDefault": 4.0
+    }
+  },
+  "scene": {
+    "renderer": {
+      "sky": "assets/textures/skyorig.png",
+      "debug": true,
+      "postprocess": "assets/shaders/postprocess/vignette.frag"
+    },
+    "assets": {
+      "shaders": {
+        "tinted": {
+          "vs": "assets/shaders/tinted.vert",
+          "fs": "assets/shaders/tinted.frag"
         },
-        "wheel": {
-            "restLength": 0.01,
-            "radius": 0.35,
-            "offsetX": 0.5,
-            "offsetZ": 0.45,
-            "frictionSlip": 10000.0,
-            "rollInfluence": 0.2
+        "textured": {
+          "vs": "assets/shaders/textured.vert",
+          "fs": "assets/shaders/textured.frag"
         },
-        "rigidbody": {
-            "friction": 0.8,
-            "rollingFriction": 0.05,
-            "linearDamping": 0.1,
-            "angularDamping": 0.8
-        },
-        "physics": {
-            "maxSpeed": 40.0,
-            "engineForceRange": {
-                "min": -600.0,
-                "max": 1200.0
-            },
-            "brakeForce": 20.0,
-            "gravity": -12.0,
-            "airForce": 3.0
-        },
-        "steering": {
-            "increment": 0.01,
-            "returnFactor": 0.9,
-            "maxAngleAtLowSpeed": 0.5,
-            "maxAngleAtHighSpeed": 0.07,
-            "speedThreshold": 15.0
-        },
-        "input": {
-            "engineForceIncrement": 25.0,
-            "brakeForceDefault": 4.0
+        "light": {
+          "vs": "assets/shaders/light.vert",
+          "fs": "assets/shaders/light.frag"
         }
-    },
-    "scene": {
-        "renderer":{
-            "sky": "assets/textures/skyorig.png",
-            "debug": true
-            //,"postprocess": "assets/shaders/postprocess/vignette.frag"
+      },
+      "textures": {
+        "moon": "assets/textures/moon.jpg",
+        "grass": "assets/textures/grass_ground_d.jpg",
+        "wood": "assets/textures/wood.jpg",
+        "glass": "assets/textures/glass-panels.png",
+        "monkey": "assets/textures/monkey.png",
+        "emission": "assets/textures/emissive.jpg",
+        "roughness": "assets/textures/roughness.jpg",
+        "specular": "assets/textures/specular.jpg",
+        "albedo": "assets/textures/albedo.jpg",
+        "ambient": "assets/textures/ambient_occlusion.jpg",
+        "plane-roughness": "assets/textures/Plane roughness.png",
+        "plane-emission": "assets/textures/A_black_image.jpg",
+        "mario": "assets/textures/mario.png",
+        "kart": "assets/textures/body_std_mr.png",
+        "track": "assets/textures/track.png",
+        "tire": "assets/textures/tire.png",
+        "track-shadow": "assets/textures/tc_shadowmap.png"
+      },
+      "meshes": {
+        "cube": "assets/models/cube.obj",
+        "monkey": "assets/models/monkey.obj",
+        "plane": "assets/models/plane.obj",
+        "sphere": "assets/models/sphere.obj",
+        "mario": "assets/models/mario.obj",
+        "kart": "assets/models/kart.obj",
+        "track": "assets/models/track.obj",
+        "tire": "assets/models/tire.obj"
+      },
+      "samplers": {
+        "default": {},
+        "pixelated": {
+          "MAG_FILTER": "GL_NEAREST"
+        }
+      },
+      "materials": {
+        "track": {
+          "type": "lit",
+          "shader": "light",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            },
+            "blending": {
+              "enabled": true,
+              "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA",
+              "sourceFactor": "GL_SRC_ALPHA",
+              "equation": "GL_FUNC_ADD",
+              "constantColor": [1, 1, 1, 1]
+            },
+            "depthMask": true
+          },
+          "transparent": true,
+          "texture": "track",
+          "sampler": "default",
+          "alphaThreshold": 0.01,
+          "roughness": "track",
+          "emission": "plane-emission",
+          "specular": "track",
+          "albedo": "track",
+          "ambientOcclusion": "track"
         },
-        "assets":{
-            "shaders":{
-                "tinted":{
-                    "vs":"assets/shaders/tinted.vert",
-                    "fs":"assets/shaders/tinted.frag"
-                },
-                "textured":{
-                    "vs":"assets/shaders/textured.vert",
-                    "fs":"assets/shaders/textured.frag"
-                },
-                "light":{
-                    "vs":"assets/shaders/light.vert",
-                    "fs":"assets/shaders/light.frag"
-                }
-            },
-            "textures":{
-                "moon": "assets/textures/moon.jpg",
-                "grass": "assets/textures/grass_ground_d.jpg",
-                "wood": "assets/textures/wood.jpg",
-                "glass": "assets/textures/glass-panels.png",
-                "monkey": "assets/textures/monkey.png",
-                "emission": "assets/textures/emissive.jpg",
-                "roughness": "assets/textures/roughness.jpg",
-                "specular": "assets/textures/specular.jpg",
-                "albedo": "assets/textures/albedo.jpg",
-                "ambient": "assets/textures/ambient_occlusion.jpg",
-                "plane-roughness": "assets/textures/Plane roughness.png",
-                "plane-emission": "assets/textures/A_black_image.jpg",
-                "mario": "assets/textures/mario.png",
-                "kart": "assets/textures/body_std_mr.png",
-                "track": "assets/textures/track.png",
-                "tire" : "assets/textures/tire.png",
-                "track-shadow": "assets/textures/tc_shadowmap.png"
-            },
-            "meshes":{
-                "cube": "assets/models/cube.obj",
-                "monkey": "assets/models/monkey.obj",
-                "plane": "assets/models/plane.obj",
-                "sphere": "assets/models/sphere.obj",
-                "mario": "assets/models/mario.obj",
-                "kart": "assets/models/kart.obj",
-                "track": "assets/models/track.obj",
-                "tire": "assets/models/tire.obj"
-            },
-            "samplers":{
-                "default":{},
-                "pixelated":{
-                    "MAG_FILTER": "GL_NEAREST"
-                }
-            },
-            "materials":{
-                "track": {
-                    "type": "lit",
-                    "shader": "light",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        },
-                        "blending":{
-                            "enabled": true,
-                            "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA",
-                            "sourceFactor": "GL_SRC_ALPHA",
-                            "equation": "GL_FUNC_ADD",
-                            "constantColor": [1, 1, 1, 1]
 
-                        },
-                        "depthMask": true
-                    },
-                    "transparent": true,
-                    "texture": "track",
-                    "sampler": "default",
-                    "alphaThreshold": 0.01,
-                    "roughness": "track",
-                    "emission": "plane-emission",
-                    "specular": "track",
-                    "albedo": "track",
-                    "ambientOcclusion": "track"
-                },
-            
-                "tire": {
-                    "type": "lit",
-                    "shader": "light",
-                    "pipelineState": {
-                        "faceCulling": {
-                            "enabled": false
-                        },
-                        "depthTesting": {
-                            "enabled": true
-                        }
-                    },
-
-                    "texture": "tire",
-                    "sampler": "default",
-                    "roughness": "tire",
-                    "emission": "plane-emission",
-                    "specular": "tire",
-                    "albedo": "tire",
-                    "ambientOcclusion": "tire"
-                },
-                "kart":{
-                    "type": "lit",
-                    "shader": "light",
-                    "pipelineState": {
-                        "faceCulling": {
-                            "enabled": false
-                        },
-                        "depthTesting": {
-                            "enabled": true
-                        }
-                    },
-
-                    "texture": "kart",
-                    "sampler": "default",
-                    "roughness": "kart",
-                    "emission": "plane-emission",
-                    "specular": "kart",
-                    "albedo": "kart",
-                    "ambientOcclusion": "kart"
-                },
-                "mario":{
-                    "type": "lit",
-                    "shader": "light",
-                    "pipelineState": {
-                        "faceCulling": {
-                            "enabled": false
-                        },
-                        "depthTesting": {
-                            "enabled": true
-                        }
-                    },
-                    "texture": "mario",
-                    "sampler": "default",
-                    "albedo":"mario",
-                    "ambientOcclusion": "mario",
-                    "emission": "plane-emission",
-                    "roughness": "mario",
-                    "specular": "mario"
-
-                },
-                "monkey":{
-                    "type": "lit",
-                    "shader": "light",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "texture": "monkey",
-                    "sampler": "default",
-                    "albedo":"albedo",
-                    "ambientOcclusion": "ambient",
-                    "emission": "emission",
-                    "roughness": "roughness",
-                    "specular": "specular"
-                },
-                "moon":{
-                    "type": "lit",
-                    "shader": "light",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "texture": "moon",
-                    "sampler": "default",
-                    "albedo":"moon",
-                    "ambientOcclusion": "moon",
-                    "emission": "moon",
-                    "roughness": "roughness",
-                    "specular": "specular"
-                }
+        "tire": {
+          "type": "lit",
+          "shader": "light",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
             }
-            
+          },
+
+          "texture": "tire",
+          "sampler": "default",
+          "roughness": "tire",
+          "emission": "plane-emission",
+          "specular": "tire",
+          "albedo": "tire",
+          "ambientOcclusion": "tire"
         },
-        "world":[
-            {
-                "position": [-5, 6, 50],
-                "rotation": [180, 0, 0],
-                "scale": [0.1, 0.1, 0.1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "kart",
-                        "material": "kart"
-                    },
-                    {
-                        "type": "Movement",
-                        "linearVelocity": [0, 0, 0]
-                    },
-                       {
-                        "type": "Rigidbody",
-                        "mesh":"kart",
-                        "input" : 1,
-                        "position": [-5, 6, 50],
-                        "rotation": [180, 0, 0],
-                        "scale": [0.1, 0.1, 0.1],
-                        "steeringAngle" :0,
-                        "mass":500
-                    },                    {
-                        "type": "race-player",
-                        "currentLap": 1,
-                        "maxLaps": 3,
-                        "nextCheckpoint": 1
-                    }
-                ],
-                "children": [
-                    {
-                        "position": [0, 3, 0],
-                        "rotation": [0, 0, 0],
-                        "scale": [0.65, 0.65, 0.65],
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "mario",
-                                "material": "mario"
-                            }
-                            
-                        ]
-                    },
-                    {
-                        "position": [5.7, 0.85, -3],
-                        "rotation": [0, 0, 0],
-                        "scale": [1.35, 1.35, 1.35],
-                        "name": "tireBack",
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "tire",
-                                "material": "tire"
-                            },
-                            {
-                                "type": "Movement",
-                                "angularVelocity": [90, 0, 0]
-                            }
-                        ]
-                    },
-                    {
-                        "position": [-5.7, 0.85, -3],
-                        "rotation": [0, 0, 0],
-                        "scale": [1.35, 1.35, 1.35],
-                        "name": "tireBack",
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "tire",
-                                "material": "tire"
-                            },
-                            {
-                                "type": "Movement",
-                                "angularVelocity": [90, 0, 0]
-                            }
-                        ]
-                    },
-                    {
-                        "position": [6, 0.85, 6],
-                        "rotation": [0, 0, 0],
-                        "scale": [1.15, 1.15, 1.15],
-                        "name": "tireFront",
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "tire",
-                                "material": "tire"
-                            },
-                            {
-                                "type": "Movement",
-                                "angularVelocity": [90, 0, 0]
-                            }
-                            
-                        ]
-                    },
-                    {
-                        "position": [-6, 0.85, 6],
-                        "rotation": [0, 0, 0],
-                        "scale": [1.15, 1.15, 1.15],
-                        "name": "tireFront",
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "tire",
-                                "material": "tire"
-                            },
-                            {
-                                "type": "Movement",
-                                "angularVelocity": [90, 0, 0]
-                            }
-                        ]
-                    },
-                    {
-                        "position"  : [0, 15, -24],
-                        "rotation"  : [-30, 180, 0],
-                        "components" : [
-                            {
-                                "type" : "Camera",
-                                "far": 150
-                            },
-                            {
-                                "type" : "Free Camera Controller"
-                            
-                            },
-                            {
-                                "type" : "Sound",
-                                "soundPath": "assets/sounds/1-06. Toad Circuit & Mario Circuit.mp3",
-                                "looped": true,
-                                "playing": false,
-                                "volume": 10
-                            }
-                        ]
-               
-                    }
-                ]
+        "kart": {
+          "type": "lit",
+          "shader": "light",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
             },
-        {
-            "position": [-5,20,-5],
-            "rotation": [0,0,0],
-            "scale": [1,1,1],
-            "components": [
-                {
-                    "type": "Light",
-                    "color": [
-                        1,
-                        1,
-                        1
-                    ],
-                    "attenuation": [
-                        1,
-                        0,
-                        0
-                    ],
-                    "direction": [
-                        0,
-                        -1,
-                        0
-                    ],
-                    "inner_cone_angle": "20",
-                    "outer_cone_angle": "30",
-                    "lightType": "point"
-                }
-        
-            ]
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+
+          "texture": "kart",
+          "sampler": "default",
+          "roughness": "kart",
+          "emission": "plane-emission",
+          "specular": "kart",
+          "albedo": "kart",
+          "ambientOcclusion": "kart"
         },
-        {
-            "position": [0, 50, 0],
-            "scale": [10, 10, 10],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "sphere",
-                    "material": "moon"
-                }
-                
-                
-            ]
+        "mario": {
+          "type": "lit",
+          "shader": "light",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "texture": "mario",
+          "sampler": "default",
+          "albedo": "mario",
+          "ambientOcclusion": "mario",
+          "emission": "plane-emission",
+          "roughness": "mario",
+          "specular": "mario"
         },
-        {
-            
-            "rotation": [-45, 0, 0],
-            "position": [0, 30, 0],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "monkey",
-                    "material": "monkey"
-                },
-                {
-                    "type": "Movement",
-                    "linearVelocity": [0, 0.1, 0],
-                    "angularVelocity": [0, 0, -45]
-                }
-            ]
-        
+        "monkey": {
+          "type": "lit",
+          "shader": "light",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [1, 1, 1, 1],
+          "texture": "monkey",
+          "sampler": "default",
+          "albedo": "albedo",
+          "ambientOcclusion": "ambient",
+          "emission": "emission",
+          "roughness": "roughness",
+          "specular": "specular"
         },
-        {
+        "moon": {
+          "type": "lit",
+          "shader": "light",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
+          "tint": [1, 1, 1, 1],
+          "texture": "moon",
+          "sampler": "default",
+          "albedo": "moon",
+          "ambientOcclusion": "moon",
+          "emission": "moon",
+          "roughness": "roughness",
+          "specular": "specular"
+        }
+      }
+    },
+    "world": [
+      {
+        "position": [-5, 6, 50],
+        "rotation": [180, 0, 0],
+        "scale": [0.1, 0.1, 0.1],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "kart",
+            "material": "kart"
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0, 0]
+          },
+          {
+            "type": "Rigidbody",
+            "mesh": "kart",
+            "input": 1,
+            "position": [-5, 6, 50],
+            "rotation": [180, 0, 0],
+            "scale": [0.1, 0.1, 0.1],
+            "steeringAngle": 0,
+            "mass": 500
+          },
+          {
+            "type": "race-player",
+            "currentLap": 1,
+            "maxLaps": 3,
+            "nextCheckpoint": 1
+          }
+        ],
+        "children": [
+          {
+            "position": [0, 3, 0],
+            "rotation": [0, 0, 0],
+            "scale": [0.65, 0.65, 0.65],
+            "components": [
+              {
+                "type": "Mesh Renderer",
+                "mesh": "mario",
+                "material": "mario"
+              }
+            ]
+          },
+          {
+            "position": [5.7, 0.85, -3],
+            "rotation": [0, 0, 0],
+            "scale": [1.35, 1.35, 1.35],
+            "name": "tireBack",
+            "components": [
+              {
+                "type": "Mesh Renderer",
+                "mesh": "tire",
+                "material": "tire"
+              },
+              {
+                "type": "Movement",
+                "angularVelocity": [90, 0, 0]
+              }
+            ]
+          },
+          {
+            "position": [-5.7, 0.85, -3],
+            "rotation": [0, 0, 0],
+            "scale": [1.35, 1.35, 1.35],
+            "name": "tireBack",
+            "components": [
+              {
+                "type": "Mesh Renderer",
+                "mesh": "tire",
+                "material": "tire"
+              },
+              {
+                "type": "Movement",
+                "angularVelocity": [90, 0, 0]
+              }
+            ]
+          },
+          {
+            "position": [6, 0.85, 6],
+            "rotation": [0, 0, 0],
+            "scale": [1.15, 1.15, 1.15],
+            "name": "tireFront",
+            "components": [
+              {
+                "type": "Mesh Renderer",
+                "mesh": "tire",
+                "material": "tire"
+              },
+              {
+                "type": "Movement",
+                "angularVelocity": [90, 0, 0]
+              }
+            ]
+          },
+          {
+            "position": [-6, 0.85, 6],
+            "rotation": [0, 0, 0],
+            "scale": [1.15, 1.15, 1.15],
+            "name": "tireFront",
+            "components": [
+              {
+                "type": "Mesh Renderer",
+                "mesh": "tire",
+                "material": "tire"
+              },
+              {
+                "type": "Movement",
+                "angularVelocity": [90, 0, 0]
+              }
+            ]
+          },
+          {
+            "position": [0, 15, -24],
+            "rotation": [-30, 180, 0],
+            "components": [
+              {
+                "type": "Camera",
+                "far": 150
+              },
+              {
+                "type": "Free Camera Controller"
+              },
+              {
+                "type": "Sound",
+                "soundPath": "assets/sounds/1-06. Toad Circuit & Mario Circuit.mp3",
+                "looped": true,
+                "playing": false,
+                "volume": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "position": [-5, 20, -5],
+        "rotation": [0, 0, 0],
+        "scale": [1, 1, 1],
+        "components": [
+          {
+            "type": "Light",
+            "color": [1, 1, 1],
+            "attenuation": [1, 0, 0],
+            "direction": [0, -1, 0],
+            "inner_cone_angle": "20",
+            "outer_cone_angle": "30",
+            "lightType": "point"
+          }
+        ]
+      },
+      {
+        "position": [0, 50, 0],
+        "scale": [10, 10, 10],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "sphere",
+            "material": "moon"
+          }
+        ]
+      },
+      {
+        "rotation": [-45, 0, 0],
+        "position": [0, 30, 0],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0.1, 0],
+            "angularVelocity": [0, 0, -45]
+          }
+        ]
+      },
+      {
+        "position": [0, 1, 0],
+        "rotation": [0, 0, 0],
+        "scale": [0.04, 0.04, 0.04],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "track",
+            "material": "track"
+          },
+          {
+            "type": "Rigidbody",
+            "mesh": "track",
+            "input": 0,
             "position": [0, 1, 0],
             "rotation": [0, 0, 0],
             "scale": [0.04, 0.04, 0.04],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "track",
-                    "material": "track"
-                },                {
-                    "type": "Rigidbody",
-                    "mesh":"track",
-                    "input" : 0,
-                    "position": [0, 1, 0],
-                    "rotation": [0, 0, 0],
-                    "scale": [0.04, 0.04, 0.04],
-                    "steeringAngle" :0,
-                    "mass":0
-                }
-                 
-            ]
-        },
-        {
-            "name": "race-manager",
-            "position": [0, 0, 0],
-            "components": [
-                {
-                    "type": "race-manager",
-                    "state": "WAITING",
-                    "countdownTime": 3.0,
-                    "totalCheckpoints": 4
-                }
-            ]
-        },        {
-            "name": "checkpoint-0",
-            "position": [-6, 7, 45],
-            "scale": [1.0, 1.0, 1.0],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "monkey",
-                    "material": "monkey"
-                },                {
-                    "type": "checkpoint",
-                    "checkpointIndex": 0,
-                    "radius": 30.0,
-                    "isFinishLine": true
-                }
-            ]
-        },{
-            "name": "checkpoint-1", 
-            "position": [-6, 7, -35],
-            "scale": [1.0, 1.0, 1.0],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "monkey",
-                    "material": "monkey"
-                },
-                {
-                    "type": "checkpoint",
-                    "checkpointIndex": 1,
-                    "radius": 25.0,
-                    "isFinishLine": false
-                }
-            ]
-        },
-        {
-            "name": "checkpoint-2",
-            "position": [55, 7, -25],
-            "scale": [1.0, 1.0, 1.0],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "monkey",
-                    "material": "monkey"
-                },
-                {
-                    "type": "checkpoint",
-                    "checkpointIndex": 2,
-                    "radius": 25.0,
-                    "isFinishLine": false
-                }
-            ]
-        },
-        {
-            "name": "checkpoint-3",
-            "position": [-30, 3, -10],
-            "scale": [1.0, 1.0, 1.0],
-            "components": [
-                {
-                    "type": "Mesh Renderer",
-                    "mesh": "monkey",
-                    "material": "monkey"
-                },                {
-                    "type": "checkpoint",
-                    "checkpointIndex": 3,
-                    "radius": 25.0,
-                    "isFinishLine": false
-                }
-            ]
-        }
+            "steeringAngle": 0,
+            "mass": 0
+          }
         ]
-    }
+      },
+      {
+        "name": "race-manager",
+        "position": [0, 0, 0],
+        "components": [
+          {
+            "type": "race-manager",
+            "state": "WAITING",
+            "countdownTime": 3.0,
+            "totalCheckpoints": 4
+          }
+        ]
+      },
+      {
+        "name": "checkpoint-0",
+        "position": [-6, 7, 45],
+        "scale": [1.0, 1.0, 1.0],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "checkpoint",
+            "checkpointIndex": 0,
+            "radius": 30.0,
+            "isFinishLine": true
+          }
+        ]
+      },
+      {
+        "name": "checkpoint-1",
+        "position": [-6, 7, -35],
+        "scale": [1.0, 1.0, 1.0],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "checkpoint",
+            "checkpointIndex": 1,
+            "radius": 25.0,
+            "isFinishLine": false
+          }
+        ]
+      },
+      {
+        "name": "checkpoint-2",
+        "position": [55, 7, -25],
+        "scale": [1.0, 1.0, 1.0],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "checkpoint",
+            "checkpointIndex": 2,
+            "radius": 25.0,
+            "isFinishLine": false
+          }
+        ]
+      },
+      {
+        "name": "checkpoint-3",
+        "position": [-30, 3, -10],
+        "scale": [1.0, 1.0, 1.0],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "checkpoint",
+            "checkpointIndex": 3,
+            "radius": 25.0,
+            "isFinishLine": false
+          }
+        ]
+      }
+    ]
+  }
 }

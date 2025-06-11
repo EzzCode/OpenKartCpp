@@ -6,7 +6,7 @@
 #include <systems/forward-renderer.hpp>
 #include <systems/free-camera-controller.hpp>
 #include <systems/rigidbodySystem.hpp>
-#include<systems/ColliderSystem.hpp>
+#include <systems/ColliderSystem.hpp>
 #include <systems/movement.hpp>
 #include <asset-loader.hpp>
 #include <systems/InputMovement.hpp>
@@ -15,6 +15,7 @@
 #include <systems/miniaudio.h>
 #include <systems/race-system.hpp>
 #include <systems/hud-system.hpp>
+#include <systems/text-render-system.hpp>
 
 #include <btBulletDynamicsCommon.h>
 // This state shows how to use the ECS framework and deserialization.
@@ -25,15 +26,17 @@ class Playstate : public our::State
     our::ForwardRenderer renderer;
     our::FreeCameraControllerSystem cameraController;
     our::MovementSystem movementSystem;
-    our::InputMovementSystem inputMovementSystem;    our::RigidbodySystem rigidbodySystem;
+    our::InputMovementSystem inputMovementSystem;
+    our::RigidbodySystem rigidbodySystem;
     our::soundSystem soundSystem;
     our::ColliderSystem colliderSystem;
     our::RaceSystem raceSystem;
     our::HUDSystem hudSystem;
+    our::TextRenderSystem textRenderSystem;
     btDiscreteDynamicsWorld *dynamicsWorld;
     void onInitialize() override
     {
-        
+
         // First of all, we get the scene configuration from the app config
         auto &config = getApp()->getConfig()["scene"];
         // If we have assets in the scene config, we deserialize them
@@ -77,52 +80,58 @@ class Playstate : public our::State
         our::Application *appPtr = getApp();
         cameraController.enter(appPtr);
         // InputMovementSystem disabled to avoid conflicts with RigidbodySystem
-        // inputMovementSystem.enter(appPtr);        
-        
+        // inputMovementSystem.enter(appPtr);
+
         // Pass vehicleTuning config section directly without copying - more efficient O(1) access
-        const auto& fullConfig = getApp()->getConfig();
+        const auto &fullConfig = getApp()->getConfig();
         auto vehicleTuningIt = fullConfig.find("vehicleTuning");
-        if (vehicleTuningIt != fullConfig.end()) {
+        if (vehicleTuningIt != fullConfig.end())
+        {
             rigidbodySystem.enter(dynamicsWorld, appPtr, *vehicleTuningIt);
-        } else {
+        }
+        else
+        {
             rigidbodySystem.enter(dynamicsWorld, appPtr);
         }
-        
-        soundSystem.initialize();
-          // Initialize race and HUD systems
+
+        soundSystem.initialize(); // Initialize race and HUD systems
         raceSystem.enter(appPtr);
-        
+
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.setWorld(dynamicsWorld);
         renderer.initialize(size, config["renderer"]);
-        
-        // Initialize HUD system with renderer reference
-        hudSystem.enter(appPtr, &raceSystem, &renderer);
+
+        // Initialize text rendering system
+        textRenderSystem.initialize(size);
+
+        // Initialize HUD system with text render system reference
+        hudSystem.enter(appPtr, &raceSystem, &textRenderSystem, &world);
     }
 
     void onDraw(double deltaTime) override
-    {        // Here, we just run a bunch of systems to control the world logic
+    {
+        // Here, we just run a bunch of systems to control the world logic
         // Update physics with optimized timestep for better performance
-    
+
         // Use adaptive timestep with more substeps for better performance and stability
         dynamicsWorld->stepSimulation((float)deltaTime, 10, 1.0f / 120.0f);
-        
+
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
-        
+
         // Only use RigidbodySystem for physics-based movement
         // InputMovementSystem is disabled to avoid conflicts
         rigidbodySystem.update(&world, (float)deltaTime);
         soundSystem.update(&world, (float)deltaTime);
         colliderSystem.update(&world, (float)deltaTime);
-        
+
         // Update race system
         raceSystem.update(&world, (float)deltaTime);
 
         // And finally we use the renderer system to draw the scene
         renderer.render(&world);
-        
+
         // Update and render HUD
         hudSystem.update(&world, (float)deltaTime);
         hudSystem.render();
@@ -135,11 +144,12 @@ class Playstate : public our::State
             getApp()->changeState("menu");
         }
     }
-
     void onDestroy() override
     {
         // We destroy the sound system
         soundSystem.destroy();
+        // Destroy text render system
+        textRenderSystem.destroy();
         // Don't forget to destroy the renderer
         renderer.destroy();
         // On exit, we call exit for the camera controller system to make sure that the mouse is unlocked
