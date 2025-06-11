@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)   # Selects the minimum version of CMake required to run this file
+cmake_minimum_required(VERSION 3.10)   # Selects the minimum version of CMake required to run this file
 project(GFX-LAB VERSION 0.1.0)          # Here we select the project name and version
 
 
