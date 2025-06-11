@@ -105,7 +105,7 @@ namespace our
             // so it is more performant to disable the depth mask
             postprocessMaterial->pipelineState.depthMask = false;
         }
-        if(debug == true)
+        if (debug == true)
         {
             debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe);
             dynWorld->setDebugDrawer(&debugDrawer);
@@ -142,7 +142,8 @@ namespace our
 
     void ForwardRenderer::destroy()
     {
-        if(debug) debugDrawer.glfw3_device_destroy();
+        if (debug)
+            debugDrawer.glfw3_device_destroy();
         // Delete all objects related to the sky
         if (skyMaterial)
         {
@@ -165,7 +166,7 @@ namespace our
         }
 
         // Clean up character textures
-        for (auto& pair : characters)
+        for (auto &pair : characters)
         {
             glDeleteTextures(1, &pair.second.textureID);
         }
@@ -281,9 +282,9 @@ namespace our
                 command.material->shader->set("VP", VP);
                 command.material->shader->set("M", command.localToWorld);
                 command.material->shader->set("M_IT", glm::transpose(glm::inverse(command.localToWorld)));
-                //command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
+                // command.material->shader->set("M_IT", glm::inverse(command.localToWorld));
 
-                for (int i = 0; i < lightCommands.size(); i++)
+                for (size_t i = 0; i < lightCommands.size(); i++)
                 {
                     LightComponent *light = lightCommands[i];
                     glm::vec3 light_position;
@@ -362,7 +363,7 @@ namespace our
                 command.material->shader->set("M", command.localToWorld);
                 command.material->shader->set("M_IT", glm::transpose(glm::inverse(command.localToWorld)));
 
-                for (int i = 0; i < lightCommands.size(); i++)
+                for (size_t i = 0; i < lightCommands.size(); i++)
                 {
                     LightComponent *light = lightCommands[i];
                     glm::vec3 light_position;
@@ -394,34 +395,32 @@ namespace our
             }
             /////////////////////////// LIGHT COMPONENT ///////////////////////////
             command.mesh->draw();
-        }        if (debug == true)
+        }
+        if (debug == true)
         {
             // Option 1: Show only wireframes (kart will appear white/gray, wheels blue)
             debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawConstraints);
-            
+
             // Option 2: Show wireframes + contact points (current - kart appears red due to contacts)
             // debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints + btIDebugDraw::DBG_DrawConstraints + btIDebugDraw::DBG_DrawConstraintLimits);
-            
+
             // Option 3: Show everything for full debug info
             // debugDrawer.setDebugMode(btIDebugDraw::DBG_DrawWireframe + btIDebugDraw::DBG_DrawContactPoints + btIDebugDraw::DBG_DrawConstraints + btIDebugDraw::DBG_DrawConstraintLimits + btIDebugDraw::DBG_DrawAabb);
-            
+
             dynWorld->debugDrawWorld();
             debugDrawer.glfw3_device_render(glm::value_ptr(VP));
         }
         // If there is a postprocess material, apply postprocessing
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         if (postprocessMaterial)
         {
-            // TODO: (Req 11) Return to the default framebuffer
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            // TODO: (Req 11) Setup the postprocess material and draw the fullscreen triangle
             postprocessMaterial->setup();
             glBindVertexArray(postProcessVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
     }
 
-    void ForwardRenderer::loadFont(const std::string& fontPath)
+    void ForwardRenderer::loadFont(const std::string &fontPath)
     {
         // Load font face
         if (FT_New_Face(ft, fontPath.c_str(), 0, &face))
@@ -439,7 +438,7 @@ namespace our
         // Load first 128 characters of ASCII set
         for (unsigned char c = 0; c < 128; c++)
         {
-            // Load character glyph 
+            // Load character glyph
             if (FT_Load_Char(face, c, FT_LOAD_RENDER))
             {
                 std::cerr << "ERROR::FREETYPE: Failed to load Glyph" << std::endl;
@@ -458,8 +457,7 @@ namespace our
                 0,
                 GL_RED,
                 GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-            );
+                face->glyph->bitmap.buffer);
             // Set texture options
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -470,8 +468,7 @@ namespace our
                 texture,
                 glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
                 glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-                static_cast<GLuint>(face->glyph->advance.x)
-            };
+                static_cast<GLuint>(face->glyph->advance.x)};
             characters.insert(std::pair<char, Character>(c, character));
         }
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -510,7 +507,7 @@ namespace our
     void ForwardRenderer::destroyTextRendering()
     {
         // Clean up character textures
-        for (auto& pair : characters)
+        for (auto &pair : characters)
         {
             glDeleteTextures(1, &pair.second.textureID);
         }
@@ -530,13 +527,23 @@ namespace our
         }
     }
 
-    void ForwardRenderer::renderText(const std::string& text, float x, float y, float scale, const glm::vec3& color)
+    void ForwardRenderer::renderText(const std::string &text, float x, float y, float scale, const glm::vec3 &color)
     {
+        // Ensure we're rendering to the default framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // Save current OpenGL state
+        GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
+        GLboolean blendEnabled = glIsEnabled(GL_BLEND);
+
+        // Disable depth testing for text rendering (text should appear on top)
+        glDisable(GL_DEPTH_TEST);
+
         // Enable blending for transparency
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Activate corresponding render state    
+        // Activate corresponding render state
         textShader->use();
         textShader->set("textColor", color);
 
@@ -549,7 +556,7 @@ namespace our
 
         // Iterate through all characters
         std::string::const_iterator c;
-        for (c = text.begin(); c != text.end(); c++) 
+        for (c = text.begin(); c != text.end(); c++)
         {
             Character ch = characters[*c];
 
@@ -558,34 +565,43 @@ namespace our
 
             float w = ch.size.x * scale;
             float h = ch.size.y * scale;
+
             // Update VBO for each character
             float vertices[6][4] = {
-                { xpos,     ypos + h,   0.0f, 0.0f },            
-                { xpos,     ypos,       0.0f, 1.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
+                {xpos, ypos + h, 0.0f, 0.0f},
+                {xpos, ypos, 0.0f, 1.0f},
+                {xpos + w, ypos, 1.0f, 1.0f},
 
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-                { xpos + w, ypos + h,   1.0f, 0.0f }           
-            };
+                {xpos, ypos + h, 0.0f, 0.0f},
+                {xpos + w, ypos, 1.0f, 1.0f},
+                {xpos + w, ypos + h, 1.0f, 0.0f}};
+
             // Render glyph texture over quad
             glBindTexture(GL_TEXTURE_2D, ch.textureID);
+
             // Update content of VBO memory
             glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // Be sure to use glBufferSubData and not glBufferData
-
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
+
             // Render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
+
             // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+            x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
         }
+
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_BLEND);
+
+        // Restore previous OpenGL state
+        if (!blendEnabled)
+            glDisable(GL_BLEND);
+        if (depthTestEnabled)
+            glEnable(GL_DEPTH_TEST);
     }
 
-    void ForwardRenderer::renderTextCentered(const std::string& text, float x, float y, float scale, const glm::vec3& color)
+    void ForwardRenderer::renderTextCentered(const std::string &text, float x, float y, float scale, const glm::vec3 &color)
     {
         // Calculate text width
         float textWidth = 0;
@@ -594,7 +610,7 @@ namespace our
             Character ch = characters[c];
             textWidth += (ch.advance >> 6) * scale;
         }
-        
+
         // Render text centered
         renderText(text, x - textWidth / 2.0f, y, scale, color);
     }
