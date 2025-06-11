@@ -42,6 +42,7 @@ namespace our
                 // Get the entity's world position
                 glm::mat4 worldMatrix = entity->getLocalToWorldMatrix();
                 glm::vec3 worldPosition = glm::vec3(worldMatrix[3]);
+                (void)worldPosition; // Suppress unused variable warning - may be used in future
 
                 // Convert world position to screen coordinates (for HUD, we can use the transform directly)
                 // For text rendering, we typically want screen-space coordinates
