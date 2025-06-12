@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 namespace our
 {
@@ -23,25 +24,26 @@ namespace our
         float leftX = 20.0f;
         float rightX = windowSize.x - 200.0f;
 
-        // Create HUD text entities
-        raceStateEntity = createTextEntity("", centerX, topY, 1.5f, glm::vec3(1.0f, 1.0f, 0.0f), true);
-        raceTimeEntity = createTextEntity("", leftX, topY - 50.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-        playerInfoEntity = createTextEntity("", leftX, topY - 90.0f, 0.8f, glm::vec3(1.0f, 1.0f, 1.0f));
-        controlsHintEntity = createTextEntity("ESC: Menu | Arrow Keys: Drive", leftX, 30.0f, 0.6f, glm::vec3(0.6f, 0.6f, 0.6f));
-        speedLabelEntity = createTextEntity("SPEED", rightX, 140.0f, 0.8f, glm::vec3(0.7f, 0.7f, 0.7f));
-        speedEntity = createTextEntity("", rightX, 100.0f, 1.2f, glm::vec3(1.0f, 1.0f, 1.0f));
-        countdownEntity = createTextEntity("", centerX, windowSize.y / 2.0f + 50.0f, 2.0f, glm::vec3(1.0f, 0.3f, 0.3f), true);
-        titleEntity = createTextEntity("", centerX, topY - 50.0f, 1.5f, glm::vec3(1.0f, 1.0f, 1.0f), true);
+        // Create HUD text entities with error handling
+        try {
+            raceStateEntity = createTextEntity("", centerX, topY, 1.0f, glm::vec3(1.0f, 1.0f, 0.0f), true);
+            raceTimeEntity = createTextEntity("", leftX, topY - 50.0f, 1.0f, glm::vec3(1.0f, 1.0f, 1.0f));
+            playerInfoEntity = createTextEntity("", leftX, topY - 90.0f, 0.8f, glm::vec3(1.0f, 1.0f, 1.0f));
+            controlsHintEntity = createTextEntity("ESC: Menu | Arrow Keys: Drive", leftX, 30.0f, 0.6f, glm::vec3(0.6f, 0.6f, 0.6f));
+            speedLabelEntity = createTextEntity("SPEED", rightX, 140.0f, 0.8f, glm::vec3(0.7f, 0.7f, 0.7f));
+            speedEntity = createTextEntity("", rightX, 100.0f, 1.2f, glm::vec3(1.0f, 1.0f, 1.0f));
+            countdownEntity = createTextEntity("", centerX, windowSize.y / 2.0f + 50.0f, 2.0f, glm::vec3(1.0f, 0.3f, 0.3f), true);
+            titleEntity = createTextEntity("", centerX, topY - 50.0f, 1.5f, glm::vec3(1.0f, 1.0f, 1.0f), true);
+        } catch (const std::exception& e) {
+            std::cerr << "Error creating HUD entities: " << e.what() << std::endl;
+        }
     }
 
     void HUDSystem::update(World *world, float deltaTime)
     {
-        // Update animation time for text effects
+        if (!world || !showHUD || !raceSystem) return;
+        
         animationTime += deltaTime;
-
-        if (!showHUD || !raceSystem)
-            return;
-
         updateHUDElements();
     }
 
@@ -50,21 +52,30 @@ namespace our
         if (!showHUD || !textRenderSystem || !world)
             return;
 
-        // The TextRenderSystem will handle rendering all TextRendererComponent entities
-        textRenderSystem->render(world);
+        try {
+            textRenderSystem->render(world);
+        } catch (const std::exception& e) {
+            std::cerr << "Error rendering HUD: " << e.what() << std::endl;
+        }
     }
 
     Entity *HUDSystem::createTextEntity(const std::string &text, float x, float y, float scale,
                                         const glm::vec3 &color, bool centered)
     {
-        if (!world)
-            return nullptr;
+        if (!world) return nullptr;
 
         Entity *entity = world->add();
+        if (!entity) return nullptr;
+
         entity->localTransform.position = glm::vec3(x, y, 0.0f);
         entity->localTransform.scale = glm::vec3(scale, scale, 1.0f);
 
         auto textRenderer = entity->addComponent<TextRendererComponent>();
+        if (!textRenderer) {
+            // Use safer cleanup - don't call markForRemoval if it doesn't exist
+            return nullptr;
+        }
+
         textRenderer->text = text;
         textRenderer->color = color;
         textRenderer->scale = scale;
@@ -76,8 +87,7 @@ namespace our
 
     void HUDSystem::updateTextEntity(Entity *entity, const std::string &text, const glm::vec3 &color)
     {
-        if (!entity)
-            return;
+        if (!entity) return;
 
         auto textRenderer = entity->getComponent<TextRendererComponent>();
         if (textRenderer)
@@ -89,28 +99,21 @@ namespace our
 
     void HUDSystem::updateHUDElements()
     {
-        if (!raceSystem)
-            return;
+        if (!raceSystem || !app) return;
 
         auto windowSize = app->getFrameBufferSize();
         float centerX = windowSize.x / 2.0f;
 
-        // Update race state text
+        // Update race state with safe string handling
         std::string stateText = raceSystem->getRaceStateString();
-        glm::vec3 stateColor = glm::vec3(1.0f, 1.0f, 0.0f); // Yellow for general state
+        glm::vec3 stateColor = glm::vec3(1.0f, 1.0f, 0.0f);
 
-        // Color-code different race states
-        if (stateText.find("Ready") != std::string::npos)
-        {
-            stateColor = glm::vec3(0.0f, 1.0f, 0.0f); // Green for ready
-        }
-        else if (stateText.find("Racing") != std::string::npos)
-        {
-            stateColor = glm::vec3(1.0f, 0.5f, 0.0f); // Orange for racing
-        }
-        else if (stateText.find("Completed") != std::string::npos)
-        {
-            stateColor = glm::vec3(0.0f, 1.0f, 1.0f); // Cyan for completed
+        if (stateText.find("Ready") != std::string::npos) {
+            stateColor = glm::vec3(0.0f, 1.0f, 0.0f);
+        } else if (stateText.find("Racing") != std::string::npos) {
+            stateColor = glm::vec3(1.0f, 0.5f, 0.0f);
+        } else if (stateText.find("Completed") != std::string::npos) {
+            stateColor = glm::vec3(0.0f, 1.0f, 1.0f);
         }
 
         updateTextEntity(raceStateEntity, stateText, stateColor);
@@ -216,7 +219,7 @@ namespace our
         {
             // Animated countdown effect with pulsing
             glm::vec3 countdownColor = getPulsingColor(animationTime * 2.0f, glm::vec3(1.0f, 0.3f, 0.3f));
-            float scale = 2.0f + 0.5f * sin(animationTime * 4.0f);
+            float scale = 1.0f + 0.5f * sin(animationTime * 4.0f);
 
             updateTextEntity(countdownEntity, "GET READY!", countdownColor);
 
@@ -248,7 +251,7 @@ namespace our
                 0.5f + 0.5f * sin(animationTime * 2.0f + 2.094f),
                 0.5f + 0.5f * sin(animationTime * 2.0f + 4.188f));
 
-            float titleScale = 1.5f + 0.2f * sin(animationTime * 3.0f);
+            float titleScale = 0.5f + 0.2f * sin(animationTime * 3.0f);
 
             updateTextEntity(titleEntity, "RACING CHAMPIONSHIP", titleColor);
 

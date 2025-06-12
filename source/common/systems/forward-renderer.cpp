@@ -364,23 +364,29 @@ namespace our
             debugDrawer.glfw3_device_render(glm::value_ptr(VP));
         }
         // If there is a postprocess material, apply postprocessing
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
         if (postprocessMaterial)
         {
+            // Bind default framebuffer for postprocessing output
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            
+            // Clear any existing viewport settings
+            glViewport(0, 0, windowSize.x, windowSize.y);
+            
             postprocessMaterial->setup();
             glBindVertexArray(postProcessVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            // Reset OpenGL state after postprocessing to ensure text rendering works
-            glBindVertexArray(0);
-            glUseProgram(0);
         }
         else
         {
-            // When postprocessing is disabled, minimal state reset is sufficient
-            // Text rendering will handle its own state management
-            glBindVertexArray(0);
+            // Ensure we're rendering to the default framebuffer
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
+
+        // Essential state cleanup for text rendering
+        glBindVertexArray(0);
+        glUseProgram(0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
 }

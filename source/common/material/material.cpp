@@ -140,15 +140,24 @@ namespace our
     TextMaterial::TextMaterial()
     {
         // Set default text rendering pipeline state
-        pipelineState.depthTesting.enabled = false; // Disable depth testing for text (render on top)
-        pipelineState.blending.enabled = true;      // Enable blending for transparency
+        pipelineState.depthTesting.enabled = false;
+        pipelineState.blending.enabled = true;
         pipelineState.blending.sourceFactor = GL_SRC_ALPHA;
         pipelineState.blending.destinationFactor = GL_ONE_MINUS_SRC_ALPHA;
-        pipelineState.depthMask = false; // Don't write to depth buffer
+        pipelineState.depthMask = false;
 
-        textColor = glm::vec3(1.0f, 1.0f, 1.0f); // Default white text
-        transparent = true;                      // Text is transparent
+        textColor = glm::vec3(1.0f, 1.0f, 1.0f);
+        transparent = true;
 
+        // Initialize OpenGL objects to 0
+        textVAO = 0;
+        textVBO = 0;
+        ft = nullptr;
+        face = nullptr;
+        shader = nullptr;
+        windowSize = glm::ivec2(800, 600); // Default size
+
+        // Initialize text rendering automatically
         initializeTextRendering();
     }
 
@@ -156,41 +165,58 @@ namespace our
     {
         destroyTextRendering();
     }
+
     void TextMaterial::setup() const
     {
-        Material::setup(); // Set up pipeline state and use shader
+        if (!shader)
+            return;
+
+        Material::setup();
         shader->set("textColor", textColor);
 
-        // Set up projection matrix for 2D rendering
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(windowSize.x),
                                           0.0f, static_cast<float>(windowSize.y));
         shader->set("projection", projection);
-
-        // Set the texture uniform
         shader->set("text", 0);
     }
 
     void TextMaterial::initializeTextRendering()
     {
-        // Initialize FreeType
         if (FT_Init_FreeType(&ft))
         {
             std::cerr << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
             return;
         }
 
-        // Configure VAO/VBO for texture quads
+        // Clean up existing OpenGL objects if they exist
+        if (textVAO != 0)
+        {
+            glDeleteVertexArrays(1, &textVAO);
+        }
+        if (textVBO != 0)
+        {
+            glDeleteBuffers(1, &textVBO);
+        }
+
         glGenVertexArrays(1, &textVAO);
         glGenBuffers(1, &textVBO);
+
         glBindVertexArray(textVAO);
         glBindBuffer(GL_ARRAY_BUFFER, textVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+
+        // Unbind to prevent accidental modification
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        // Create text shader
+        // Clean up existing shader
+        if (shader)
+        {
+            delete shader;
+        }
+
         shader = new ShaderProgram();
         shader->attach("assets/shaders/text.vert", GL_VERTEX_SHADER);
         shader->attach("assets/shaders/text.frag", GL_FRAGMENT_SHADER);
@@ -199,7 +225,19 @@ namespace our
 
     bool TextMaterial::loadFont(const std::string &fontPath)
     {
-        // Load font face
+        if (!ft)
+        {
+            std::cerr << "ERROR::FREETYPE: FreeType not initialized" << std::endl;
+            return false;
+        }
+
+        // Clean up existing face
+        if (face)
+        {
+            FT_Done_Face(face);
+            face = nullptr;
+        }
+
         if (FT_New_Face(ft, fontPath.c_str(), 0, &face))
         {
             std::cerr << "ERROR::FREETYPE: Failed to load font: " << fontPath << std::endl;
@@ -207,52 +245,41 @@ namespace our
         }
 
         currentFont = fontPath;
-
-        // Set size to load glyphs as
         FT_Set_Pixel_Sizes(face, 0, 48);
 
-        // Disable byte-alignment restriction
+        // Store current pixel store state
+        GLint currentUnpackAlignment;
+        glGetIntegerv(GL_UNPACK_ALIGNMENT, &currentUnpackAlignment);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        // Clear existing characters
+        // Clean up existing character textures
         for (auto &pair : characters)
         {
             glDeleteTextures(1, &pair.second.textureID);
         }
         characters.clear();
 
-        // Load first 128 characters of ASCII set
+        // Load ASCII characters
         for (unsigned char c = 0; c < 128; c++)
         {
-            // Load character glyph
             if (FT_Load_Char(face, c, FT_LOAD_RENDER))
             {
-                std::cerr << "ERROR::FREETYPE: Failed to load Glyph" << std::endl;
+                std::cerr << "ERROR::FREETYPE: Failed to load Glyph " << (int)c << std::endl;
                 continue;
             }
 
-            // Generate texture
             GLuint texture;
             glGenTextures(1, &texture);
             glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED,
+                         face->glyph->bitmap.width, face->glyph->bitmap.rows,
+                         0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer);
 
-            // Set texture options
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            // Store character for later use
             Character character = {
                 texture,
                 glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
@@ -260,36 +287,38 @@ namespace our
                 static_cast<GLuint>(face->glyph->advance.x)};
             characters.insert(std::pair<char, Character>(c, character));
         }
+
+        // Restore pixel store state
+        glPixelStorei(GL_UNPACK_ALIGNMENT, currentUnpackAlignment);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         return true;
     }
+
     void TextMaterial::renderText(const std::string &text, float x, float y, float scale, const glm::vec3 &color)
     {
+        if (!shader || textVAO == 0 || characters.empty())
+            return;
+
         // Save current OpenGL state
         GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
         GLboolean blendEnabled = glIsEnabled(GL_BLEND);
-        GLint blendSrcRGB, blendDstRGB, blendSrcAlpha, blendDstAlpha;
+        GLint blendSrcRGB, blendDstRGB;
         glGetIntegerv(GL_BLEND_SRC_RGB, &blendSrcRGB);
         glGetIntegerv(GL_BLEND_DST_RGB, &blendDstRGB);
-        glGetIntegerv(GL_BLEND_SRC_ALPHA, &blendSrcAlpha);
-        glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDstAlpha);
-
-        GLint currentProgram, currentVAO, currentTexture;
+        GLint currentProgram, currentVAO, currentTexture, currentArrayBuffer;
         glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
         glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &currentTexture);
+        glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &currentArrayBuffer);
 
         // Set up text rendering state
-        glDisable(GL_DEPTH_TEST); // Disable depth testing for text (render on top)
-        glEnable(GL_BLEND);       // Enable blending for transparency
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Use shader and set uniforms
         shader->use();
         shader->set("textColor", color);
-
-        // Set up projection matrix for 2D rendering
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(windowSize.x),
                                           0.0f, static_cast<float>(windowSize.y));
         shader->set("projection", projection);
@@ -297,67 +326,69 @@ namespace our
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(textVAO);
 
-        // Iterate through all characters
-        for (auto c = text.begin(); c != text.end(); c++)
+        for (char c : text)
         {
-            Character ch = characters[*c];
+            auto it = characters.find(c);
+            if (it == characters.end())
+                continue;
+
+            Character ch = it->second;
 
             float xpos = x + ch.bearing.x * scale;
             float ypos = y - (ch.size.y - ch.bearing.y) * scale;
-
             float w = ch.size.x * scale;
             float h = ch.size.y * scale;
 
-            // Update VBO for each character
             float vertices[6][4] = {
                 {xpos, ypos + h, 0.0f, 0.0f},
                 {xpos, ypos, 0.0f, 1.0f},
                 {xpos + w, ypos, 1.0f, 1.0f},
-
                 {xpos, ypos + h, 0.0f, 0.0f},
                 {xpos + w, ypos, 1.0f, 1.0f},
                 {xpos + w, ypos + h, 1.0f, 0.0f}};
 
-            // Render glyph texture over quad
             glBindTexture(GL_TEXTURE_2D, ch.textureID);
-
-            // Update content of VBO memory
             glBindBuffer(GL_ARRAY_BUFFER, textVBO);
             glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            // Render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            // Advance cursors for next glyph
             x += (ch.advance >> 6) * scale;
         }
+
+        // Restore OpenGL state
+        glBindBuffer(GL_ARRAY_BUFFER, currentArrayBuffer);
         glBindVertexArray(currentVAO);
         glBindTexture(GL_TEXTURE_2D, currentTexture);
+        glUseProgram(currentProgram);
 
-        // Restore previous OpenGL state
+        // Restore blending state
         if (!blendEnabled)
             glDisable(GL_BLEND);
-        else
+        else {
+            GLint blendSrcAlpha, blendDstAlpha;
+            glGetIntegerv(GL_BLEND_SRC_ALPHA, &blendSrcAlpha);
+            glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDstAlpha);
             glBlendFuncSeparate(blendSrcRGB, blendDstRGB, blendSrcAlpha, blendDstAlpha);
+        }
+
+        // Restore depth test state
         if (depthTestEnabled)
             glEnable(GL_DEPTH_TEST);
-
-        // Always restore the previous program, even if it was 0 (unbound)
-        glUseProgram(currentProgram);
+        else
+            glDisable(GL_DEPTH_TEST);
     }
 
     void TextMaterial::renderTextCentered(const std::string &text, float x, float y, float scale, const glm::vec3 &color)
     {
-        // Calculate text width
         float textWidth = 0;
         for (char c : text)
         {
-            Character ch = characters[c];
-            textWidth += (ch.advance >> 6) * scale;
+            auto it = characters.find(c);
+            if (it != characters.end())
+            {
+                textWidth += (it->second.advance >> 6) * scale;
+            }
         }
-
-        // Render text centered
         renderText(text, x - textWidth / 2.0f, y, scale, color);
     }
 
@@ -372,13 +403,27 @@ namespace our
 
         // Clean up FreeType
         if (face)
+        {
             FT_Done_Face(face);
+            face = nullptr;
+        }
         if (ft)
+        {
             FT_Done_FreeType(ft);
+            ft = nullptr;
+        }
 
         // Clean up OpenGL resources
-        glDeleteVertexArrays(1, &textVAO);
-        glDeleteBuffers(1, &textVBO);
+        if (textVAO != 0)
+        {
+            glDeleteVertexArrays(1, &textVAO);
+            textVAO = 0;
+        }
+        if (textVBO != 0)
+        {
+            glDeleteBuffers(1, &textVBO);
+            textVBO = 0;
+        }
         if (shader)
         {
             delete shader;

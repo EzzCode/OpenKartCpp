@@ -56,8 +56,8 @@
   "scene": {
     "renderer": {
       "sky": "assets/textures/skyorig.png",
-      "debug": true,
-      "postprocess": "assets/shaders/postprocess/vignette.frag"
+      "debug": false
+      //,"postprocess": "assets/shaders/postprocess/vignette.frag"
     },
     "assets": {
       "shaders": {
@@ -370,7 +370,7 @@
                 "soundPath": "assets/sounds/1-06. Toad Circuit & Mario Circuit.mp3",
                 "looped": true,
                 "playing": false,
-                "volume": 10
+                "volume": 1
               }
             ]
           }
@@ -468,6 +468,11 @@
             "checkpointIndex": 0,
             "radius": 30.0,
             "isFinishLine": true
+          },
+        {
+            "type": "Movement",
+            "linearVelocity": [0, 0.0, 0],
+            "angularVelocity": [0, 45, 0]
           }
         ]
       },
@@ -486,6 +491,11 @@
             "checkpointIndex": 1,
             "radius": 25.0,
             "isFinishLine": false
+          },
+        {
+            "type": "Movement",
+            "linearVelocity": [0, 0.0, 0],
+            "angularVelocity": [0, 45, 0]
           }
         ]
       },
@@ -504,6 +514,11 @@
             "checkpointIndex": 2,
             "radius": 25.0,
             "isFinishLine": false
+          },
+        {
+            "type": "Movement",
+            "linearVelocity": [0, 0.0, 0],
+            "angularVelocity": [0, 45, 0]
           }
         ]
       },
@@ -522,6 +537,11 @@
             "checkpointIndex": 3,
             "radius": 25.0,
             "isFinishLine": false
+          },
+        {
+            "type": "Movement",
+            "linearVelocity": [0, 0.0, 0],
+            "angularVelocity": [0, 45, 0]
           }
         ]
       }
