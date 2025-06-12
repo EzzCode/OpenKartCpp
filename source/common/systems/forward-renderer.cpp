@@ -415,10 +415,10 @@ namespace our
         {
             // Bind default framebuffer for postprocessing output
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            
+
             // Clear any existing viewport settings
             glViewport(0, 0, windowSize.x, windowSize.y);
-            
+
             postprocessMaterial->setup();
             glBindVertexArray(postProcessVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -534,34 +534,39 @@ namespace our
 
     void ForwardRenderer::renderText(const std::string &text, float x, float y, float scale, const glm::vec3 &color)
     {
-        // Ensure we're rendering to the default framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
         // Save current OpenGL state
         GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
         GLboolean blendEnabled = glIsEnabled(GL_BLEND);
+        GLint blendSrcRGB, blendDstRGB, blendSrcAlpha, blendDstAlpha;
+        glGetIntegerv(GL_BLEND_SRC_RGB, &blendSrcRGB);
+        glGetIntegerv(GL_BLEND_DST_RGB, &blendDstRGB);
+        glGetIntegerv(GL_BLEND_SRC_ALPHA, &blendSrcAlpha);
+        glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDstAlpha);
 
-        // Disable depth testing for text rendering (text should appear on top)
-        glDisable(GL_DEPTH_TEST);
+        GLint currentProgram, currentVAO, currentTexture;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+        glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &currentTexture);
 
-        // Enable blending for transparency
-        glEnable(GL_BLEND);
+        // Set up text rendering state
+        glDisable(GL_DEPTH_TEST); // Disable depth testing for text (render on top)
+        glEnable(GL_BLEND);       // Enable blending for transparency
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // Activate corresponding render state
+        // Use shader and set uniforms
         textShader->use();
         textShader->set("textColor", color);
 
         // Set up projection matrix for 2D rendering
-        glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(windowSize.x), 0.0f, static_cast<float>(windowSize.y));
+        glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(windowSize.x),
+                                          0.0f, static_cast<float>(windowSize.y));
         textShader->set("projection", projection);
 
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(textVAO);
 
         // Iterate through all characters
-        std::string::const_iterator c;
-        for (c = text.begin(); c != text.end(); c++)
+        for (auto c = text.begin(); c != text.end(); c++)
         {
             Character ch = characters[*c];
 
@@ -592,9 +597,22 @@ namespace our
             // Render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
 
-            // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-            x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+            // Advance cursors for next glyph
+            x += (ch.advance >> 6) * scale;
         }
+        glBindVertexArray(currentVAO);
+        glBindTexture(GL_TEXTURE_2D, currentTexture);
+
+        // Restore previous OpenGL state
+        if (!blendEnabled)
+            glDisable(GL_BLEND);
+        else
+            glBlendFuncSeparate(blendSrcRGB, blendDstRGB, blendSrcAlpha, blendDstAlpha);
+        if (depthTestEnabled)
+            glEnable(GL_DEPTH_TEST);
+
+        // Always restore the previous program, even if it was 0 (unbound)
+        glUseProgram(currentProgram);
 
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -619,5 +637,4 @@ namespace our
         // Render text centered
         renderText(text, x - textWidth / 2.0f, y, scale, color);
     }
-
 }
