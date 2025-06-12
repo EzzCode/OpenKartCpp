@@ -262,6 +262,11 @@ namespace our
             // TODO: (Req 11) bind the framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
         }
+        else
+        {
+            // Ensure we're using the default framebuffer when no postprocessing
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
 
         // TODO: (Req 9) Clear the color and depth buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -413,18 +418,20 @@ namespace our
         // If there is a postprocess material, apply postprocessing
         if (postprocessMaterial)
         {
-            // Bind default framebuffer for postprocessing output
+            // First, bind the default framebuffer for postprocessing output
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            // Clear any existing viewport settings
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
+            // Set viewport to full window
             glViewport(0, 0, windowSize.x, windowSize.y);
-
+            
+            // Render postprocess quad
             postprocessMaterial->setup();
             glBindVertexArray(postProcessVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, 3);
+            glBindVertexArray(0);
         }
     }
-
     void ForwardRenderer::loadFont(const std::string &fontPath)
     {
         // Load font face
@@ -543,10 +550,14 @@ namespace our
         glGetIntegerv(GL_BLEND_SRC_ALPHA, &blendSrcAlpha);
         glGetIntegerv(GL_BLEND_DST_ALPHA, &blendDstAlpha);
 
-        GLint currentProgram, currentVAO, currentTexture;
+        GLint currentProgram, currentVAO, currentTexture, currentFramebuffer;
         glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
         glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
         glGetIntegerv(GL_TEXTURE_BINDING_2D, &currentTexture);
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebuffer);
+
+        // FORCE text to render to default framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // Set up text rendering state
         glDisable(GL_DEPTH_TEST); // Disable depth testing for text (render on top)
@@ -556,6 +567,7 @@ namespace our
         // Use shader and set uniforms
         textShader->use();
         textShader->set("textColor", color);
+        textShader->set("text", 0); // Explicitly set sampler to texture unit 0
 
         // Set up projection matrix for 2D rendering
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(windowSize.x),
@@ -600,28 +612,27 @@ namespace our
             // Advance cursors for next glyph
             x += (ch.advance >> 6) * scale;
         }
+
+        // Restore OpenGL state
         glBindVertexArray(currentVAO);
         glBindTexture(GL_TEXTURE_2D, currentTexture);
-
-        // Restore previous OpenGL state
-        if (!blendEnabled)
-            glDisable(GL_BLEND);
-        else
-            glBlendFuncSeparate(blendSrcRGB, blendDstRGB, blendSrcAlpha, blendDstAlpha);
-        if (depthTestEnabled)
-            glEnable(GL_DEPTH_TEST);
-
-        // Always restore the previous program, even if it was 0 (unbound)
         glUseProgram(currentProgram);
-
-        glBindVertexArray(0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        // Restore previous OpenGL state
-        if (!blendEnabled)
+        glBindFramebuffer(GL_FRAMEBUFFER, currentFramebuffer);
+        
+        // Restore blending state
+        if (blendEnabled) {
+            glEnable(GL_BLEND);
+            glBlendFuncSeparate(blendSrcRGB, blendDstRGB, blendSrcAlpha, blendDstAlpha);
+        } else {
             glDisable(GL_BLEND);
-        if (depthTestEnabled)
+        }
+        
+        // Restore depth testing state
+        if (depthTestEnabled) {
             glEnable(GL_DEPTH_TEST);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+        }
     }
 
     void ForwardRenderer::renderTextCentered(const std::string &text, float x, float y, float scale, const glm::vec3 &color)

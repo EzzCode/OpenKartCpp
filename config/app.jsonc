@@ -57,7 +57,7 @@
     "renderer": {
       "sky": "assets/textures/skyorig.png",
       "debug": false
-      ,"postprocess": "assets/shaders/postprocess/vignette.frag"
+      ,"postprocess": "assets/shaders/postprocess/nothing.frag"
     },
     "assets": {
       "shaders": {
