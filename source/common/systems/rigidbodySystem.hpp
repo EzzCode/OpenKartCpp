@@ -24,7 +24,7 @@ namespace our
     class RigidbodySystem
     {
     private:
-        btDiscreteDynamicsWorld *dynWorld = nullptr;        // Vehicle tuning parameters loaded from config
+        btDiscreteDynamicsWorld *dynWorld = nullptr; // Vehicle tuning parameters loaded from config
         struct VehicleTuningConfig
         {
             // Bullet3D btVehicleTuning parameters
@@ -69,13 +69,17 @@ namespace our
             float brakeForceDefault = 2.0f;
 
             // Deserialize vehicle tuning configuration from JSON
-            void deserialize(const nlohmann::json& data) {
-                if (!data.is_object()) return;
-                
+            void deserialize(const nlohmann::json &data)
+            {
+                if (!data.is_object())
+                    return;
+
                 // Load Bullet3D parameters
-                if (data.contains("bullet3d")) {
-                    const auto& b3d = data["bullet3d"];
-                    if (b3d.is_object()) {
+                if (data.contains("bullet3d"))
+                {
+                    const auto &b3d = data["bullet3d"];
+                    if (b3d.is_object())
+                    {
                         suspensionStiffness = b3d.value("suspensionStiffness", suspensionStiffness);
                         suspensionCompression = b3d.value("suspensionCompression", suspensionCompression);
                         suspensionDamping = b3d.value("suspensionDamping", suspensionDamping);
@@ -84,11 +88,13 @@ namespace our
                         maxSuspensionForce = b3d.value("maxSuspensionForce", maxSuspensionForce);
                     }
                 }
-                
+
                 // Load wheel parameters
-                if (data.contains("wheel")) {
-                    const auto& wheel = data["wheel"];
-                    if (wheel.is_object()) {
+                if (data.contains("wheel"))
+                {
+                    const auto &wheel = data["wheel"];
+                    if (wheel.is_object())
+                    {
                         wheelRestLength = wheel.value("restLength", wheelRestLength);
                         wheelRadius = wheel.value("radius", wheelRadius);
                         wheelOffsetX = wheel.value("offsetX", wheelOffsetX);
@@ -97,26 +103,32 @@ namespace our
                         wheelRollInfluence = wheel.value("rollInfluence", wheelRollInfluence);
                     }
                 }
-                
+
                 // Load rigidbody parameters
-                if (data.contains("rigidbody")) {
-                    const auto& rb = data["rigidbody"];
-                    if (rb.is_object()) {
+                if (data.contains("rigidbody"))
+                {
+                    const auto &rb = data["rigidbody"];
+                    if (rb.is_object())
+                    {
                         rigidbodyFriction = rb.value("friction", rigidbodyFriction);
                         rigidbodyRollingFriction = rb.value("rollingFriction", rigidbodyRollingFriction);
                         linearDamping = rb.value("linearDamping", linearDamping);
                         angularDamping = rb.value("angularDamping", angularDamping);
                     }
                 }
-                
+
                 // Load physics parameters
-                if (data.contains("physics")) {
-                    const auto& physics = data["physics"];
-                    if (physics.is_object()) {
+                if (data.contains("physics"))
+                {
+                    const auto &physics = data["physics"];
+                    if (physics.is_object())
+                    {
                         maxSpeed = physics.value("maxSpeed", maxSpeed);
-                        if (physics.contains("engineForceRange")) {
-                            const auto& range = physics["engineForceRange"];
-                            if (range.is_object()) {
+                        if (physics.contains("engineForceRange"))
+                        {
+                            const auto &range = physics["engineForceRange"];
+                            if (range.is_object())
+                            {
                                 engineForceMin = range.value("min", engineForceMin);
                                 engineForceMax = range.value("max", engineForceMax);
                             }
@@ -126,11 +138,13 @@ namespace our
                         airForce = physics.value("airForce", airForce);
                     }
                 }
-                
+
                 // Load steering parameters
-                if (data.contains("steering")) {
-                    const auto& steering = data["steering"];
-                    if (steering.is_object()) {
+                if (data.contains("steering"))
+                {
+                    const auto &steering = data["steering"];
+                    if (steering.is_object())
+                    {
                         steeringIncrement = steering.value("increment", steeringIncrement);
                         steeringReturnFactor = steering.value("returnFactor", steeringReturnFactor);
                         maxAngleAtLowSpeed = steering.value("maxAngleAtLowSpeed", maxAngleAtLowSpeed);
@@ -138,11 +152,13 @@ namespace our
                         speedThreshold = steering.value("speedThreshold", speedThreshold);
                     }
                 }
-                
+
                 // Load input parameters
-                if (data.contains("input")) {
-                    const auto& input = data["input"];
-                    if (input.is_object()) {
+                if (data.contains("input"))
+                {
+                    const auto &input = data["input"];
+                    if (input.is_object())
+                    {
                         engineForceIncrement = input.value("engineForceIncrement", engineForceIncrement);
                         brakeForceDefault = input.value("brakeForceDefault", brakeForceDefault);
                     }
@@ -241,35 +257,42 @@ namespace our
             dynWorld->addRigidBody(body);
 
             return body;
-        }    public:
+        }
+
+    public:
         Application *app;
         RaceSystem *raceSystem = nullptr;
-        void enter(btDiscreteDynamicsWorld *world, Application *app, const nlohmann::json& vehicleTuningConfig = nlohmann::json{})
+        void enter(btDiscreteDynamicsWorld *world, Application *app, const nlohmann::json &vehicleTuningConfig = nlohmann::json{})
         {
             this->app = app;
             if (!world)
                 throw std::invalid_argument("Dynamic world cannot be null");
             dynWorld = world;
-            
+
             // Debug: Print vehicle tuning config status
-            std::cout << "RigidbodySystem::enter() - VehicleTuning config provided: " 
+            std::cout << "RigidbodySystem::enter() - VehicleTuning config provided: "
                       << (!vehicleTuningConfig.is_null() && vehicleTuningConfig.is_object() ? "YES" : "NO") << std::endl;
-            
+
             // Load vehicle tuning configuration if provided
-            if (!vehicleTuningConfig.is_null() && vehicleTuningConfig.is_object()) {
+            if (!vehicleTuningConfig.is_null() && vehicleTuningConfig.is_object())
+            {
                 std::cout << "Loading vehicleTuning configuration..." << std::endl;
                 vehicleTuning.deserialize(vehicleTuningConfig);
-                
+
                 // Debug: Print some loaded values to verify
-                std::cout << "Loaded values - Max Speed: " << vehicleTuning.maxSpeed 
-                          << ", Suspension Stiffness: " << vehicleTuning.suspensionStiffness 
+                std::cout << "Loaded values - Max Speed: " << vehicleTuning.maxSpeed
+                          << ", Suspension Stiffness: " << vehicleTuning.suspensionStiffness
                           << ", Engine Force Max: " << vehicleTuning.engineForceMax << std::endl;
-            } else {                std::cout << "Using default vehicleTuning values - Max Speed: " << vehicleTuning.maxSpeed 
+            }
+            else
+            {
+                std::cout << "Using default vehicleTuning values - Max Speed: " << vehicleTuning.maxSpeed
                           << ", Suspension Stiffness: " << vehicleTuning.suspensionStiffness << std::endl;
             }
         }
-        
-        void setRaceSystem(RaceSystem* raceSystem) {
+
+        void setRaceSystem(RaceSystem *raceSystem)
+        {
             this->raceSystem = raceSystem;
         }
         //(y: yaw, x: pitch, z: roll)
@@ -340,7 +363,7 @@ namespace our
                         path,
                         btVector3(rigidbodyComponent->position.x, rigidbodyComponent->position.y, rigidbodyComponent->position.z),
                         btVector3(rigidbodyComponent->rotation.x, rigidbodyComponent->rotation.y, rigidbodyComponent->rotation.z),
-                        rigidbodyComponent->mass,                        btVector3(rigidbodyComponent->scale.x, rigidbodyComponent->scale.y, rigidbodyComponent->scale.z));
+                        rigidbodyComponent->mass, btVector3(rigidbodyComponent->scale.x, rigidbodyComponent->scale.y, rigidbodyComponent->scale.z));
 
                     // Set friction for the rigid body using config values
                     rigidbodyComponent->rigidbody->setFriction(vehicleTuning.rigidbodyFriction);
@@ -352,7 +375,7 @@ namespace our
                 {
                     // Create RaycastVehicle once
                     if (!rigidbodyComponent->vehicle)
-                    {                        // Vehicle tuning and setup using config values
+                    { // Vehicle tuning and setup using config values
                         btRaycastVehicle::btVehicleTuning tuning;
                         tuning.m_suspensionStiffness = vehicleTuning.suspensionStiffness;
                         tuning.m_suspensionCompression = vehicleTuning.suspensionCompression;
@@ -360,7 +383,7 @@ namespace our
                         tuning.m_maxSuspensionTravelCm = vehicleTuning.maxSuspensionTravelCm;
                         tuning.m_frictionSlip = vehicleTuning.frictionSlip;
                         tuning.m_maxSuspensionForce = vehicleTuning.maxSuspensionForce;
-                        
+
                         // Configure vehicle rigid body
                         rigidbodyComponent->rigidbody->setActivationState(DISABLE_DEACTIVATION);
                         // Add angular and linear damping using config values
@@ -371,7 +394,8 @@ namespace our
                         rigidbodyComponent->vehicle->setCoordinateSystem(0, 1, 2);
 
                         btBoxShape *boxShape = static_cast<btBoxShape *>(rigidbodyComponent->rigidbody->getCollisionShape());
-                        btVector3 chassisHalfExtents = boxShape->getHalfExtentsWithoutMargin();                        btVector3 wheelDir(0, -1, 0);
+                        btVector3 chassisHalfExtents = boxShape->getHalfExtentsWithoutMargin();
+                        btVector3 wheelDir(0, -1, 0);
                         btVector3 wheelAxle(-1, 0, 0);
                         float restLength = vehicleTuning.wheelRestLength;
                         float radius = vehicleTuning.wheelRadius;
@@ -382,7 +406,7 @@ namespace our
                             btVector3(chassisHalfExtents.x() + radius + offsetX, 0, chassisHalfExtents.z() + radius + offsetZ),
                             btVector3(-chassisHalfExtents.x() - radius - offsetX, 0, chassisHalfExtents.z() + radius + offsetZ),
                             btVector3(chassisHalfExtents.x() + radius + offsetX, 0, -chassisHalfExtents.z() - radius - offsetZ),
-                            btVector3(-chassisHalfExtents.x() - radius - offsetX, 0, -chassisHalfExtents.z() - radius - offsetZ)};                        // Add wheels with friction using config values
+                            btVector3(-chassisHalfExtents.x() - radius - offsetX, 0, -chassisHalfExtents.z() - radius - offsetZ)}; // Add wheels with friction using config values
                         for (int i = 0; i < 4; i++)
                         {
                             bool isFrontWheel = (i < 2);
@@ -418,7 +442,7 @@ namespace our
                             isInAir = false;
                             break;
                         }
-                    }                    // Reduce gravity if the vehicle is in the air using config values
+                    } // Reduce gravity if the vehicle is in the air using config values
                     if (isInAir)
                     {
                         rigidbodyComponent->rigidbody->applyCentralForce(btVector3(0, vehicleTuning.airForce, 0));
@@ -428,20 +452,22 @@ namespace our
 
                         dynWorld->setGravity(btVector3(0, vehicleTuning.gravity, 0));
                     }
-                    else                    {
+                    else
+                    {
                         dynWorld->setGravity(btVector3(0, vehicleTuning.gravity, 0));
                     }
-                    
+
                     // Check if input should be disabled based on race state
                     bool inputDisabled = raceSystem && raceSystem->isInputDisabled();
-                    
+
                     if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_UP))
                     {
                         engineForce += vehicleTuning.engineForceIncrement;
                     }
                     else if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_DOWN))
                     {
-                        engineForce -= vehicleTuning.engineForceIncrement;                    }
+                        engineForce -= vehicleTuning.engineForceIncrement;
+                    }
                     else
                     {
                         engineForce = 0.0f;
@@ -464,15 +490,15 @@ namespace our
                     }
 
                     // Adjust steering angle limits based on velocity using config values
-                    float maxSteeringAngle = glm::mix(vehicleTuning.maxAngleAtLowSpeed, vehicleTuning.maxAngleAtHighSpeed, 
-                                                     glm::clamp(velocity.length() / vehicleTuning.speedThreshold, 0.0f, 1.0f));
+                    float maxSteeringAngle = glm::mix(vehicleTuning.maxAngleAtLowSpeed, vehicleTuning.maxAngleAtHighSpeed,
+                                                      glm::clamp(velocity.length() / vehicleTuning.speedThreshold, 0.0f, 1.0f));
                     steeringValue = glm::clamp(steeringValue, -maxSteeringAngle, maxSteeringAngle);
 
                     if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_SPACE))
                     {
                         brakeForce = vehicleTuning.brakeForce;
                     }
-                                        for (int i = 0; i < rigidbodyComponent->vehicle->getNumWheels(); i++)
+                    for (int i = 0; i < rigidbodyComponent->vehicle->getNumWheels(); i++)
                     {
                         engineForce = glm::clamp(engineForce, vehicleTuning.engineForceMin, vehicleTuning.engineForceMax);
                         rigidbodyComponent->vehicle->applyEngineForce(engineForce, i);

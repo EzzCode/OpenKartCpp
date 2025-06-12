@@ -32,14 +32,13 @@ namespace our
         }
         void update(World *world, float deltaTime)
         {
-       
 
             for (auto entity : world->getEntities())
             {
                 ColliderComponent *collider = entity->getComponent<ColliderComponent>();
                 if (collider)
                 {
-              
+
                     collider->collidingWith.clear();
                     collider->center = entity->localTransform.position;
                 }
@@ -49,9 +48,6 @@ namespace our
                 ColliderComponent *colliderA = entityA->getComponent<ColliderComponent>();
                 if (!colliderA)
                     continue;
-                
-                    
-                
 
                 for (auto entityB : world->getEntities())
                 {
@@ -64,7 +60,7 @@ namespace our
 
                     if (checkCollision(colliderA, colliderB))
                     {
-                        
+
                         colliderA->collidingWith.push_back(colliderB->id);
                         colliderB->collidingWith.push_back(colliderA->id);
                     }

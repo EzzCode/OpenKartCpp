@@ -7,36 +7,43 @@
 #include <iomanip>
 #include <iostream>
 
-namespace our {
+namespace our
+{
 
     // ========== Public Methods ==========
 
-    void HUDSystem::enter(Application* app, RaceSystem* raceSystem, ForwardRenderer* renderer) {
+    void HUDSystem::enter(Application *app, RaceSystem *raceSystem, ForwardRenderer *renderer)
+    {
         this->app = app;
         this->raceSystem = raceSystem;
         this->renderer = renderer;
     }
 
-    void HUDSystem::update(World* world, float deltaTime) {
+    void HUDSystem::update(World *world, float deltaTime)
+    {
         animationTime += deltaTime;
     }
 
-    void HUDSystem::render() {
-        if (!showHUD || !raceSystem || !renderer) return;
+    void HUDSystem::render()
+    {
+        if (!showHUD || !raceSystem || !renderer)
+            return;
 
         renderRaceInfo();
         renderSpeedometer();
 
-        if (!raceSystem->isRaceActive() && !raceSystem->isRaceCompleted()) {
+        if (!raceSystem->isRaceActive() && !raceSystem->isRaceCompleted())
+        {
             renderCountdownTimer();
         }
-
     }
 
     // ========== Core Rendering Helpers ==========
 
-    void HUDSystem::renderRaceInfo() {
-        if (!raceSystem) return;
+    void HUDSystem::renderRaceInfo()
+    {
+        if (!raceSystem)
+            return;
 
         auto windowSize = app->getFrameBufferSize();
         float centerX = windowSize.x / 2.0f;
@@ -54,13 +61,16 @@ namespace our {
 
         renderer->renderTextCentered(stateText, centerX, topY - 20, 1.2f, stateColor);
 
-        if (raceSystem->isRaceActive() || raceSystem->isRaceCompleted()) {
+        if (raceSystem->isRaceActive() || raceSystem->isRaceCompleted())
+        {
             renderRaceStats();
         }
     }
 
-    void HUDSystem::renderRaceStats() {
-        if (!raceSystem) return;
+    void HUDSystem::renderRaceStats()
+    {
+        if (!raceSystem)
+            return;
 
         auto windowSize = app->getFrameBufferSize();
         float leftX = 20.0f;
@@ -77,7 +87,8 @@ namespace our {
         playerInfo << "Lap: " << raceSystem->getCurrentLap()
                    << " | Position: " << raceSystem->getPosition();
 
-        if (raceSystem->getBestLapTime() > 0.0f) {
+        if (raceSystem->getBestLapTime() > 0.0f)
+        {
             playerInfo << " | Best Lap: " << std::fixed << std::setprecision(2)
                        << raceSystem->getBestLapTime() << "s";
         }
@@ -85,9 +96,12 @@ namespace our {
         glm::vec3 positionColor = glm::vec3(1.0f);
         int position = raceSystem->getPosition();
 
-        if (position == 1) positionColor = glm::vec3(0.0f, 1.0f, 0.0f);      // Green
-        else if (position == 2) positionColor = glm::vec3(1.0f, 1.0f, 0.0f); // Yellow
-        else if (position == 3) positionColor = glm::vec3(1.0f, 0.5f, 0.0f); // Orange
+        if (position == 1)
+            positionColor = glm::vec3(0.0f, 1.0f, 0.0f); // Green
+        else if (position == 2)
+            positionColor = glm::vec3(1.0f, 1.0f, 0.0f); // Yellow
+        else if (position == 3)
+            positionColor = glm::vec3(1.0f, 0.5f, 0.0f); // Orange
 
         renderer->renderText(playerInfo.str(), leftX, yOffset, 0.8f, positionColor);
 
@@ -95,8 +109,10 @@ namespace our {
         renderer->renderText("ESC: Menu | Arrow Keys: Drive", leftX, 30.0f, 0.6f, glm::vec3(0.6f));
     }
 
-    void HUDSystem::renderSpeedometer() {
-        if (!raceSystem || !raceSystem->isRaceActive()) return;
+    void HUDSystem::renderSpeedometer()
+    {
+        if (!raceSystem || !raceSystem->isRaceActive())
+            return;
 
         auto windowSize = app->getFrameBufferSize();
         float rightX = windowSize.x - 200.0f;
@@ -114,7 +130,8 @@ namespace our {
         renderer->renderText(speedStream.str(), rightX, bottomY, 0.9f, speedColor);
     }
 
-    void HUDSystem::renderCountdownTimer() {
+    void HUDSystem::renderCountdownTimer()
+    {
         auto windowSize = app->getFrameBufferSize();
         float centerX = windowSize.x / 2.0f;
         float centerY = windowSize.y / 2.0f;
@@ -125,30 +142,37 @@ namespace our {
         renderer->renderTextCentered("GET READY!", centerX, centerY + 50.0f, scale, countdownColor);
     }
 
-
     // ========== Utility Methods ==========
 
-    glm::vec3 HUDSystem::getSpeedColor(float speed, float maxSpeed) {
+    glm::vec3 HUDSystem::getSpeedColor(float speed, float maxSpeed)
+    {
         float ratio = speed / maxSpeed;
-        if (ratio < 0.3f) return glm::vec3(0.0f, 1.0f, 0.0f);  // Green
-        if (ratio < 0.7f) return glm::vec3(1.0f, 1.0f, 0.0f);  // Yellow
-        return glm::vec3(1.0f, 0.0f, 0.0f);                    // Red
+        if (ratio < 0.3f)
+            return glm::vec3(0.0f, 1.0f, 0.0f); // Green
+        if (ratio < 0.7f)
+            return glm::vec3(1.0f, 1.0f, 0.0f); // Yellow
+        return glm::vec3(1.0f, 0.0f, 0.0f);     // Red
     }
 
-    glm::vec3 HUDSystem::getPulsingColor(float time, const glm::vec3& baseColor) {
+    glm::vec3 HUDSystem::getPulsingColor(float time, const glm::vec3 &baseColor)
+    {
         float pulse = 0.5f + 0.5f * sin(time);
         return baseColor * pulse + glm::vec3(0.3f) * (1.0f - pulse);
     }
 
-    std::string HUDSystem::formatTime(float timeInSeconds) {
+    std::string HUDSystem::formatTime(float timeInSeconds)
+    {
         int minutes = static_cast<int>(timeInSeconds / 60.0f);
         float seconds = timeInSeconds - minutes * 60.0f;
 
         std::stringstream stream;
-        if (minutes > 0) {
+        if (minutes > 0)
+        {
             stream << minutes << ":"
                    << std::fixed << std::setprecision(2) << std::setw(5) << std::setfill('0') << seconds;
-        } else {
+        }
+        else
+        {
             stream << std::fixed << std::setprecision(2) << seconds << "s";
         }
         return stream.str();

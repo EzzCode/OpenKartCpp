@@ -50,10 +50,8 @@ namespace our
             {
                 checkpoints.push_back(entity);
             }
-        }
-        // Debug output for first frame
-        static bool firstTime = true;
-        if (firstTime)
+        } // Debug output for first frame and initialization
+        if (!systemInitialized)
         {
             std::cout << "Race System: Found " << players.size() << " players and " << checkpoints.size() << " checkpoints" << std::endl;
 
@@ -67,7 +65,16 @@ namespace our
                           << " isFinishLine: " << checkpoint->isFinishLine << std::endl;
             }
 
-            firstTime = false;
+            systemInitialized = true;
+            initializationTime = glfwGetTime();
+            std::cout << "Race System: Waiting 3 seconds before allowing race start. Press R to start manually." << std::endl;
+        }
+
+        // Auto-start race after 3 seconds, or allow manual start with R key
+        if (manager->state == RaceManagerComponent::RaceState::WAITING &&
+            glfwGetTime() - initializationTime > 3.0f)
+        {
+            std::cout << "Race System: Auto-starting race after initialization delay." << std::endl;
             startRace();
         }
 
@@ -160,18 +167,16 @@ namespace our
             break;
         }
     }
-
     void RaceSystem::updateCountdown(RaceManagerComponent *manager, float dt)
     {
         manager->countdownTime -= dt;
 
-        static int lastCountdown = 4;
         int currentCountdown = (int)ceil(manager->countdownTime);
 
-        if (currentCountdown != lastCountdown && currentCountdown > 0)
+        if (currentCountdown != lastCountdownValue && currentCountdown > 0)
         {
             std::cout << currentCountdown << "..." << std::endl;
-            lastCountdown = currentCountdown;
+            lastCountdownValue = currentCountdown;
         }
 
         if (manager->countdownTime <= 0.0f)
@@ -180,6 +185,7 @@ namespace our
             manager->raceStartTime = glfwGetTime();
             manager->raceStarted = true;
             std::cout << "GO!" << std::endl;
+            lastCountdownValue = 4; // Reset for next countdown
         }
     }
     void RaceSystem::checkPlayerProgress(Entity *player, RacePlayerComponent *racePlayer)
@@ -310,7 +316,8 @@ namespace our
                 racePlayer->position = i + 1;
             }
         }
-    }    void RaceSystem::updateCheckpointVisibility()
+    }
+    void RaceSystem::updateCheckpointVisibility()
     {
         // Hide all checkpoints first
         for (auto checkpoint : checkpoints)
@@ -346,7 +353,6 @@ namespace our
         glm::vec3 checkpointPos = checkpoints[racePlayer->nextCheckpoint]->localTransform.position;
         return glm::length(playerPos - checkpointPos);
     }
-
     void RaceSystem::startRace()
     {
         if (raceManager)
@@ -355,10 +361,11 @@ namespace our
             if (manager)
             {
                 manager->state = RaceManagerComponent::RaceState::COUNTDOWN;
+                manager->countdownTime = 3.0f; // Reset countdown time when starting
+                lastCountdownValue = 4;        // Reset countdown display state
             }
         }
     }
-
     void RaceSystem::resetRace()
     {
         if (raceManager)
@@ -368,8 +375,13 @@ namespace our
             {
                 manager->state = RaceManagerComponent::RaceState::WAITING;
                 manager->raceStarted = false;
+                manager->countdownTime = 3.0f; // Reset countdown timer
             }
         }
+        // Reset initialization timer for proper restart behavior
+        initializationTime = glfwGetTime();
+        lastCountdownValue = 4; // Reset countdown display state
+
         // Reset all players
         for (auto player : players)
         {
@@ -383,6 +395,49 @@ namespace our
                 racePlayer->raceCompleted = false;
                 racePlayer->position = 1;
                 racePlayer->lapTimes.clear();
+            }
+            // Reset player position to initial spawn location
+            auto rigidbody = player->getComponent<RigidbodyComponent>();
+            if (rigidbody)
+            {
+                // Use the initial spawn position stored during deserialization
+                glm::vec3 spawnPosition = rigidbody->initialPosition;
+                glm::vec3 spawnRotation = rigidbody->initialRotation;
+
+                // Reset entity transform to initial position
+                player->localTransform.position = spawnPosition;
+                player->localTransform.rotation = spawnRotation;
+
+                // Reset physics body if it exists
+                if (rigidbody->rigidbody)
+                {
+                    // Convert to Bullet's coordinate system
+                    btVector3 initialPos(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+                    // Create new transform with initial position and rotation
+                    btTransform resetTransform;
+                    resetTransform.setRotation(btQuaternion(spawnRotation.x, spawnRotation.y, spawnRotation.z));
+                    resetTransform.setOrigin(initialPos);
+
+                    // Reset the rigidbody position and clear velocities
+                    rigidbody->rigidbody->setWorldTransform(resetTransform);
+                    rigidbody->rigidbody->setLinearVelocity(btVector3(0, 0, 0));
+                    rigidbody->rigidbody->setAngularVelocity(btVector3(0, 0, 0));
+                    rigidbody->rigidbody->clearForces();
+
+                    // Also update the motion state
+                    btMotionState *motionState = rigidbody->rigidbody->getMotionState();
+                    if (motionState)
+                    {
+                        motionState->setWorldTransform(resetTransform);
+                    }
+
+                    // Update the rigidbody component's position to match the initial spawn
+                    rigidbody->position = spawnPosition;
+                    rigidbody->rotation = spawnRotation;
+
+                    std::cout << "Reset player position to spawn coordinates (" << spawnPosition.x
+                              << ", " << spawnPosition.y << ", " << spawnPosition.z << ")" << std::endl;
+                }
             }
         }
 
@@ -457,15 +512,20 @@ namespace our
             return "Race Finished! Press R to Restart";
         default:
             return "Unknown State";
-        }    }
+        }
+    }
     bool RaceSystem::isInputDisabled() const
     {
         if (!raceManager)
-            return true;
+            return true; // Disable input if no race manager found
         auto manager = raceManager->getComponent<RaceManagerComponent>();
         if (!manager)
-            return true;
-        return !(manager->raceStarted || manager->state == RaceManagerComponent::RaceState::RACING);
+            return true; // Disable input if no race manager component found
+
+        // Disable input when race is in WAITING, COUNTDOWN, or FINISHED state
+        return manager->state == RaceManagerComponent::RaceState::WAITING ||
+               manager->state == RaceManagerComponent::RaceState::COUNTDOWN ||
+               manager->state == RaceManagerComponent::RaceState::FINISHED;
     }
     int RaceSystem::getSpeed() const
     {

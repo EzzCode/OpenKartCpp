@@ -269,7 +269,7 @@
           {
             "type": "race-player",
             "currentLap": 1,
-            "maxLaps": 3,
+            "maxLaps": 1,
             "nextCheckpoint": 1
           }
         ],
@@ -448,7 +448,7 @@
           {
             "type": "race-manager",
             "state": "WAITING",
-            "countdownTime": 10.0,
+            "countdownTime": 3.0,
             "totalCheckpoints": 4
           }
         ]

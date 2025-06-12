@@ -197,7 +197,7 @@ namespace our
         {
             // If we hadn't found a camera yet, we look for a camera in this entity
             if (!camera)
-                camera = entity->getComponent<CameraComponent>();            // If this entity has a mesh renderer component
+                camera = entity->getComponent<CameraComponent>(); // If this entity has a mesh renderer component
             if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
             {
                 // Check if this entity has a checkpoint component and if it's visible
@@ -207,7 +207,7 @@ namespace our
                     if (!checkpoint->isVisible)
                         continue;
                 }
-                
+
                 // We construct a command from it
                 RenderCommand command;
                 command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();
@@ -428,10 +428,10 @@ namespace our
             // First, bind the default framebuffer for postprocessing output
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
+
             // Set viewport to full window
             glViewport(0, 0, windowSize.x, windowSize.y);
-            
+
             // Render postprocess quad
             postprocessMaterial->setup();
             glBindVertexArray(postProcessVertexArray);
@@ -625,19 +625,25 @@ namespace our
         glBindTexture(GL_TEXTURE_2D, currentTexture);
         glUseProgram(currentProgram);
         glBindFramebuffer(GL_FRAMEBUFFER, currentFramebuffer);
-        
+
         // Restore blending state
-        if (blendEnabled) {
+        if (blendEnabled)
+        {
             glEnable(GL_BLEND);
             glBlendFuncSeparate(blendSrcRGB, blendDstRGB, blendSrcAlpha, blendDstAlpha);
-        } else {
+        }
+        else
+        {
             glDisable(GL_BLEND);
         }
-        
+
         // Restore depth testing state
-        if (depthTestEnabled) {
+        if (depthTestEnabled)
+        {
             glEnable(GL_DEPTH_TEST);
-        } else {
+        }
+        else
+        {
             glDisable(GL_DEPTH_TEST);
         }
     }
