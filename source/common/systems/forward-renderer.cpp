@@ -1,7 +1,6 @@
-﻿#include "forward-renderer.hpp"
+#include "forward-renderer.hpp"
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
-#include "../material/material.hpp"
 #include <iostream>
 
 namespace our
@@ -112,7 +111,35 @@ namespace our
             dynWorld->setDebugDrawer(&debugDrawer);
             debugDrawer.glfw3_device_create();
         }
+
+        // Initialize FreeType
+        if (FT_Init_FreeType(&ft))
+        {
+            std::cerr << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+            return;
+        }
+
+        // Load font
+        loadFont("assets/fonts/arial.ttf");
+
+        // Configure VAO/VBO for texture quads
+        glGenVertexArrays(1, &textVAO);
+        glGenBuffers(1, &textVBO);
+        glBindVertexArray(textVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        // Load text shader
+        textShader = new ShaderProgram();
+        textShader->attach("assets/shaders/text.vert", GL_VERTEX_SHADER);
+        textShader->attach("assets/shaders/text.frag", GL_FRAGMENT_SHADER);
+        textShader->link();
     }
+
     void ForwardRenderer::destroy()
     {
         if (debug)
@@ -136,6 +163,26 @@ namespace our
             delete postprocessMaterial->sampler;
             delete postprocessMaterial->shader;
             delete postprocessMaterial;
+        }
+
+        // Clean up character textures
+        for (auto &pair : characters)
+        {
+            glDeleteTextures(1, &pair.second.textureID);
+        }
+        characters.clear();
+
+        // Clean up FreeType
+        FT_Done_Face(face);
+        FT_Done_FreeType(ft);
+
+        // Clean up OpenGL resources
+        glDeleteVertexArrays(1, &textVAO);
+        glDeleteBuffers(1, &textVBO);
+        if (textShader)
+        {
+            delete textShader;
+            textShader = nullptr;
         }
     }
 
@@ -376,17 +423,201 @@ namespace our
             glBindVertexArray(postProcessVertexArray);
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
-        else
+    }
+
+    void ForwardRenderer::loadFont(const std::string &fontPath)
+    {
+        // Load font face
+        if (FT_New_Face(ft, fontPath.c_str(), 0, &face))
         {
-            // Ensure we're rendering to the default framebuffer
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            std::cerr << "ERROR::FREETYPE: Failed to load font: " << fontPath << std::endl;
+            return;
         }
 
-        // Essential state cleanup for text rendering
-        glBindVertexArray(0);
-        glUseProgram(0);
-        glActiveTexture(GL_TEXTURE0);
+        // Set size to load glyphs as
+        FT_Set_Pixel_Sizes(face, 0, 48);
+
+        // Disable byte-alignment restriction
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        // Load first 128 characters of ASCII set
+        for (unsigned char c = 0; c < 128; c++)
+        {
+            // Load character glyph
+            if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+            {
+                std::cerr << "ERROR::FREETYPE: Failed to load Glyph" << std::endl;
+                continue;
+            }
+            // Generate texture
+            GLuint texture;
+            glGenTextures(1, &texture);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RED,
+                face->glyph->bitmap.width,
+                face->glyph->bitmap.rows,
+                0,
+                GL_RED,
+                GL_UNSIGNED_BYTE,
+                face->glyph->bitmap.buffer);
+            // Set texture options
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            // Now store character for later use
+            Character character = {
+                texture,
+                glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
+                glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
+                static_cast<GLuint>(face->glyph->advance.x)};
+            characters.insert(std::pair<char, Character>(c, character));
+        }
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    void ForwardRenderer::initializeTextRendering()
+    {
+        // Initialize FreeType
+        if (FT_Init_FreeType(&ft))
+        {
+            std::cerr << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+            return;
+        }
+
+        // Load font
+        loadFont("assets/fonts/arial.ttf");
+
+        // Configure VAO/VBO for texture quads
+        glGenVertexArrays(1, &textVAO);
+        glGenBuffers(1, &textVBO);
+        glBindVertexArray(textVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        // Load text shader
+        textShader = new ShaderProgram();
+        textShader->attach("assets/shaders/text.vert", GL_VERTEX_SHADER);
+        textShader->attach("assets/shaders/text.frag", GL_FRAGMENT_SHADER);
+        textShader->link();
+    }
+
+    void ForwardRenderer::destroyTextRendering()
+    {
+        // Clean up character textures
+        for (auto &pair : characters)
+        {
+            glDeleteTextures(1, &pair.second.textureID);
+        }
+        characters.clear();
+
+        // Clean up FreeType
+        FT_Done_Face(face);
+        FT_Done_FreeType(ft);
+
+        // Clean up OpenGL resources
+        glDeleteVertexArrays(1, &textVAO);
+        glDeleteBuffers(1, &textVBO);
+        if (textShader)
+        {
+            delete textShader;
+            textShader = nullptr;
+        }
+    }
+
+    void ForwardRenderer::renderText(const std::string &text, float x, float y, float scale, const glm::vec3 &color)
+    {
+        // Ensure we're rendering to the default framebuffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // Save current OpenGL state
+        GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
+        GLboolean blendEnabled = glIsEnabled(GL_BLEND);
+
+        // Disable depth testing for text rendering (text should appear on top)
+        glDisable(GL_DEPTH_TEST);
+
+        // Enable blending for transparency
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // Activate corresponding render state
+        textShader->use();
+        textShader->set("textColor", color);
+
+        // Set up projection matrix for 2D rendering
+        glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(windowSize.x), 0.0f, static_cast<float>(windowSize.y));
+        textShader->set("projection", projection);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindVertexArray(textVAO);
+
+        // Iterate through all characters
+        std::string::const_iterator c;
+        for (c = text.begin(); c != text.end(); c++)
+        {
+            Character ch = characters[*c];
+
+            float xpos = x + ch.bearing.x * scale;
+            float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+
+            float w = ch.size.x * scale;
+            float h = ch.size.y * scale;
+
+            // Update VBO for each character
+            float vertices[6][4] = {
+                {xpos, ypos + h, 0.0f, 0.0f},
+                {xpos, ypos, 0.0f, 1.0f},
+                {xpos + w, ypos, 1.0f, 1.0f},
+
+                {xpos, ypos + h, 0.0f, 0.0f},
+                {xpos + w, ypos, 1.0f, 1.0f},
+                {xpos + w, ypos + h, 1.0f, 0.0f}};
+
+            // Render glyph texture over quad
+            glBindTexture(GL_TEXTURE_2D, ch.textureID);
+
+            // Update content of VBO memory
+            glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+            // Render quad
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+            x += (ch.advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+        }
+
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        // Restore previous OpenGL state
+        if (!blendEnabled)
+            glDisable(GL_BLEND);
+        if (depthTestEnabled)
+            glEnable(GL_DEPTH_TEST);
+    }
+
+    void ForwardRenderer::renderTextCentered(const std::string &text, float x, float y, float scale, const glm::vec3 &color)
+    {
+        // Calculate text width
+        float textWidth = 0;
+        for (char c : text)
+        {
+            Character ch = characters[c];
+            textWidth += (ch.advance >> 6) * scale;
+        }
+
+        // Render text centered
+        renderText(text, x - textWidth / 2.0f, y, scale, color);
     }
 
 }

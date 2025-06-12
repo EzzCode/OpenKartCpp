@@ -57,7 +57,7 @@
     "renderer": {
       "sky": "assets/textures/skyorig.png",
       "debug": false
-      //,"postprocess": "assets/shaders/postprocess/vignette.frag"
+      ,"postprocess": "assets/shaders/postprocess/vignette.frag"
     },
     "assets": {
       "shaders": {
@@ -152,25 +152,25 @@
             }
           },
 
-          "texture": "tire",
-          "sampler": "default",
-          "roughness": "tire",
-          "emission": "plane-emission",
-          "specular": "tire",
-          "albedo": "tire",
-          "ambientOcclusion": "tire"
-        },
-        "kart": {
-          "type": "lit",
-          "shader": "light",
-          "pipelineState": {
-            "faceCulling": {
-              "enabled": false
-            },
-            "depthTesting": {
-              "enabled": true
-            }
-          },
+                    "texture": "tire",
+                    "sampler": "default",
+                    "roughness": "tire",
+                    "emission": "plane-emission",
+                    "specular": "tire",
+                    "albedo": "tire",
+                    "ambientOcclusion": "tire"
+                },
+                "kart":{
+                    "type": "lit",
+                    "shader": "light",
+                    "pipelineState": {
+                        "faceCulling": {
+                            "enabled": false
+                        },
+                        "depthTesting": {
+                            "enabled": true
+                        }
+                    },
 
           "texture": "kart",
           "sampler": "default",
