@@ -25,7 +25,6 @@ namespace our {
         void renderRaceStats();
         void renderSpeedometer();
         void renderCountdownTimer();
-        void renderAnimatedTitle();
         std::string formatTime(float timeInSeconds);
         
         // Color utilities

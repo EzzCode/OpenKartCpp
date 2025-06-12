@@ -1,6 +1,7 @@
 #pragma once
 // ADD LIGHT COMPONENT HERE and check line 37
 #include "../components/light.hpp"
+#include "../components/race.hpp"
 #include "../ecs/world.hpp"
 #include "../components/camera.hpp"
 #include "../components/mesh-renderer.hpp"

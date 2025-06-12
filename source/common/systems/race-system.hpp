@@ -21,8 +21,9 @@ namespace our {
         void updateCountdown(RaceManagerComponent* manager, float dt);
         void checkPlayerProgress(Entity* player, RacePlayerComponent* racePlayer);
         void updateRacePositions();
-        float calculateDistanceToNextCheckpoint(Entity* player, RacePlayerComponent* racePlayer);
-        
+        void updateCheckpointVisibility();
+        float calculateDistanceToNextCheckpoint(Entity *player, RacePlayerComponent *racePlayer);
+
     public:
         // Initialize the race system
         void enter(Application* app);
@@ -35,15 +36,14 @@ namespace our {
         
         // Reset race to beginning
         void resetRace();
-        
-        // Get race statistics for display
+          // Get race statistics for display
         bool isRaceActive() const;
         bool isRaceCompleted() const;
+        bool isInputDisabled() const;
         float getRaceTime() const;
         int getCurrentLap() const;
-        int getPosition() const;
-        float getBestLapTime() const;
+        int getPosition() const;        float getBestLapTime() const;
         std::string getRaceStateString() const;
+        int getSpeed() const;
     };
-
 }

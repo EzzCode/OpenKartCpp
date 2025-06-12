@@ -132,7 +132,7 @@
           "transparent": true,
           "texture": "track",
           "sampler": "default",
-          "alphaThreshold": 0.01,
+          "alphaThreshold": 0.09,
           "roughness": "track",
           "emission": "plane-emission",
           "specular": "track",
@@ -448,7 +448,7 @@
           {
             "type": "race-manager",
             "state": "WAITING",
-            "countdownTime": 3.0,
+            "countdownTime": 10.0,
             "totalCheckpoints": 4
           }
         ]
@@ -456,7 +456,7 @@
       {
         "name": "checkpoint-0",
         "position": [-6, 7, 45],
-        "scale": [1.0, 1.0, 1.0],
+        "scale": [1.5, 1.5, 1.5],
         "components": [
           {
             "type": "Mesh Renderer",
@@ -466,20 +466,20 @@
           {
             "type": "checkpoint",
             "checkpointIndex": 0,
-            "radius": 30.0,
+            "radius": 10.0,
             "isFinishLine": true
           },
         {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
-            "angularVelocity": [0, 45, 0]
+            "angularVelocity": [0, 90, 0]
           }
         ]
       },
       {
         "name": "checkpoint-1",
         "position": [-6, 7, -35],
-        "scale": [1.0, 1.0, 1.0],
+        "scale": [1.5, 1.5, 1.5],
         "components": [
           {
             "type": "Mesh Renderer",
@@ -489,20 +489,20 @@
           {
             "type": "checkpoint",
             "checkpointIndex": 1,
-            "radius": 25.0,
+            "radius": 10.0,
             "isFinishLine": false
           },
         {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
-            "angularVelocity": [0, 45, 0]
+            "angularVelocity": [0, 90, 0]
           }
         ]
       },
       {
         "name": "checkpoint-2",
         "position": [55, 7, -25],
-        "scale": [1.0, 1.0, 1.0],
+        "scale": [1.5, 1.5, 1.5],
         "components": [
           {
             "type": "Mesh Renderer",
@@ -512,20 +512,20 @@
           {
             "type": "checkpoint",
             "checkpointIndex": 2,
-            "radius": 25.0,
+            "radius": 10.0,
             "isFinishLine": false
           },
         {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
-            "angularVelocity": [0, 45, 0]
+            "angularVelocity": [0, 90, 0]
           }
         ]
       },
       {
         "name": "checkpoint-3",
         "position": [-30, 3, -10],
-        "scale": [1.0, 1.0, 1.0],
+        "scale": [1.5, 1.5, 1.5],
         "components": [
           {
             "type": "Mesh Renderer",
@@ -535,13 +535,13 @@
           {
             "type": "checkpoint",
             "checkpointIndex": 3,
-            "radius": 25.0,
+            "radius": 10.0,
             "isFinishLine": false
           },
         {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
-            "angularVelocity": [0, 45, 0]
+            "angularVelocity": [0, 90, 0]
           }
         ]
       }

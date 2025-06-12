@@ -31,9 +31,6 @@ namespace our {
             renderCountdownTimer();
         }
 
-        if (raceSystem->getRaceStateString().find("Ready") != std::string::npos) {
-            renderAnimatedTitle();
-        }
     }
 
     // ========== Core Rendering Helpers ==========
@@ -55,7 +52,7 @@ namespace our {
         else if (stateText.find("Completed") != std::string::npos)
             stateColor = glm::vec3(0.0f, 1.0f, 1.0f); // Cyan
 
-        renderer->renderTextCentered(stateText, centerX, topY, 1.5f, stateColor);
+        renderer->renderTextCentered(stateText, centerX, topY - 20, 1.2f, stateColor);
 
         if (raceSystem->isRaceActive() || raceSystem->isRaceCompleted()) {
             renderRaceStats();
@@ -105,16 +102,16 @@ namespace our {
         float rightX = windowSize.x - 200.0f;
         float bottomY = 100.0f;
 
-        float currentSpeed = 0.0f; // Replace with real speed if available
-        float maxSpeed = 100.0f;
+        float currentSpeed = raceSystem->getSpeed();
+        float maxSpeed = 40.0f;
 
         glm::vec3 speedColor = getSpeedColor(currentSpeed, maxSpeed);
 
         std::stringstream speedStream;
-        speedStream << std::fixed << std::setprecision(1) << currentSpeed << " km/h";
+        speedStream << std::fixed << std::setprecision(0) << currentSpeed << " km/h";
 
         renderer->renderText("SPEED", rightX, bottomY + 40.0f, 0.8f, glm::vec3(0.7f));
-        renderer->renderText(speedStream.str(), rightX, bottomY, 1.2f, speedColor);
+        renderer->renderText(speedStream.str(), rightX, bottomY, 0.9f, speedColor);
     }
 
     void HUDSystem::renderCountdownTimer() {
@@ -128,20 +125,6 @@ namespace our {
         renderer->renderTextCentered("GET READY!", centerX, centerY + 50.0f, scale, countdownColor);
     }
 
-    void HUDSystem::renderAnimatedTitle() {
-        auto windowSize = app->getFrameBufferSize();
-        float centerX = windowSize.x / 2.0f;
-        float topY = windowSize.y - 50.0f;
-
-        glm::vec3 titleColor = glm::vec3(
-            0.5f + 0.5f * sin(animationTime * 2.0f),
-            0.5f + 0.5f * sin(animationTime * 2.0f + 2.094f),
-            0.5f + 0.5f * sin(animationTime * 2.0f + 4.188f)
-        );
-
-        float titleScale = 1.5f + 0.2f * sin(animationTime * 3.0f);
-        renderer->renderTextCentered("RACING CHAMPIONSHIP", centerX, topY - 50.0f, titleScale, titleColor);
-    }
 
     // ========== Utility Methods ==========
 

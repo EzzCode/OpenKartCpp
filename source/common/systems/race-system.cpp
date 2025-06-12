@@ -68,6 +68,7 @@ namespace our
             }
 
             firstTime = false;
+            startRace();
         }
 
         // Sort checkpoints by index
@@ -81,6 +82,9 @@ namespace our
 
         manager->totalCheckpoints = checkpoints.size();
 
+        // Update checkpoint visibility
+        updateCheckpointVisibility();
+
         // Handle race states
         switch (manager->state)
         {
@@ -89,7 +93,6 @@ namespace our
             if (app->getKeyboard().justPressed(GLFW_KEY_R))
             {
                 manager->state = RaceManagerComponent::RaceState::COUNTDOWN;
-                manager->countdownTime = 3.0f;
                 std::cout << "Race starting in 3..." << std::endl;
             }
             break;
@@ -307,7 +310,33 @@ namespace our
                 racePlayer->position = i + 1;
             }
         }
+    }    void RaceSystem::updateCheckpointVisibility()
+    {
+        // Hide all checkpoints first
+        for (auto checkpoint : checkpoints)
+        {
+            auto checkpointComponent = checkpoint->getComponent<CheckpointComponent>();
+            if (checkpointComponent)
+            {
+                checkpointComponent->isVisible = false;
+            }
+        }
+
+        // Show only the next checkpoint for each player
+        for (auto player : players)
+        {
+            auto racePlayer = player->getComponent<RacePlayerComponent>();
+            if (racePlayer && racePlayer->nextCheckpoint < static_cast<int>(checkpoints.size()))
+            {
+                auto checkpointComponent = checkpoints[racePlayer->nextCheckpoint]->getComponent<CheckpointComponent>();
+                if (checkpointComponent)
+                {
+                    checkpointComponent->isVisible = true;
+                }
+            }
+        }
     }
+
     float RaceSystem::calculateDistanceToNextCheckpoint(Entity *player, RacePlayerComponent *racePlayer)
     {
         if (racePlayer->nextCheckpoint >= static_cast<int>(checkpoints.size()))
@@ -326,7 +355,6 @@ namespace our
             if (manager)
             {
                 manager->state = RaceManagerComponent::RaceState::COUNTDOWN;
-                manager->countdownTime = 3.0f;
             }
         }
     }
@@ -429,7 +457,25 @@ namespace our
             return "Race Finished! Press R to Restart";
         default:
             return "Unknown State";
+        }    }
+    bool RaceSystem::isInputDisabled() const
+    {
+        if (!raceManager)
+            return true;
+        auto manager = raceManager->getComponent<RaceManagerComponent>();
+        if (!manager)
+            return true;
+        return !(manager->raceStarted || manager->state == RaceManagerComponent::RaceState::RACING);
+    }
+    int RaceSystem::getSpeed() const
+    {
+        auto rigidbodyComponent = players[0]->getComponent<RigidbodyComponent>();
+        if (rigidbodyComponent && rigidbodyComponent->rigidbody)
+        {
+            btVector3 velocity = rigidbodyComponent->rigidbody->getLinearVelocity();
+            return static_cast<int>(velocity.length());
         }
+        return 0; // No speed if no rigidbody or not moving
     }
 
 }

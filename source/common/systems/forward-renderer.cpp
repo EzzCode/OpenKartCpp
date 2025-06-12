@@ -197,10 +197,17 @@ namespace our
         {
             // If we hadn't found a camera yet, we look for a camera in this entity
             if (!camera)
-                camera = entity->getComponent<CameraComponent>();
-            // If this entity has a mesh renderer component
+                camera = entity->getComponent<CameraComponent>();            // If this entity has a mesh renderer component
             if (auto meshRenderer = entity->getComponent<MeshRendererComponent>(); meshRenderer)
             {
+                // Check if this entity has a checkpoint component and if it's visible
+                if (auto checkpoint = entity->getComponent<CheckpointComponent>(); checkpoint)
+                {
+                    // Skip rendering if checkpoint is not visible
+                    if (!checkpoint->isVisible)
+                        continue;
+                }
+                
                 // We construct a command from it
                 RenderCommand command;
                 command.localToWorld = meshRenderer->getOwner()->getLocalToWorldMatrix();

@@ -16,6 +16,7 @@
 #include <json/json.hpp>
 #include <BulletDynamics/Vehicle/btRaycastVehicle.h>
 #include "../components/movement.hpp"
+#include "race-system.hpp"
 
 namespace our
 {
@@ -242,6 +243,7 @@ namespace our
             return body;
         }    public:
         Application *app;
+        RaceSystem *raceSystem = nullptr;
         void enter(btDiscreteDynamicsWorld *world, Application *app, const nlohmann::json& vehicleTuningConfig = nlohmann::json{})
         {
             this->app = app;
@@ -262,10 +264,13 @@ namespace our
                 std::cout << "Loaded values - Max Speed: " << vehicleTuning.maxSpeed 
                           << ", Suspension Stiffness: " << vehicleTuning.suspensionStiffness 
                           << ", Engine Force Max: " << vehicleTuning.engineForceMax << std::endl;
-            } else {
-                std::cout << "Using default vehicleTuning values - Max Speed: " << vehicleTuning.maxSpeed 
+            } else {                std::cout << "Using default vehicleTuning values - Max Speed: " << vehicleTuning.maxSpeed 
                           << ", Suspension Stiffness: " << vehicleTuning.suspensionStiffness << std::endl;
             }
+        }
+        
+        void setRaceSystem(RaceSystem* raceSystem) {
+            this->raceSystem = raceSystem;
         }
         //(y: yaw, x: pitch, z: roll)
         void quaternionToEuler(const btQuaternion &quat, float &yaw, float &pitch, float &roll)
@@ -423,17 +428,20 @@ namespace our
 
                         dynWorld->setGravity(btVector3(0, vehicleTuning.gravity, 0));
                     }
-                    else
-                    {
+                    else                    {
                         dynWorld->setGravity(btVector3(0, vehicleTuning.gravity, 0));
                     }
-                    if (app->getKeyboard().isPressed(GLFW_KEY_UP))
+                    
+                    // Check if input should be disabled based on race state
+                    bool inputDisabled = raceSystem && raceSystem->isInputDisabled();
+                    
+                    if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_UP))
                     {
                         engineForce += vehicleTuning.engineForceIncrement;
-                    }                    else if (app->getKeyboard().isPressed(GLFW_KEY_DOWN))
-                    {
-                        engineForce -= vehicleTuning.engineForceIncrement;
                     }
+                    else if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_DOWN))
+                    {
+                        engineForce -= vehicleTuning.engineForceIncrement;                    }
                     else
                     {
                         engineForce = 0.0f;
@@ -441,14 +449,15 @@ namespace our
                     }
 
                     // Modify steering logic using config values
-                    if (app->getKeyboard().isPressed(GLFW_KEY_LEFT))
+                    if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_LEFT))
                     {
                         steeringValue += vehicleTuning.steeringIncrement;
                     }
-                    else if (app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
+                    else if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
                     {
                         steeringValue -= vehicleTuning.steeringIncrement;
-                    }                    else
+                    }
+                    else
                     {
                         // Add gradual return to center using config value
                         steeringValue *= vehicleTuning.steeringReturnFactor;
@@ -459,7 +468,7 @@ namespace our
                                                      glm::clamp(velocity.length() / vehicleTuning.speedThreshold, 0.0f, 1.0f));
                     steeringValue = glm::clamp(steeringValue, -maxSteeringAngle, maxSteeringAngle);
 
-                    if (app->getKeyboard().isPressed(GLFW_KEY_SPACE))
+                    if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_SPACE))
                     {
                         brakeForce = vehicleTuning.brakeForce;
                     }

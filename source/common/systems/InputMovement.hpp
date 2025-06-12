@@ -8,11 +8,12 @@
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <btBulletDynamicsCommon.h>
+#include "race-system.hpp"
 
-namespace our {
-    class InputMovementSystem {
+namespace our {class InputMovementSystem {
     private:
         Application* app;
+        RaceSystem* raceSystem = nullptr; // Reference to race system for input checking
 
         // Vehicle properties
         float engineForce = 0.0f;
@@ -32,15 +33,20 @@ namespace our {
         const float MAX_SPEED = 60.0f;             // Increased top speed
         const float REVERSE_SPEED_LIMIT = -15.0f;  // Reduced reverse speed for balance
 
-    public:
-        void enter(Application* app) {
+    public:        void enter(Application* app) {
             this->app = app;
         }
-
-        void update(World* world, float deltaTime) {
+        
+        void setRaceSystem(RaceSystem* raceSystem) {
+            this->raceSystem = raceSystem;
+        }        void update(World* world, float deltaTime) {
             for (auto entity : world->getEntities()) {
                 InputComponent* input = entity->getComponent<InputComponent>();
                 if (!input) continue;
+
+                // Check if input should be disabled based on race state
+                bool inputDisabled = raceSystem && raceSystem->isInputDisabled();
+                if (inputDisabled) continue; // Skip input processing if disabled
 
                 // Reset forces
                 brakingForce = 0.0f;

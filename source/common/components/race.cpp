@@ -4,6 +4,7 @@ namespace our {    void CheckpointComponent::deserialize(const nlohmann::json& d
         checkpointIndex = data.value("checkpointIndex", 0);
         radius = data.value("radius", 5.0f);
         isFinishLine = data.value("isFinishLine", false);
+        isVisible = data.value("isVisible", false);
     }
 
     void RacePlayerComponent::deserialize(const nlohmann::json& data) {
