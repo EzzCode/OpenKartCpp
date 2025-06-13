@@ -36,6 +36,8 @@ namespace our {
         virtual void onDraw(double deltaTime){}         // Called every frame in the game loop passing the time taken to draw the frame "Delta time".
         virtual void onDestroy(){}                      // Called once after the game loop ends for house cleaning.
 
+        // Virtual destructor to ensure proper cleanup of derived classes
+        virtual ~State() {}
 
         // Override these functions to get mouse and keyboard event.
         virtual void onKeyEvent(int key, int scancode, int action, int mods){}      

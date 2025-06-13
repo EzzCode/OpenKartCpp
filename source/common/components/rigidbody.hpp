@@ -22,6 +22,8 @@ public:
     glm::vec3 position = {0, 0, 0};    // Initial position
     glm::vec3 rotation = {0, 0, 0};    // Initial rotation in degrees
     glm::vec3 scale = {1, 1, 1};       // Initial scale
+    glm::vec3 initialPosition = {0, 0, 0};  // Store initial spawn position for reset
+    glm::vec3 initialRotation = {0, 0, 0};  // Store initial spawn rotation for reset
     float mass = 1.0f;                 // Mass of the rigid body
     std::string mesh = "";             // Path to the OBJ file
     bool addedToWorld = false;         // Has the rigid body been added to the world?

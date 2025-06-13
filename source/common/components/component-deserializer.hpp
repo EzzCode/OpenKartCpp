@@ -10,6 +10,7 @@
 #include "rigidbody.hpp"
 #include "collider.hpp"
 #include "sound.hpp"
+#include "race.hpp"
 namespace our {
 
     // Given a json object, this function picks and creates a component in the given entity
@@ -31,11 +32,16 @@ namespace our {
         } else if (type == InputComponent::getID()){
             component = entity->addComponent<InputComponent>();
         }else if (type == RigidbodyComponent::getID()){
-            component = entity->addComponent<RigidbodyComponent>();
-        }else if(type == ColliderComponent::getID()){
+            component = entity->addComponent<RigidbodyComponent>();        }else if(type == ColliderComponent::getID()){
             component = entity->addComponent<ColliderComponent>();
         }else if (type == SoundComponent::getID()){
             component = entity->addComponent<SoundComponent>();
+        }else if (type == CheckpointComponent::getID()){
+            component = entity->addComponent<CheckpointComponent>();
+        }else if (type == RacePlayerComponent::getID()){
+            component = entity->addComponent<RacePlayerComponent>();
+        }else if (type == RaceManagerComponent::getID()){
+            component = entity->addComponent<RaceManagerComponent>();
         }
 
         if(component) component->deserialize(data);

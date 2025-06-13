@@ -21,5 +21,9 @@ namespace our
         scale = data.value("scale", scale);
         input = data.value("input", input);
         steeringAngle = data.value("steeringAngle", steeringAngle);
+        
+        // Store initial spawn position and rotation for race reset functionality
+        initialPosition = position;
+        initialRotation = rotation;
     }
 }
