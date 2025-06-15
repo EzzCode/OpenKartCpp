@@ -54,7 +54,7 @@ namespace our
 
         if (stateText.find("Ready") != std::string::npos)
             stateColor = glm::vec3(0.0f, 1.0f, 0.0f); // Green
-        else if (stateText.find("Racing") != std::string::npos)
+        else if (stateText.find("GO") != std::string::npos)
             stateColor = glm::vec3(1.0f, 0.5f, 0.0f); // Orange
         else if (stateText.find("Completed") != std::string::npos)
             stateColor = glm::vec3(0.0f, 1.0f, 1.0f); // Cyan

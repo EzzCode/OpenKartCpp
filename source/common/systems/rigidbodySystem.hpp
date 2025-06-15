@@ -490,8 +490,13 @@ namespace our
                     }
 
                     // Adjust steering angle limits based on velocity using config values
-                    float maxSteeringAngle = glm::mix(vehicleTuning.maxAngleAtLowSpeed, vehicleTuning.maxAngleAtHighSpeed,
-                                                      glm::clamp(velocity.length() / vehicleTuning.speedThreshold, 0.0f, 1.0f));
+                    // Interpolate between maxAngleAtLowSpeed and maxAngleAtHighSpeed depending on current speed
+                    float maxSteeringAngle = glm::mix(
+                        vehicleTuning.maxAngleAtLowSpeed,   // Maximum steering angle at low speed
+                        vehicleTuning.maxAngleAtHighSpeed,  // Maximum steering angle at high speed
+                        glm::clamp(velocity.length() / vehicleTuning.speedThreshold, 0.0f, 1.0f) // Interpolation factor (0 at low speed, 1 at or above speedThreshold)
+                    );
+                    // Clamp the steering value to the calculated maximum steering angle (both directions)
                     steeringValue = glm::clamp(steeringValue, -maxSteeringAngle, maxSteeringAngle);
 
                     if (!inputDisabled && app->getKeyboard().isPressed(GLFW_KEY_SPACE))

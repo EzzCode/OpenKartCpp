@@ -556,7 +556,7 @@ namespace our
         case RaceManagerComponent::RaceState::COUNTDOWN:
             return "Get Ready... " + std::to_string((int)ceil(manager->countdownTime));
         case RaceManagerComponent::RaceState::RACING:
-            return "Racing!";
+            return "GO!";
         case RaceManagerComponent::RaceState::FINISHED:
             return "Race Finished! Press R to Restart";
         default:

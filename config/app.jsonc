@@ -37,7 +37,7 @@
         "min": -600.0,
         "max": 1200.0
       },
-      "brakeForce": 20.0,
+      "brakeForce": 40.0,
       "gravity": -12.0,
       "airForce": 3.0
     },
