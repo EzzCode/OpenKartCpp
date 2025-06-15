@@ -56,8 +56,8 @@
   "scene": {
     "renderer": {
       "sky": "assets/textures/skyorig.png",
-      "debug": false
-      ,"postprocess": "assets/shaders/postprocess/nothing.frag"
+      "debug": false,
+      "postprocess": "assets/shaders/postprocess/nothing.frag"
     },
     "assets": {
       "shaders": {
@@ -152,25 +152,25 @@
             }
           },
 
-                    "texture": "tire",
-                    "sampler": "default",
-                    "roughness": "tire",
-                    "emission": "plane-emission",
-                    "specular": "tire",
-                    "albedo": "tire",
-                    "ambientOcclusion": "tire"
-                },
-                "kart":{
-                    "type": "lit",
-                    "shader": "light",
-                    "pipelineState": {
-                        "faceCulling": {
-                            "enabled": false
-                        },
-                        "depthTesting": {
-                            "enabled": true
-                        }
-                    },
+          "texture": "tire",
+          "sampler": "default",
+          "roughness": "tire",
+          "emission": "plane-emission",
+          "specular": "tire",
+          "albedo": "tire",
+          "ambientOcclusion": "tire"
+        },
+        "kart": {
+          "type": "lit",
+          "shader": "light",
+          "pipelineState": {
+            "faceCulling": {
+              "enabled": false
+            },
+            "depthTesting": {
+              "enabled": true
+            }
+          },
 
           "texture": "kart",
           "sampler": "default",
@@ -469,7 +469,7 @@
             "radius": 10.0,
             "isFinishLine": true
           },
-        {
+          {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
             "angularVelocity": [0, 90, 0]
@@ -492,7 +492,7 @@
             "radius": 10.0,
             "isFinishLine": false
           },
-        {
+          {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
             "angularVelocity": [0, 90, 0]
@@ -501,7 +501,7 @@
       },
       {
         "name": "checkpoint-2",
-        "position": [55, 7, -25],
+        "position": [55, 5, -25],
         "scale": [1.5, 1.5, 1.5],
         "components": [
           {
@@ -515,7 +515,7 @@
             "radius": 10.0,
             "isFinishLine": false
           },
-        {
+          {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
             "angularVelocity": [0, 90, 0]
@@ -538,10 +538,80 @@
             "radius": 10.0,
             "isFinishLine": false
           },
-        {
+          {
             "type": "Movement",
             "linearVelocity": [0, 0.0, 0],
             "angularVelocity": [0, 90, 0]
+          }
+        ]
+      },
+      {
+        "name": "checkpoint-4",
+        "position": [-103, 8.5, 2],
+        "scale": [1.5, 1.5, 1.5],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "checkpoint",
+            "checkpointIndex": 4,
+            "radius": 10.0,
+            "isFinishLine": false
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0.0, 0],
+            "angularVelocity": [0, 90, 0]
+          }
+        ]
+      },
+      {
+        "name": "checkpoint-5",
+        "position": [-60, 9, 105],
+        "scale": [1.5, 1.5, 1.5],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "checkpoint",
+            "checkpointIndex": 5,
+            "radius": 10.0,
+            "isFinishLine": false
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0.0, 0],
+            "angularVelocity": [0, 90, 0]
+          }
+        ]
+      },
+      {
+        "name": "checkpoint-6",
+        "position": [-30, 12, 125],
+        "rotation": [0, 0, 45],
+        "scale": [1.5, 1.5, 1.5],
+        "components": [
+          {
+            "type": "Mesh Renderer",
+            "mesh": "monkey",
+            "material": "monkey"
+          },
+          {
+            "type": "checkpoint",
+            "checkpointIndex": 6,
+            "radius": 10.0,
+            "isFinishLine": false
+          },
+          {
+            "type": "Movement",
+            "linearVelocity": [0, 0.0, 0],
+            "angularVelocity": [0, 45, 0]
           }
         ]
       }

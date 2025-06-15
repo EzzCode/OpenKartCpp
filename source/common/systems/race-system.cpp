@@ -72,7 +72,7 @@ namespace our
 
         // Auto-start race after 3 seconds, or allow manual start with R key
         if (manager->state == RaceManagerComponent::RaceState::WAITING &&
-            glfwGetTime() - initializationTime > 3.0f)
+            glfwGetTime() - initializationTime > 2.0f)
         {
             std::cout << "Race System: Auto-starting race after initialization delay." << std::endl;
             startRace();
