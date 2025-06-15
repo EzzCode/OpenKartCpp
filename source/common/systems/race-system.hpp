@@ -2,6 +2,7 @@
 
 #include "../ecs/world.hpp"
 #include "../components/race.hpp"
+#include "../components/sound.hpp"
 #include "../application.hpp"
 #include <glm/glm.hpp>
 #include <vector>
@@ -9,7 +10,11 @@
 
 namespace our
 {
-    class RaceSystem
+    // Forward declaration
+    class soundSystem;
+
+
+  class RaceSystem
     {
     private:
         Application *app;
@@ -20,6 +25,7 @@ namespace our
         bool systemInitialized = false;
         float initializationTime = 0.0f;
         int lastCountdownValue = 4;
+        soundSystem *soundSystemRef = nullptr; // Reference to sound system
 
         // UI and HUD functions
         void updateCountdown(RaceManagerComponent *manager, float dt);
@@ -27,10 +33,16 @@ namespace our
         void updateRacePositions();
         void updateCheckpointVisibility();
         float calculateDistanceToNextCheckpoint(Entity *player, RacePlayerComponent *racePlayer);
-
-    public:
+        
+        // Sound functions
+        void playCheckpointSound();
+        void playLapCompleteSound();
+        void playRaceCompleteSound();    public:
         // Initialize the race system
         void enter(Application *app);
+        
+        // Set sound system reference for audio feedback
+        void setSoundSystem(soundSystem *soundSys);
 
         // Main update function called every frame
         void update(World *world, float deltaTime);

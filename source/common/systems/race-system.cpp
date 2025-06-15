@@ -1,4 +1,5 @@
 #include "race-system.hpp"
+#include "soundSystem.hpp"
 #include "../components/movement.hpp"
 #include "../components/rigidbody.hpp"
 #include <iostream>
@@ -10,7 +11,14 @@ namespace our
     {
         this->app = app;
         this->raceManager = nullptr;
+        this->soundSystemRef = nullptr;
         std::cout << "Race System: Initialized" << std::endl;
+    }
+
+    void RaceSystem::setSoundSystem(soundSystem *soundSys)
+    {
+        this->soundSystemRef = soundSys;
+        std::cout << "Race System: Sound system reference set" << std::endl;
     }
 
     void RaceSystem::update(World *world, float deltaTime)
@@ -211,11 +219,14 @@ namespace our
                       << " pos: (" << checkpointPos.x << ", " << checkpointPos.y << ", " << checkpointPos.z
                       << ") | Distance: " << distance << " (radius: " << checkpoint->radius << ")" << std::endl;
             lastDebugTime = currentTime;
-        }
-        // Check if player reached checkpoint
+        } // Check if player reached checkpoint
         if (distance <= checkpoint->radius)
         {
             std::cout << "*** CHECKPOINT " << checkpoint->checkpointIndex << " REACHED! ***" << std::endl;
+
+            // Play checkpoint sound
+            playCheckpointSound();
+
             // Move to next checkpoint
             racePlayer->nextCheckpoint++;
             // Check if this was the finish line AND player has completed a full circuit
@@ -232,18 +243,22 @@ namespace our
                     {
                         racePlayer->bestLapTime = racePlayer->currentLapTime;
                     }
-
                     std::cout << "Lap " << racePlayer->currentLap << " completed! Time: "
                               << racePlayer->currentLapTime << "s" << std::endl;
 
-                    racePlayer->currentLapTime = 0.0f;
-                    racePlayer->currentLap++;
+                    // Play lap completion sound
+                    playLapCompleteSound();
 
-                    // Check if race is complete
+                    racePlayer->currentLapTime = 0.0f;
+                    racePlayer->currentLap++; // Check if race is complete
                     if (racePlayer->currentLap > racePlayer->maxLaps)
                     {
                         racePlayer->raceCompleted = true;
                         std::cout << "*** RACE COMPLETE! ***" << std::endl;
+
+                        // Play race completion sound
+                        playRaceCompleteSound();
+
                         std::cout << "Total race time: " << racePlayer->raceTime << "s" << std::endl;
                         std::cout << "Best lap time: " << racePlayer->bestLapTime << "s" << std::endl;
                         std::cout << "Lap times: ";
@@ -536,6 +551,42 @@ namespace our
             return static_cast<int>(velocity.length());
         }
         return 0; // No speed if no rigidbody or not moving
+    } // ========== Sound Functions ==========
+
+    void RaceSystem::playCheckpointSound()
+    {
+        if (!soundSystemRef)
+        {
+            std::cout << "No sound system reference - checkpoint sound would play here" << std::endl;
+            return;
+        }
+
+        soundSystemRef->playSound("assets/sounds/checkpoint.wav", 0.8f);
+        std::cout << "Playing checkpoint sound!" << std::endl;
+    }
+
+    void RaceSystem::playLapCompleteSound()
+    {
+        if (!soundSystemRef)
+        {
+            std::cout << "No sound system reference - lap complete sound would play here" << std::endl;
+            return;
+        }
+
+        soundSystemRef->playSound("assets/sounds/checkpoint.wav", 1.0f);
+        std::cout << "Playing lap complete sound!" << std::endl;
+    }
+
+    void RaceSystem::playRaceCompleteSound()
+    {
+        if (!soundSystemRef)
+        {
+            std::cout << "No sound system reference - race complete sound would play here" << std::endl;
+            return;
+        }
+
+        soundSystemRef->playSound("assets/sounds/checkpoint.wav", 1.0f);
+        std::cout << "Playing race complete sound!" << std::endl;
     }
 
 }

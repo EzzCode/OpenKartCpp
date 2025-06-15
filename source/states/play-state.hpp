@@ -90,14 +90,16 @@ class Playstate : public our::State
         else
         {
             rigidbodySystem.enter(dynamicsWorld, appPtr);
-        }
-        soundSystem.initialize();
+        }        soundSystem.initialize();
         // Initialize race and HUD systems
         raceSystem.enter(appPtr);
 
         // Set race system references for input systems
         rigidbodySystem.setRaceSystem(&raceSystem);
         // inputMovementSystem.setRaceSystem(&raceSystem); // Uncomment if you enable InputMovementSystem
+
+        // Connect race system with sound system for audio feedback
+        raceSystem.setSoundSystem(&soundSystem);
 
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
