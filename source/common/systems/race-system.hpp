@@ -27,6 +27,16 @@ namespace our
         int lastCountdownValue = 4;
         soundSystem *soundSystemRef = nullptr; // Reference to sound system
 
+        // Sound configuration
+        struct SoundConfig {
+            std::string checkpointPath = "assets/sounds/checkpoint.wav";
+            float checkpointVolume = 0.8f;
+            std::string lapCompletePath = "assets/sounds/lap_complete.wav";
+            float lapCompleteVolume = 1.0f;
+            std::string raceCompletePath = "assets/sounds/race_complete.wav";
+            float raceCompleteVolume = 1.0f;
+        } soundConfig;
+
         // UI and HUD functions
         void updateCountdown(RaceManagerComponent *manager, float dt);
         void checkPlayerProgress(Entity *player, RacePlayerComponent *racePlayer);

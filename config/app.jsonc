@@ -53,6 +53,22 @@
       "brakeForceDefault": 4.0
     }
   },
+  "sounds": {
+    "race": {
+      "checkpoint": {
+        "path": "assets/sounds/SE_RC_PAUSE_OFF.wav",
+        "volume": 0.1
+      },
+      "lapComplete": {
+        "path": "assets/sounds/SE_RC_PAUSE_EXIT_GAME.wav",
+        "volume": 0.3
+      },
+      "raceComplete": {
+        "path": "assets/sounds/SE_SYS_WIFI_MATCH_COMPLETE.wav",
+        "volume": 0.3
+      }
+    }
+  },
   "scene": {
     "renderer": {
       "sky": "assets/textures/skyorig.png",
@@ -269,7 +285,7 @@
           {
             "type": "race-player",
             "currentLap": 1,
-            "maxLaps": 1,
+            "maxLaps": 2,
             "nextCheckpoint": 1
           }
         ],

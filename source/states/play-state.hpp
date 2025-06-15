@@ -90,7 +90,8 @@ class Playstate : public our::State
         else
         {
             rigidbodySystem.enter(dynamicsWorld, appPtr);
-        }        soundSystem.initialize();
+        }
+        soundSystem.initialize();
         // Initialize race and HUD systems
         raceSystem.enter(appPtr);
 

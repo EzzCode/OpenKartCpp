@@ -12,6 +12,40 @@ namespace our
         this->app = app;
         this->raceManager = nullptr;
         this->soundSystemRef = nullptr;
+
+        // Load sound configuration from app config
+        const auto &config = app->getConfig();
+        if (config.contains("sounds") && config["sounds"].contains("race"))
+        {
+            const auto &raceSound = config["sounds"]["race"];
+
+            if (raceSound.contains("checkpoint"))
+            {
+                soundConfig.checkpointPath = raceSound["checkpoint"].value("path", soundConfig.checkpointPath);
+                soundConfig.checkpointVolume = raceSound["checkpoint"].value("volume", soundConfig.checkpointVolume);
+            }
+
+            if (raceSound.contains("lapComplete"))
+            {
+                soundConfig.lapCompletePath = raceSound["lapComplete"].value("path", soundConfig.lapCompletePath);
+                soundConfig.lapCompleteVolume = raceSound["lapComplete"].value("volume", soundConfig.lapCompleteVolume);
+            }
+
+            if (raceSound.contains("raceComplete"))
+            {
+                soundConfig.raceCompletePath = raceSound["raceComplete"].value("path", soundConfig.raceCompletePath);
+                soundConfig.raceCompleteVolume = raceSound["raceComplete"].value("volume", soundConfig.raceCompleteVolume);
+            }
+
+            std::cout << "Race System: Loaded sound config - Checkpoint: " << soundConfig.checkpointPath
+                      << ", Lap: " << soundConfig.lapCompletePath
+                      << ", Race: " << soundConfig.raceCompletePath << std::endl;
+        }
+        else
+        {
+            std::cout << "Race System: Using default sound configuration" << std::endl;
+        }
+
         std::cout << "Race System: Initialized" << std::endl;
     }
 
@@ -552,7 +586,6 @@ namespace our
         }
         return 0; // No speed if no rigidbody or not moving
     } // ========== Sound Functions ==========
-
     void RaceSystem::playCheckpointSound()
     {
         if (!soundSystemRef)
@@ -561,8 +594,8 @@ namespace our
             return;
         }
 
-        soundSystemRef->playSound("assets/sounds/checkpoint.wav", 0.8f);
-        std::cout << "Playing checkpoint sound!" << std::endl;
+        soundSystemRef->playSound(soundConfig.checkpointPath, soundConfig.checkpointVolume);
+        std::cout << "Playing checkpoint sound: " << soundConfig.checkpointPath << std::endl;
     }
 
     void RaceSystem::playLapCompleteSound()
@@ -573,8 +606,8 @@ namespace our
             return;
         }
 
-        soundSystemRef->playSound("assets/sounds/checkpoint.wav", 1.0f);
-        std::cout << "Playing lap complete sound!" << std::endl;
+        soundSystemRef->playSound(soundConfig.lapCompletePath, soundConfig.lapCompleteVolume);
+        std::cout << "Playing lap complete sound: " << soundConfig.lapCompletePath << std::endl;
     }
 
     void RaceSystem::playRaceCompleteSound()
@@ -585,8 +618,8 @@ namespace our
             return;
         }
 
-        soundSystemRef->playSound("assets/sounds/checkpoint.wav", 1.0f);
-        std::cout << "Playing race complete sound!" << std::endl;
+        soundSystemRef->playSound(soundConfig.raceCompletePath, soundConfig.raceCompleteVolume);
+        std::cout << "Playing race complete sound: " << soundConfig.raceCompletePath << std::endl;
     }
 
 }
