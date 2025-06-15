@@ -5,7 +5,6 @@ A 3D graphics engine and racing game built with OpenGL, developed as part of the
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
-- [System Requirements](#system-requirements)
 - [Building the Project](#building-the-project)
 - [Running the Application](#running-the-application)
 - [Project Structure](#project-structure)
@@ -13,7 +12,6 @@ A 3D graphics engine and racing game built with OpenGL, developed as part of the
 - [Technical Implementation](#technical-implementation)
 - [Dependencies](#dependencies)
 - [Legal and Licensing](#legal-and-licensing)
-- [Contributing](#contributing)
 - [Acknowledgments](#acknowledgments)
 
 ## Overview
